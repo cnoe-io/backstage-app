@@ -1,0 +1,80 @@
+apiVersion: scaffolder.backstage.io/v1beta3
+kind: Template
+metadata:
+  name: test-template
+  title: TESTING
+  description: test
+spec:
+  owner: backstage/techdocs-core
+  type: service
+  # these are the steps which are rendered in the frontend with the form input
+  parameters:
+    - title: Fill in some steps
+      required:
+        - name
+        - owner
+      properties:
+        name:
+          title: Application Name
+          type: string
+          description: Unique name of the component
+          ui:autofocus: true
+          ui:options:
+            rows: 5
+        owner:
+          title: Owner
+          type: string
+          description: Owner of the component
+          ui:field: OwnerPicker
+          ui:options:
+            catalogFilter:
+              kind: Group
+        labels:
+          title: Labels
+          type: object
+          additionalProperties:
+            type: string
+          description: Labels to apply to the application
+        namespace:
+          title: Namespace
+          type: string
+          description: Namespace to deploy this application into. Optional. Defaults to application name.
+          ui:options:
+            rows: 5
+        clusterName:
+          title: Cluster Name
+          type: string
+          default: canoe-packaging
+          description: Name of the cluster to run this in
+    - title: Workflow params
+      properties:
+        workflowParams:
+          title: workflow parameters
+          type: array
+          description: workflow parameters
+          ui:autofocus: true
+          items:
+            type: object
+            properties:
+              required:
+                - name
+                - value
+              name:
+                type: string
+              value:
+                type: string
+  steps:
+    - id: flow
+      name: Flow
+      action: workflows:argo:invoke
+      input:
+        templateName: workflow-template-whalesay-template
+        namespace: admin
+        clusterName: ${{ parameters.clusterName }}
+        parameters: ${{ parameters.workflowParams }}
+
+#  output:
+#    links:
+#      - title: Open in catalog
+#        icon: catalog
+#        entityRef: ${{ steps['register'].output.entityRef }}
