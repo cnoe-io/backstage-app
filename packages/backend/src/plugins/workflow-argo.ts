@@ -142,12 +142,12 @@ export function createInvokeArgoAction(config: Config, logger: Logger) {
 
                 const client = kc.makeApiClient(k8s.CustomObjectsApi)
                 const wf = new Workflow(ctx.input.templateName, ctx.input.namespace, ctx.input.parameters)
-                const body = generateBody(ctx.input.templateName, ctx.input.namespace)
+                // const body = generateBody(ctx.input.templateName, ctx.input.namespace)
 
                 try {
                     const resp = await client.createNamespacedCustomObject(
                         argoWorkflowsGroup, argoWorkflowsVersion, ctx.input.namespace,
-                        argoWorkFlowPlural, body
+                        argoWorkFlowPlural, wf
                     )
                     logger.debug(`response: ${resp.body}`)
                     ctx.output('ID', resp.body.toString())
@@ -191,33 +191,3 @@ function getClusterConfig(name: string, config: Config): Config {
     }
     return clusters[0]
 }
-
-function generateBody(templateName: string, namespace: string, entrypoint: string): object {
-    let obj = {
-        "apiVersion": "argoproj.io/v1alpha1",
-        "kind": "Workflow",
-        "metadata": {
-            "generateName": "backstage-scaffolding-",
-            "namespace": `${namespace}`
-        },
-        "spec": {
-            "arguments": {
-                "parameters": [
-                    {
-                        "name": "message",
-                        "value": "from workflow"
-                    }
-                ]
-            },
-            "workflowTemplateRef": {
-                "name": `${templateName}`
-            }
-        }
-    }
-    if (entrypoint) {
-        obj.spec.entorypoint = entrypoint
-    }
-    return obj
-}
-
-

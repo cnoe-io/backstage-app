@@ -55,10 +55,10 @@ spec:
           ui:autofocus: true
           items:
             type: object
+            required:
+              - name
+              - value
             properties:
-              required:
-                - name
-                - value
               name:
                 type: string
               value:
