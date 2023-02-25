@@ -19,8 +19,6 @@ export default async function createPlugin(
     config: env.config,
     reader: env.reader,
   });
-  console.log(`env.logger ${env.logger}`)
-  env.logger.info("HIIIII")
   const actions = [...builtInActions, createInvokeArgoAction(env.config, env.logger)];
 
   return await createRouter({

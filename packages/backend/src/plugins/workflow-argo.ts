@@ -24,7 +24,7 @@ class Workflow {
     kind: string = argoWorkFlowKind
     metadata: k8s.V1ObjectMeta = argoWorkFlowMetadataDefault
     spec: workflowSpec
-
+    status?: workflowStatus
     constructor(templateName: string, namespace: string, params?: parameter[], artifacts?: object[] ) {
         this.metadata.namespace = namespace
         const args: argument = {}
@@ -47,6 +47,18 @@ type workflowSpec = {
     arguments?: argument
     entrypoint?: string
     workflowTemplateRef: workflowTemplateRef
+}
+
+type workflowStatus = {
+    conditions?: workflowStatusCondition[]
+    phase?: string
+    progress?: string
+}
+
+type workflowStatusCondition = {
+    message?: string
+    status?: string
+    type: string
 }
 
 type workflowTemplateRef = {
@@ -111,15 +123,19 @@ export function createInvokeArgoAction(config: Config, logger: Logger) {
                 output: {
                     type: 'object',
                     properties: {
-                        ID: {
-                            title: 'Workflow ID',
+                        workflowName: {
+                            title: 'Workflow name',
+                            type: 'string',
+                        },
+                        workflowNamespace: {
+                            title: 'Workflow namespace',
                             type: 'string',
                         },
                     },
                 },
             },
             async handler(ctx: ActionContext<argoInput>) {
-                logger.debug(`Invoked with ${ctx.input}`)
+                logger.debug(`Invoked with ${JSON.stringify(ctx.input)})`)
 
                 const targetCluster = getClusterConfig(ctx.input.clusterName, config)
                 const kc = new k8s.KubeConfig()
@@ -143,14 +159,16 @@ export function createInvokeArgoAction(config: Config, logger: Logger) {
                 const client = kc.makeApiClient(k8s.CustomObjectsApi)
                 const wf = new Workflow(ctx.input.templateName, ctx.input.namespace, ctx.input.parameters)
                 // const body = generateBody(ctx.input.templateName, ctx.input.namespace)
-
                 try {
                     const resp = await client.createNamespacedCustomObject(
                         argoWorkflowsGroup, argoWorkflowsVersion, ctx.input.namespace,
                         argoWorkFlowPlural, wf
                     )
-                    logger.debug(`response: ${resp.body}`)
-                    ctx.output('ID', resp.body.toString())
+                    const respBody = resp.body as Workflow
+                    logger.debug(`Workflow ID: ${respBody.metadata.name}, namespace ${respBody.metadata.namespace}`)
+                    ctx.output('workflowName', respBody.metadata.name!)
+                    ctx.output('workflowNamespace', respBody.metadata.namespace!)
+                    await wait(kc, respBody.metadata.namespace!, respBody.metadata.name!)
                 } catch (err) {
                     if (err instanceof HttpError) {
                         let msg = `${err.response.statusMessage}: `
@@ -190,4 +208,40 @@ function getClusterConfig(name: string, config: Config): Config {
         throw new Error(`Cluster with name ${name} not found`)
     }
     return clusters[0]
+}
+
+async function wait(kc: k8s.KubeConfig, namespace: string, name: string, timeoutSeconds: number = 120) {
+    const client = new k8s.Watch(kc)
+    return new Promise<void>( async (resolve, reject) => {
+        const result = await client.watch(
+            `/apis/${argoWorkflowsGroup}/${argoWorkflowsVersion}/namespaces/${namespace}/${argoWorkFlowPlural}`,
+            {
+                fieldSelector: `metadata.name=${name}`,
+            },
+            (_type, apiObj, _watchObj) => {
+                if (apiObj) {
+                    const wf = apiObj as Workflow
+                    if (wf.status && wf.status.conditions) {
+                        const cond = wf.status.conditions.filter((val) => {
+                            return val.type === 'Completed' && val.status === "True"
+                        })
+                        if (cond.length > 0) {
+                            // result.abort()
+                            resolve()
+                            return
+                        }
+                    }
+                }
+            },
+            (err) => {
+                if (err instanceof Error) {
+                    // logger.debug(`error encountered while waiting for workflow to complete: ${err.name} ${err.message}`)
+                }
+            }
+        )
+        setTimeout(() => {
+            result.abort()
+            reject(new Error("TIMEOUT"))
+        }, timeoutSeconds * 1000)
+    })
 }
