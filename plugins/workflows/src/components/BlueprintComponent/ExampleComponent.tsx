@@ -12,9 +12,9 @@ import {
   HeaderLabel,
   SupportButton,
 } from '@backstage/core-components';
-import { ExampleFetchComponent } from '../ExampleFetchComponent';
+import {FetchTFState} from "./FetchTFState";
 
-export const ExampleComponent = () => (
+export const BlueprintsComponent = () => (
   <Page themeId="tool">
     <Header title="Blueprint information">
       <HeaderLabel label="Owner" value="Team X" />
@@ -42,7 +42,7 @@ export const ExampleComponent = () => (
           </InfoCard>
         </Grid>
         <Grid item>
-          <ExampleFetchComponent />
+          <FetchTFState />
         </Grid>
       </Grid>
     </Content>

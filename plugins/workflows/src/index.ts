@@ -1,1 +1,1 @@
-export { workflowsPlugin, WorkflowsPage } from './plugin';
+export { workflowsPlugin, EntityWorkflowsContent } from './plugin';

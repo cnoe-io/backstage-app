@@ -58,6 +58,8 @@ import { ReportIssue } from '@backstage/plugin-techdocs-module-addons-contrib';
 
 import { EntityKubernetesContent } from '@backstage/plugin-kubernetes';
 
+import {EntityWorkflowsContent} from '@internal/plugin-workflows'
+
 const techdocsContent = (
   <EntityTechdocsContent>
     <TechDocsAddons>
@@ -346,6 +348,9 @@ const systemPage = (
     </EntityLayout.Route>
     <EntityLayout.Route path="/kubernetes" title="Kubernetes">
       <EntityKubernetesContent refreshIntervalMs={30000} />
+    </EntityLayout.Route>
+    <EntityLayout.Route path="/workflows" title="Workflows">
+      <EntityWorkflowsContent />
     </EntityLayout.Route>
   </EntityLayout>
 );

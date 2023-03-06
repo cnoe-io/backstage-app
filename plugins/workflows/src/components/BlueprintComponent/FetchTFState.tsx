@@ -52,7 +52,7 @@ export const TFTable = (props: TFTableProps) => {
   );
 }
 
-export const ExampleFetchComponent = () => {
+export const FetchTFState = () => {
 
   const tfdata = tfstate as TFState
   const resources =  tfdata.resources.map(value => {
