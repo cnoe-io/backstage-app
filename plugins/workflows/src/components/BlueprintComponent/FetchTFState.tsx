@@ -1,5 +1,5 @@
-import React from 'react';
-import {Table, TableColumn, Progress, InfoCard} from '@backstage/core-components';
+import React, {useState} from 'react';
+import {Table, TableColumn, Progress, InfoCard, LinkButton} from '@backstage/core-components';
 import Alert from '@material-ui/lab/Alert';
 import useAsync from 'react-use/lib/useAsync';
 
@@ -11,12 +11,20 @@ import {
 // eslint-disable-next-line no-restricted-imports
 import {gunzipSync} from "zlib";
 import {useEntity} from "@backstage/plugin-catalog-react"
-import {IconButton, Typography} from "@material-ui/core";
+import {
+  Dialog, DialogActions,
+  DialogContent,
+  DialogContentText,
+  DialogTitle,
+  IconButton,
+  PaperProps,
+  Typography
+} from "@material-ui/core";
 import DeleteIcon from "@material-ui/icons/Delete";
 import ClearIcon from "@material-ui/icons/Clear";
 import LinkOffRounded from "@material-ui/icons/LinkOffRounded";
 
-const token = "eyJhbGciOiJSUzI1NiIsImtpZCI6ImMxNWQ5MzdiNTViOWE4NjBhN2MzNjY5ZDBjODAzMjZjZjdlNDhmOGUifQ.eyJhdWQiOlsiaHR0cHM6Ly9rdWJlcm5ldGVzLmRlZmF1bHQuc3ZjIl0sImV4cCI6MTY3ODI5OTQ2MywiaWF0IjoxNjc4MjEzMDYzLCJpc3MiOiJodHRwczovL29pZGMuZWtzLnVzLXdlc3QtMi5hbWF6b25hd3MuY29tL2lkLzNDRUJBM0NBNzg3MEEzRTVCRkUyQ0YzRkExNzNFRTU2Iiwia3ViZXJuZXRlcy5pbyI6eyJuYW1lc3BhY2UiOiJhZG1pbiIsInNlcnZpY2VhY2NvdW50Ijp7Im5hbWUiOiJhZG1pbiIsInVpZCI6IjQyMzQwOTdiLWFmZjktNDc1Zi05NzY0LTg5NjM4ZWQ4MmVhMiJ9fSwibmJmIjoxNjc4MjEzMDYzLCJzdWIiOiJzeXN0ZW06c2VydmljZWFjY291bnQ6YWRtaW46YWRtaW4ifQ.CMew9l09MFBSISOPczcITpz9ZP5XASWlD7ez-tnvfs2ZzhVI7V8OpazQSQSXFcsCs399B3-DHc4Zt6NY9rZgvAMQ9hXtfO2a840o4sRMabOuljS7br503XUPr1JUwkTZ6hS_LRVNDqE8MEw8eyLmKQ7K_jV0fyWsIrR9mVXn6RVhD96P_k-N5da49MP-PbFHJsEeOwVwcUCWRfPYIMp1XlpCGxjqymKnxVQFuVC76aQYpSKzOsI-rYMkCk0Yt7L-NjOpx0tsBvs58SJy5XP_x64cw0_j4Xba9prH8g4OmGeCUV5csaT8N3FaY0e_kGqftY-B2bwtOxl0vx_6gadjyQ"
+const token = "TOKEN"
 
 type TFState = {
   terraform_version: string
@@ -155,7 +163,25 @@ enum workflowStatus {
 }
 export const ManageBlueprint = () => {
   const entity = useEntity()
+  const [open, setOpen] = useState(false);
+
+  const handleClickOpen = () => {
+    setOpen(true);
+  };
+
+  const handleClose = () => {
+    setOpen(false);
+  };
+
   const apiRef = useApi(discoveryApiRef)
+  const handleConfirm = async () => {
+    const ok = await createWorkflow(entity.entity.metadata.uid!, "admin", apiRef)
+    if (ok) {
+      handleClose()
+    } else {
+      console.log("oh no")
+    }
+  }
   const { value, loading, error } = useAsync((): Promise<workflowStatus> => {
     return getWorkflow(entity.entity.metadata.uid!, "admin", apiRef)
   })
@@ -180,14 +206,32 @@ export const ManageBlueprint = () => {
     default:
       return <Alert severity="error">"could not determine blueprint status"</Alert>;
   }
+
   return (
       <InfoCard title="Blueprint management">
         <Typography color="textSecondary">
           {text}
         </Typography>
-        <IconButton aria-label="delete" size="medium">
+        <IconButton aria-label="delete" size="medium" onClick={handleClickOpen}>
           <DeleteIcon />
         </IconButton>
+        <Dialog open={open} onClose={handleClose}>
+          <DialogTitle style={{ cursor: 'move' }} id="title">
+            Confirmation
+          </DialogTitle>
+          <DialogContent>
+            <DialogContentText>
+              Are you sure you want to delete this?
+            </DialogContentText>
+          </DialogContent>
+          <DialogActions>
+            <LinkButton onClick={handleClose} to="cba">
+              Cancel
+            </LinkButton>
+            <LinkButton onClick={handleConfirm}
+                        to="abc" color="primary">Delete</LinkButton>
+          </DialogActions>
+         </Dialog>
         <IconButton aria-label="clear" size="medium">
           <ClearIcon />
         </IconButton>
@@ -238,6 +282,55 @@ async function getWorkflow(entityId: string, namespace: string, apiRef: Discover
       }
     } else {
       reject(`Failed to retrieve terraform information: ${resp.status}: ${resp.statusText} `)
+    }
+  })
+}
+
+async function createWorkflow(entityId: string, namespace: string, apiRef: DiscoveryApi): Promise<Boolean> {
+  const baseUrl = await apiRef.getBaseUrl("kubernetes")
+  const proxyUrl = `${baseUrl}/proxy`
+  return new Promise(async (resolve, reject) => {
+    const queryParams = new URLSearchParams({
+      fieldValidation: "Strict",
+    }).toString()
+    const body = {
+      "apiVersion": "argoproj.io/v1alpha1",
+      "kind": "Workflow",
+      "metadata": {
+        "generateName": "blue-prints-delete",
+        "namespace": "admin"
+      },
+      "spec": {
+        "arguments": {
+          "parameters": [
+            {
+              "name": "duration",
+              "value": "120"
+            },
+            {
+              "name": "entityId",
+              "value": `${entityId}`
+            }
+          ]
+        },
+        "workflowTemplateRef": {
+          "name": "blueprints-delete-template"
+        }
+      }
+    }
+    const resp = await fetch(`${proxyUrl}/apis/argoproj.io/v1alpha1/namespaces/${namespace}/workflows?${queryParams}`, {
+      method: 'POST',
+      headers: {
+        'X-Kubernetes-Cluster': "canoe-packaging",
+        Authorization: `Bearer ${token}`,
+        'Content-Type': "application/json"
+      },
+      body: JSON.stringify(body)
+    });
+    if (resp.ok) {
+      resolve(true)
+    } else {
+      reject(`Failed to delete blueprints deployment: ${resp.status}: ${resp.statusText} `)
     }
   })
 }
