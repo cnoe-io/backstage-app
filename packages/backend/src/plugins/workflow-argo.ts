@@ -9,6 +9,7 @@ type argoInput = {
     clusterName: string
     templateName: string
     parameters: parameter[]
+    wait?: boolean
 }
 
 const argoWorkflowsGroup = 'argoproj.io'
@@ -117,6 +118,11 @@ export function createInvokeArgoAction(config: Config, logger: Logger) {
                                     }
                                 }
                             }
+                        },
+                        wait: {
+                            title: 'Wait for completion',
+                            description: 'specify weather to wait for completion of this workflow',
+                            type: 'boolean',
                         }
                     },
                 },
@@ -168,7 +174,9 @@ export function createInvokeArgoAction(config: Config, logger: Logger) {
                     logger.debug(`Workflow ID: ${respBody.metadata.name}, namespace ${respBody.metadata.namespace}`)
                     ctx.output('workflowName', respBody.metadata.name!)
                     ctx.output('workflowNamespace', respBody.metadata.namespace!)
-                    await wait(kc, respBody.metadata.namespace!, respBody.metadata.name!)
+                    if (ctx.input.wait) {
+                        await wait(kc, respBody.metadata.namespace!, respBody.metadata.name!)
+                    }
                 } catch (err) {
                     if (err instanceof HttpError) {
                         let msg = `${err.response.statusMessage}: `
