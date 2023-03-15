@@ -24,7 +24,7 @@ import DeleteIcon from "@material-ui/icons/Delete";
 import ClearIcon from "@material-ui/icons/Clear";
 import LinkOffRounded from "@material-ui/icons/LinkOffRounded";
 
-const token = "TOKEN"
+const token = ""
 
 type TFState = {
   terraform_version: string
@@ -75,8 +75,10 @@ export const TFTable = (props: TFTableProps) => {
 
 export const FetchTFState = () => {
   const apiRef = useApi(discoveryApiRef)
+  const entity = useEntity()
+  const secretName = `tfstate-default-${entity.entity.metadata.name}`
   const { value, loading, error } = useAsync((): Promise<TFState> => {
-    return getTFState("tfstate-default-helloworld", "flux-system", apiRef)
+    return getTFState(secretName, "admin", apiRef)
   })
   if (loading) {
     return <Progress />
@@ -174,16 +176,22 @@ export const ManageBlueprint = () => {
   };
 
   const apiRef = useApi(discoveryApiRef)
-  const handleConfirm = async () => {
-    const ok = await createWorkflow(entity.entity.metadata.uid!, "admin", apiRef)
+  const module = entity.entity.metadata.annotations!["blueprint-module"]
+  if (module === undefined) {
+    return <Alert severity="error">"could not find blueprint module"</Alert>;
+  }
+
+  const handleConfirm = async (): Promise<void> => {
+    const ok = await createWorkflow(entity.entity.metadata.name, module, "admin", apiRef)
     if (ok) {
       handleClose()
     } else {
       console.log("oh no")
     }
   }
+
   const { value, loading, error } = useAsync((): Promise<workflowStatus> => {
-    return getWorkflow(entity.entity.metadata.uid!, "admin", apiRef)
+    return getWorkflow(entity.entity.metadata.name, "admin", apiRef)
   })
   if (loading) {
     return <Progress />
@@ -246,7 +254,7 @@ async function getWorkflow(entityId: string, namespace: string, apiRef: Discover
   const proxyUrl = `${baseUrl}/proxy`
   return new Promise(async (resolve, reject) => {
     const queryParams = new URLSearchParams({
-      labelSelector: `entity-id=${entityId}`,
+      labelSelector: `entity-id=${entityId},workflow-kind=delete`,
       limit: "1"
     }).toString()
 
@@ -286,7 +294,7 @@ async function getWorkflow(entityId: string, namespace: string, apiRef: Discover
   })
 }
 
-async function createWorkflow(entityId: string, namespace: string, apiRef: DiscoveryApi): Promise<Boolean> {
+async function createWorkflow(entityId: string, module: string, namespace: string, apiRef: DiscoveryApi): Promise<Boolean> {
   const baseUrl = await apiRef.getBaseUrl("kubernetes")
   const proxyUrl = `${baseUrl}/proxy`
   return new Promise(async (resolve, reject) => {
@@ -297,15 +305,15 @@ async function createWorkflow(entityId: string, namespace: string, apiRef: Disco
       "apiVersion": "argoproj.io/v1alpha1",
       "kind": "Workflow",
       "metadata": {
-        "generateName": "blue-prints-delete",
+        "generateName": "blue-prints-delete-",
         "namespace": "admin"
       },
       "spec": {
         "arguments": {
           "parameters": [
             {
-              "name": "duration",
-              "value": "120"
+              "name": "module",
+              "value": `${module}`
             },
             {
               "name": "entityId",
@@ -314,7 +322,7 @@ async function createWorkflow(entityId: string, namespace: string, apiRef: Disco
           ]
         },
         "workflowTemplateRef": {
-          "name": "blueprints-delete-template"
+          "name": "blueprints-delete"
         }
       }
     }
