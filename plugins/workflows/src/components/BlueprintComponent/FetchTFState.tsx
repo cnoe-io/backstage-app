@@ -17,14 +17,13 @@ import {
   DialogContentText,
   DialogTitle,
   IconButton,
-  PaperProps,
   Typography
 } from "@material-ui/core";
 import DeleteIcon from "@material-ui/icons/Delete";
 import ClearIcon from "@material-ui/icons/Clear";
 import LinkOffRounded from "@material-ui/icons/LinkOffRounded";
 
-const token = ""
+const token = "..---"
 
 type TFState = {
   terraform_version: string

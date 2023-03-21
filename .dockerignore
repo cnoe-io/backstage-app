@@ -6,3 +6,5 @@ packages/*/src
 packages/*/node_modules
 plugins
 *.local.yaml
+github-integration.yaml
+k8s-config.yaml
