@@ -1,1 +1,2 @@
-export { workflowsPlugin, EntityWorkflowsContent } from './plugin';
+
+export { workflowsPlugin, EntityWorkflowsContent, keycloakOIDCAuthApiRef } from './plugin';

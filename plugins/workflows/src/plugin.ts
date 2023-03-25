@@ -1,4 +1,10 @@
-import { createPlugin, createRoutableExtension } from '@backstage/core-plugin-api';
+import {
+    ApiRef, BackstageIdentityApi, createApiRef,
+    createPlugin,
+    createRoutableExtension,
+    OpenIdConnectApi,
+    ProfileInfoApi, SessionApi
+} from '@backstage/core-plugin-api';
 
 import { rootCatalogWorkflowsRouteRef } from './routes';
 
@@ -17,3 +23,9 @@ export const EntityWorkflowsContent = workflowsPlugin.provide(
     mountPoint: rootCatalogWorkflowsRouteRef,
   }),
 );
+
+export const keycloakOIDCAuthApiRef: ApiRef<
+    OpenIdConnectApi & ProfileInfoApi & BackstageIdentityApi & SessionApi
+> = createApiRef({
+    id: 'auth.keycloak-oidc-provider',
+});

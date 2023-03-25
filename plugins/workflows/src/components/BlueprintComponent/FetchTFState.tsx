@@ -5,8 +5,8 @@ import useAsync from 'react-use/lib/useAsync';
 
 import {
   DiscoveryApi,
-  discoveryApiRef,
-  useApi,
+  discoveryApiRef, OpenIdConnectApi, fetchApiRef,
+  useApi, FetchApi,
 } from '@backstage/core-plugin-api';
 // eslint-disable-next-line no-restricted-imports
 import {gunzipSync} from "zlib";
@@ -22,8 +22,7 @@ import {
 import DeleteIcon from "@material-ui/icons/Delete";
 import ClearIcon from "@material-ui/icons/Clear";
 import LinkOffRounded from "@material-ui/icons/LinkOffRounded";
-
-const token = "..---"
+import {keycloakOIDCAuthApiRef} from "../../plugin";
 
 type TFState = {
   terraform_version: string
@@ -75,9 +74,11 @@ export const TFTable = (props: TFTableProps) => {
 export const FetchTFState = () => {
   const apiRef = useApi(discoveryApiRef)
   const entity = useEntity()
+  const oidcApi = useApi(keycloakOIDCAuthApiRef)
+  const fetchApi = useApi(fetchApiRef)
   const secretName = `tfstate-default-${entity.entity.metadata.name}`
   const { value, loading, error } = useAsync((): Promise<TFState> => {
-    return getTFState(secretName, "admin", apiRef)
+    return getTFState(secretName, "admin", apiRef, oidcApi, fetchApi)
   })
   if (loading) {
     return <Progress />
@@ -125,7 +126,8 @@ type payload = {
   }
 }
 
-async function getTFState(name: string, namespace: string, apiRef: DiscoveryApi): Promise<TFState> {
+async function getTFState(name: string, namespace: string, apiRef: DiscoveryApi, oidcRef: OpenIdConnectApi, fetchRef: FetchApi ): Promise<TFState> {
+  const token = await oidcRef.getIdToken()
   const baseUrl = await apiRef.getBaseUrl("kubernetes")
   const proxyUrl = `${baseUrl}/proxy`
   return new Promise(async (resolve, reject) => {
@@ -133,7 +135,7 @@ async function getTFState(name: string, namespace: string, apiRef: DiscoveryApi)
       method: 'GET',
       headers: {
         'X-Kubernetes-Cluster': "canoe-packaging",
-        Authorization: `Bearer ${token}`,
+        'Authorization': `Bearer ${token}`,
       },
     });
     if (resp.ok) {

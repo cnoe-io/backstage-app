@@ -22,12 +22,13 @@ import {
 import { TechDocsAddons } from '@backstage/plugin-techdocs-react';
 import { ReportIssue } from '@backstage/plugin-techdocs-module-addons-contrib';
 import { UserSettingsPage } from '@backstage/plugin-user-settings';
-import { apis } from './apis';
+import {apis} from './apis';
+import {keycloakOIDCAuthApiRef} from "@internal/plugin-workflows"
 import { entityPage } from './components/catalog/EntityPage';
 import { searchPage } from './components/search/SearchPage';
 import { Root } from './components/Root';
 
-import {AlertDisplay, OAuthRequestDialog, ProxiedSignInPage} from '@backstage/core-components';
+import {AlertDisplay, OAuthRequestDialog, SignInPage} from '@backstage/core-components';
 import { createApp } from '@backstage/app-defaults';
 import { AppRouter, FlatRoutes } from '@backstage/core-app-api';
 import { CatalogGraphPage } from '@backstage/plugin-catalog-graph';
@@ -37,7 +38,19 @@ import { catalogEntityCreatePermission } from '@backstage/plugin-catalog-common/
 const app = createApp({
   apis,
   components: {
-    SignInPage: (props) => <ProxiedSignInPage {...props} provider="oauth2Proxy" />,
+    // SignInPage: (props) => <ProxiedSignInPage {...props} provider="oauth2Proxy" />,
+      SignInPage: props => (
+          <SignInPage
+              {...props}
+              auto
+              provider={{
+                  id: 'keycloak-oidc',
+                  title: 'Keycloak',
+                  message: 'Sign in using Keycloak',
+                  apiRef: keycloakOIDCAuthApiRef,
+              }}
+          />
+      ),
   },
   bindRoutes({ bind }) {
     bind(catalogPlugin.externalRoutes, {
