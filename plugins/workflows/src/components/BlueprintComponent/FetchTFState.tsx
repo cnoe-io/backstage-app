@@ -5,8 +5,8 @@ import useAsync from 'react-use/lib/useAsync';
 
 import {
   DiscoveryApi,
-  discoveryApiRef, OpenIdConnectApi, fetchApiRef,
-  useApi, FetchApi,
+  discoveryApiRef, OpenIdConnectApi,
+  useApi
 } from '@backstage/core-plugin-api';
 // eslint-disable-next-line no-restricted-imports
 import {gunzipSync} from "zlib";
@@ -75,10 +75,9 @@ export const FetchTFState = () => {
   const apiRef = useApi(discoveryApiRef)
   const entity = useEntity()
   const oidcApi = useApi(keycloakOIDCAuthApiRef)
-  const fetchApi = useApi(fetchApiRef)
   const secretName = `tfstate-default-${entity.entity.metadata.name}`
   const { value, loading, error } = useAsync((): Promise<TFState> => {
-    return getTFState(secretName, "admin", apiRef, oidcApi, fetchApi)
+    return getTFState(secretName, "admin", apiRef, oidcApi)
   })
   if (loading) {
     return <Progress />
@@ -126,7 +125,7 @@ type payload = {
   }
 }
 
-async function getTFState(name: string, namespace: string, apiRef: DiscoveryApi, oidcRef: OpenIdConnectApi, fetchRef: FetchApi ): Promise<TFState> {
+async function getTFState(name: string, namespace: string, apiRef: DiscoveryApi, oidcRef: OpenIdConnectApi): Promise<TFState> {
   const token = await oidcRef.getIdToken()
   const baseUrl = await apiRef.getBaseUrl("kubernetes")
   const proxyUrl = `${baseUrl}/proxy`
@@ -175,15 +174,19 @@ export const ManageBlueprint = () => {
   const handleClose = () => {
     setOpen(false);
   };
+  const oidcApi = useApi(keycloakOIDCAuthApiRef)
 
   const apiRef = useApi(discoveryApiRef)
+  const { value, loading, error } = useAsync((): Promise<workflowStatus> => {
+    return getWorkflow(entity.entity.metadata.name, "admin", apiRef, oidcApi)
+  })
   const module = entity.entity.metadata.annotations!["blueprint-module"]
   if (module === undefined) {
     return <Alert severity="error">"could not find blueprint module"</Alert>;
   }
 
   const handleConfirm = async (): Promise<void> => {
-    const ok = await createWorkflow(entity.entity.metadata.name, module, "admin", apiRef)
+    const ok = await createWorkflow(entity.entity.metadata.name, module, "admin", apiRef, oidcApi)
     if (ok) {
       handleClose()
     } else {
@@ -191,9 +194,6 @@ export const ManageBlueprint = () => {
     }
   }
 
-  const { value, loading, error } = useAsync((): Promise<workflowStatus> => {
-    return getWorkflow(entity.entity.metadata.name, "admin", apiRef)
-  })
   if (loading) {
     return <Progress />
   } else if (error) {
@@ -250,7 +250,8 @@ export const ManageBlueprint = () => {
       </InfoCard>
   )
 }
-async function getWorkflow(entityId: string, namespace: string, apiRef: DiscoveryApi): Promise<workflowStatus> {
+async function getWorkflow(entityId: string, namespace: string, apiRef: DiscoveryApi, oidcRef: OpenIdConnectApi ): Promise<workflowStatus> {
+  const token = await oidcRef.getIdToken()
   const baseUrl = await apiRef.getBaseUrl("kubernetes")
   const proxyUrl = `${baseUrl}/proxy`
   return new Promise(async (resolve, reject) => {
@@ -295,7 +296,8 @@ async function getWorkflow(entityId: string, namespace: string, apiRef: Discover
   })
 }
 
-async function createWorkflow(entityId: string, module: string, namespace: string, apiRef: DiscoveryApi): Promise<Boolean> {
+async function createWorkflow(entityId: string, module: string, namespace: string, apiRef: DiscoveryApi, oidcRef: OpenIdConnectApi): Promise<Boolean> {
+  const token = await oidcRef.getIdToken()
   const baseUrl = await apiRef.getBaseUrl("kubernetes")
   const proxyUrl = `${baseUrl}/proxy`
   return new Promise(async (resolve, reject) => {
@@ -307,7 +309,7 @@ async function createWorkflow(entityId: string, module: string, namespace: strin
       "kind": "Workflow",
       "metadata": {
         "generateName": "blue-prints-delete-",
-        "namespace": "admin"
+        "namespace": "admin",
       },
       "spec": {
         "arguments": {
