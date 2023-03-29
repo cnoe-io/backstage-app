@@ -25,7 +25,7 @@ import LinkOffRounded from "@material-ui/icons/LinkOffRounded";
 import {keycloakOIDCAuthApiRef} from "../../plugin";
 
 type TFState = {
-  terraform_version: string
+  terraform_version?: string
   resources: {
     name: string
     provider: string
@@ -115,7 +115,7 @@ type payload = {
     }
   }[]
   metadata: {
-    annotations: {
+    annotations?: {
       [key: string]: string
     }
   }
@@ -141,7 +141,7 @@ async function getTFState(name: string, namespace: string, apiRef: DiscoveryApi,
       const payload = await resp.json() as payload
       const data = Buffer.from(payload.data.tfstate, 'base64')
       let compression = "gzip"
-      if ( "encoding" in payload.metadata.annotations) {
+      if ( payload.metadata.annotations && "encoding" in payload.metadata.annotations) {
         compression = payload.metadata.annotations.encoding
       }
       if (compression === "gzip") {
@@ -150,6 +150,9 @@ async function getTFState(name: string, namespace: string, apiRef: DiscoveryApi,
       }
       reject(`unknown compression method specified: ${compression}`)
     } else {
+      if (resp.status === 404) {
+        resolve( {resources: []} as TFState)
+      }
       reject(`Failed to retrieve terraform information: ${resp.status}: ${resp.statusText} `)
     }
   })
@@ -296,7 +299,7 @@ async function getWorkflow(entityId: string, namespace: string, apiRef: Discover
   })
 }
 
-async function createWorkflow(entityId: string, module: string, namespace: string, apiRef: DiscoveryApi, oidcRef: OpenIdConnectApi): Promise<Boolean> {
+async function createWorkflow(entityId: string, blueprintName: string, namespace: string, apiRef: DiscoveryApi, oidcRef: OpenIdConnectApi): Promise<Boolean> {
   const token = await oidcRef.getIdToken()
   const baseUrl = await apiRef.getBaseUrl("kubernetes")
   const proxyUrl = `${baseUrl}/proxy`
@@ -315,8 +318,8 @@ async function createWorkflow(entityId: string, module: string, namespace: strin
         "arguments": {
           "parameters": [
             {
-              "name": "module",
-              "value": `${module}`
+              "name": "blueprint-name",
+              "value": `${blueprintName}`
             },
             {
               "name": "entityId",
