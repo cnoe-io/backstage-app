@@ -4,6 +4,20 @@ import { Router } from 'express';
 import type { PluginEnvironment } from '../types';
 import { ScmIntegrations } from '@backstage/integration';
 import {createInvokeArgoAction} from './workflow-argo'
+import {
+  createZipAction,
+  createSleepAction,
+  createWriteFileAction,
+  createAppendFileAction,
+  createMergeJSONAction,
+  createMergeAction,
+  createParseFileAction,
+  createSerializeYamlAction,
+  createSerializeJsonAction,
+  createJSONataAction,
+  createYamlJSONataTransformAction,
+  createJsonJSONataTransformAction,
+} from '@roadiehq/scaffolder-backend-module-utils';
 
 export default async function createPlugin(
   env: PluginEnvironment,
@@ -19,7 +33,23 @@ export default async function createPlugin(
     config: env.config,
     reader: env.reader,
   });
-  const actions = [...builtInActions, createInvokeArgoAction(env.config, env.logger)];
+
+  const scaffolderBackendModuleUtils =  [
+    createZipAction(),
+    createSleepAction(),
+    createWriteFileAction(),
+    createAppendFileAction(),
+    createMergeJSONAction({}),
+    createMergeAction(),
+    createParseFileAction(),
+    createSerializeYamlAction(),
+    createSerializeJsonAction(),
+    createJSONataAction(),
+    createYamlJSONataTransformAction(),
+    createJsonJSONataTransformAction()
+  ]
+  
+  const actions = [...builtInActions, ...scaffolderBackendModuleUtils, createInvokeArgoAction(env.config, env.logger)];
 
   return await createRouter({
     actions: actions,
