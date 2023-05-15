@@ -21,7 +21,7 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v2
       with:
-        ref: cnoe
+        ref: backstage-image
        
     - name: Install packages
       run: NODE_OPTIONS="--max_old_space_size=4096" yarn install
