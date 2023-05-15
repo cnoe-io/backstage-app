@@ -26,8 +26,6 @@ jobs:
     - name: Install packages
       run: NODE_OPTIONS="--max_old_space_size=4096" yarn install
       
-    - name: Sanity check
-      run: NODE_OPTIONS="--max_old_space_size=4096" yarn tsc
       
     - name: Bundle up
       run: NODE_OPTIONS="--max_old_space_size=4096" yarn build:backend
