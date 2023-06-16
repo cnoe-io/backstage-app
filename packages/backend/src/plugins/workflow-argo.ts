@@ -3,6 +3,8 @@ import { Config } from '@backstage/config';
 import * as k8s from '@kubernetes/client-node';
 import {Logger} from "winston";
 import {HttpError} from "@kubernetes/client-node";
+import {useApi} from "@backstage/core-plugin-api";
+import {OidcKubernetesAuthTranslator} from "@backstage/plugin-kubernetes-backend";
 
 type argoInput = {
     namespace: string
@@ -142,65 +144,68 @@ export function createInvokeArgoAction(config: Config, logger: Logger) {
             },
             async handler(ctx: ActionContext<argoInput>) {
                 logger.debug(`Invoked with ${JSON.stringify(ctx.input)})`)
-
-                const targetCluster = getClusterConfig(ctx.input.clusterName, config)
-                const kc = new k8s.KubeConfig()
-                kc.addCluster({
-                    name: ctx.input.clusterName,
-                    caData: targetCluster.getString("caData"),
-                    server: targetCluster.getString("url"),
-                    skipTLSVerify: targetCluster.getBoolean("skipTLSVerify"),
-                })
-                kc.addUser({
-                    name: "admin",
-                    token: targetCluster.getString("serviceAccountToken")
-                })
-                kc.addContext({
-                    cluster: ctx.input.clusterName,
-                    user: "admin",
-                    name: ctx.input.clusterName
-                })
-                kc.setCurrentContext(ctx.input.clusterName)
-
-                const client = kc.makeApiClient(k8s.CustomObjectsApi)
-                const wf = new Workflow(ctx.input.templateName, ctx.input.namespace, ctx.input.parameters)
-                // const body = generateBody(ctx.input.templateName, ctx.input.namespace)
-                try {
-                    const resp = await client.createNamespacedCustomObject(
-                        argoWorkflowsGroup, argoWorkflowsVersion, ctx.input.namespace,
-                        argoWorkFlowPlural, wf
-                    )
-                    const respBody = resp.body as Workflow
-                    logger.debug(`Workflow ID: ${respBody.metadata.name}, namespace ${respBody.metadata.namespace}`)
-                    ctx.output('workflowName', respBody.metadata.name!)
-                    ctx.output('workflowNamespace', respBody.metadata.namespace!)
-                    if (ctx.input.wait) {
-                        await wait(kc, respBody.metadata.namespace!, respBody.metadata.name!)
-                    }
-                } catch (err) {
-                    if (err instanceof HttpError) {
-                        let msg = `${err.response.statusMessage}: `
-                        if ("kind" in err.body && err.body.kind === "Status" && "message" in err.body) {
-                            msg += err.body.message
-                        }
-                        logger.info(`error : ${err.response.statusCode} ${msg}`)
-                        throw new Error(`Failed to talk to the cluster: ${err.response.statusCode} ${err.response.statusMessage} \n ${msg}`)
-                    }
-                    if (err instanceof Error) {
-                        logger.error(`error while talking to cluster: ${err.name} ${err.message}`)
-                    }
-                    throw new Error("Unknown exception was encountered.")
-                }
+                logger.info(JSON.stringify(ctx.secrets))
+                // const targetCluster = getClusterConfig(ctx.input.clusterName, config)
+                // const kc = new k8s.KubeConfig()
+                // kc.addCluster({
+                //     name: ctx.input.clusterName,
+                //     caData: targetCluster.getString("caData"),
+                //     server: targetCluster.getString("url"),
+                //     skipTLSVerify: targetCluster.getBoolean("skipTLSVerify"),
+                // })
+                // kc.addUser({
+                //     name: "admin",
+                //     token: targetCluster.getString("serviceAccountToken")
+                // })
+                // kc.addContext({
+                //     cluster: ctx.input.clusterName,
+                //     user: "admin",
+                //     name: ctx.input.clusterName
+                // })
+                // kc.setCurrentContext(ctx.input.clusterName)
+                //
+                // const client = kc.makeApiClient(k8s.CustomObjectsApi)
+                // const wf = new Workflow(ctx.input.templateName, ctx.input.namespace, ctx.input.parameters)
+                // // const body = generateBody(ctx.input.templateName, ctx.input.namespace)
+                // try {
+                //     const resp = await client.createNamespacedCustomObject(
+                //         argoWorkflowsGroup, argoWorkflowsVersion, ctx.input.namespace,
+                //         argoWorkFlowPlural, wf
+                //     )
+                //     const respBody = resp.body as Workflow
+                //     logger.debug(`Workflow ID: ${respBody.metadata.name}, namespace ${respBody.metadata.namespace}`)
+                //     ctx.output('workflowName', respBody.metadata.name!)
+                //     ctx.output('workflowNamespace', respBody.metadata.namespace!)
+                //     if (ctx.input.wait) {
+                //         await wait(kc, respBody.metadata.namespace!, respBody.metadata.name!)
+                //     }
+                // } catch (err) {
+                //     if (err instanceof HttpError) {
+                //         let msg = `${err.response.statusMessage}: `
+                //         if ("kind" in err.body && err.body.kind === "Status" && "message" in err.body) {
+                //             msg += err.body.message
+                //         }
+                //         logger.info(`error : ${err.response.statusCode} ${msg}`)
+                //         throw new Error(`Failed to talk to the cluster: ${err.response.statusCode} ${err.response.statusMessage} \n ${msg}`)
+                //     }
+                //     if (err instanceof Error) {
+                //         logger.error(`error while talking to cluster: ${err.name} ${err.message}`)
+                //     }
+                //     throw new Error("Unknown exception was encountered.")
+                // }
             }
         }
     )
 }
 
 function getClusterConfig(name: string, config: Config): Config {
+    const at = new OidcKubernetesAuthTranslator();
+
     const c = config.getConfigArray("kubernetes.clusterLocatorMethods")
     const cc = c.filter(function(val) {
         return val.getString("type") === "config"
     })
+
 
     const clusters = new Array<Config>();
     // this is shit
