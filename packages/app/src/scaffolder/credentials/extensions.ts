@@ -8,7 +8,7 @@ export const GetK8sOIDCTokenExtension = scaffolderPlugin.provide(
         {
             name: 'GetK8sOIDCToken',
             component: GetK8sOIDCToken,
-            schema: ClusterPickerSchema
+            schema: ClusterPickerSchema,
         }
     )
 )
