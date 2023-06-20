@@ -1,4 +1,4 @@
-import { KubernetesBuilder } from '@backstage/plugin-kubernetes-backend';
+import {KubernetesBuilder, OidcKubernetesAuthTranslator} from '@backstage/plugin-kubernetes-backend';
 import { Router } from 'express';
 import { PluginEnvironment } from '../types';
 import { CatalogClient } from '@backstage/catalog-client';
@@ -11,6 +11,9 @@ export default async function createPlugin(
         logger: env.logger,
         config: env.config,
         catalogApi,
+        permissions: env.permissions
     }).build();
+
+    new OidcKubernetesAuthTranslator()
     return router;
 }
