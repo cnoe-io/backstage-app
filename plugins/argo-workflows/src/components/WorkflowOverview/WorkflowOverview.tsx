@@ -36,7 +36,7 @@ const columns: TableColumn[] = [
     {title: "EndTime", field: "finishedAt", type: "datetime"}
 ]
 
-export const VersionComponent = () => {
+export const WorkflowOverviewComponent = () => {
     const {entity} = useEntity()
     const apiClient = useApi(argoWorkflowsApiRef)
 
