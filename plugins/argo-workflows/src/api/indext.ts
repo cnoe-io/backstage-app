@@ -15,7 +15,7 @@ export const argoWorkflowsApiRef = createApiRef<ArgoWorkflowsApi>({
 export interface ArgoWorkflowsApi {
     discoveryApi: DiscoveryApi
     kubernetesApi: KubernetesApi
-    getWorkflows(clusterName: string | undefined, namespace: string | undefined, labels: string | undefined): Promise<string>
+    getWorkflows(clusterName: string | undefined, namespace: string | undefined, labels: string | undefined): Promise<Workflow[]>
 }
 
 type Metadata = {
@@ -25,16 +25,9 @@ type Metadata = {
     namespace: string
 }
 
-type Workflows = {
-    workflows: Workflow[]
-}
-
-
-
 export type Workflow = {
     metadata: Metadata
-    spec: any
-    status?: any
+    status?: WorkflowStatus
 }
 
 type WorkflowStatus = {
@@ -42,9 +35,11 @@ type WorkflowStatus = {
     startedAt: string
     phase: string
     progress: string
-
 }
 
+type workflowResponse = {
+    items: Workflow[]
+}
 
 export class ArgoWorkflows implements ArgoWorkflowsApi {
     discoveryApi: DiscoveryApi
@@ -59,13 +54,14 @@ export class ArgoWorkflows implements ArgoWorkflowsApi {
         this.oauthRequestApi = oauthRequestApi
     }
 
-    async getWorkflows(clusterName: string | undefined, namespace: string | undefined, labels: string | undefined): Promise<string> {
+    async getWorkflows(clusterName: string | undefined, namespace: string | undefined, labels: string | undefined): Promise<Workflow[]> {
         const ns = namespace !== undefined ? namespace : 'default'
         const path = `/apis/${API_VERSION}/namespaces/${ns}/${WORKFLOW_PLURAL}`
         const query = new URLSearchParams()
         if (labels) {
             query.set('labelSelector', labels)
         }
+        // need limits and pagination
         const resp = await this.kubernetesApi.proxy({
             clusterName: clusterName !== undefined ? clusterName: await this.getCluster(),
             path: `${path}?${query.toString()}`
@@ -74,8 +70,12 @@ export class ArgoWorkflows implements ArgoWorkflowsApi {
         if (!resp.ok) {
             return Promise.reject(`failed to fetch resources: ${resp.status}, ${resp.statusText}, ${await resp.json()}`)
         }
-        return Promise.resolve(resp.json());
+        // need validation
+        const workflows = JSON.parse(await resp.text()) as workflowResponse
+
+        return Promise.resolve(workflows.items);
     }
+
 
     async getCluster(): Promise<string> {
         const clusters = await this.kubernetesApi.getClusters()
