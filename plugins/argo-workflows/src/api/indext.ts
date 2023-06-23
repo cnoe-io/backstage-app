@@ -5,6 +5,7 @@ import {
 } from '@backstage/core-plugin-api';
 
 import {KubernetesApi } from "@backstage/plugin-kubernetes";
+import {createConfiguration, ServerConfiguration, WorkflowServiceApi} from "./generated";
 
 
 const API_VERSION = 'argoproj.io/v1alpha1'
@@ -15,7 +16,8 @@ export const argoWorkflowsApiRef = createApiRef<ArgoWorkflowsApi>({
 export interface ArgoWorkflowsApi {
     discoveryApi: DiscoveryApi
     kubernetesApi: KubernetesApi
-    getWorkflows(clusterName: string | undefined, namespace: string | undefined, labels: string | undefined): Promise<Workflow[]>
+    getWorkflowsFromK8s(clusterName: string | undefined, namespace: string | undefined, labels: string | undefined): Promise<Workflow[]>
+    getWorkflows(name: string): Promise<Workflow[]>
 }
 
 type Metadata = {
@@ -54,7 +56,36 @@ export class ArgoWorkflows implements ArgoWorkflowsApi {
         this.oauthRequestApi = oauthRequestApi
     }
 
-    async getWorkflows(clusterName: string | undefined, namespace: string | undefined, labels: string | undefined): Promise<Workflow[]> {
+    async workflowsApiSvc(): Promise<WorkflowServiceApi> {
+        const proxyUrl = await this.discoveryApi.getBaseUrl('proxy')
+        const svcConf = createConfiguration({
+            baseServer: new ServerConfiguration(proxyUrl, {})
+        })
+        return new WorkflowServiceApi(svcConf)
+    }
+    async getWorkflows(namespace: string | undefined, labels: string | undefined): Promise<Workflow[]> {
+        const svc = await this.workflowsApiSvc()
+        const ns = namespace !== undefined ? namespace : 'default'
+        const ops = {
+            namespace: ns,
+            listOptionsLabelSelector: labels,
+            listOptionsTimeoutSeconds: "30"
+        }
+
+        const resp = await svc.workflowServiceListWorkflows(
+            ops.namespace,
+            ops.listOptionsLabelSelector,
+            undefined,
+            undefined,
+            undefined,
+            undefined,
+            undefined,
+            ops.listOptionsTimeoutSeconds
+        )
+
+    }
+
+    async getWorkflowsFromK8s(clusterName: string | undefined, namespace: string | undefined, labels: string | undefined): Promise<Workflow[]> {
         const ns = namespace !== undefined ? namespace : 'default'
         const path = `/apis/${API_VERSION}/namespaces/${ns}/${WORKFLOW_PLURAL}`
         const query = new URLSearchParams()
