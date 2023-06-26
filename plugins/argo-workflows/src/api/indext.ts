@@ -96,7 +96,7 @@ export class ArgoWorkflows implements ArgoWorkflowsApi {
         const proxyUrl = await this.discoveryApi.getBaseUrl('proxy')
 
         const ns = namespace !== undefined ? namespace : 'default'
-        const url = `${proxyUrl}/${DEFAULT_WORKFLOW_PROXY}/api/v1/workflows/${ns}`
+        const url = `${proxyUrl}${DEFAULT_WORKFLOW_PROXY}/api/v1/workflows/${ns}`
 
         const query = new URLSearchParams(
             {[API_TIMEOUT]: "30"}
@@ -114,7 +114,7 @@ export class ArgoWorkflows implements ArgoWorkflowsApi {
             }
         )
 
-        const resp = await fetch(`${url}/${query.toString()}`, {
+        const resp = await fetch(`${url}?${query.toString()}`, {
             headers: headers
         })
 
