@@ -3,7 +3,7 @@ import {
     createApiFactory,
     createPlugin,
     createRoutableExtension,
-    discoveryApiRef, oauthRequestApiRef
+    discoveryApiRef, identityApiRef
 } from '@backstage/core-plugin-api';
 
 import { rootRouteRef } from './routes';
@@ -22,12 +22,12 @@ export const argoWorkflowsPlugin = createPlugin({
           deps: {
               discoveryApi: discoveryApiRef,
               kubernetesApi: kubernetesApiRef,
-              oauthRequestApi: oauthRequestApiRef,
+              identityApi: identityApiRef,
               configApi: configApiRef},
           factory: ({
-              discoveryApi, kubernetesApi, configApi, oauthRequestApi,
+              discoveryApi, kubernetesApi, configApi, identityApi,
           }) =>
-            new ArgoWorkflows(discoveryApi, kubernetesApi, configApi, oauthRequestApi)
+            new ArgoWorkflows(discoveryApi, kubernetesApi, configApi, identityApi)
       })
   ]
 });

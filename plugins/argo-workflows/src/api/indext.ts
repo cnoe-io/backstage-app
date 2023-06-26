@@ -1,94 +1,74 @@
 import {
     ConfigApi,
     createApiRef,
-    DiscoveryApi, OAuthRequestApi,
+    DiscoveryApi, IdentityApi
 } from '@backstage/core-plugin-api';
 
 import {KubernetesApi } from "@backstage/plugin-kubernetes";
-import {createConfiguration, ServerConfiguration, WorkflowServiceApi} from "./generated";
+import {
+    IoArgoprojWorkflowV1alpha1WorkflowList,
+} from "./generated/";
 
 
 const API_VERSION = 'argoproj.io/v1alpha1'
 const WORKFLOW_PLURAL = 'workflows'
+const DEFAULT_WORKFLOW_PROXY = '/argo-workflows/api'
+const API_LABEL_SELECTOR = 'listOptions.labelSelector'
+const API_TIMEOUT = "listOptions.timeoutSeconds"
+const K8s_API_TIMEOUT = "timeoutSeconds"
 export const argoWorkflowsApiRef = createApiRef<ArgoWorkflowsApi>({
     id: 'plugin.argoworkflows',
 })
 export interface ArgoWorkflowsApi {
     discoveryApi: DiscoveryApi
     kubernetesApi: KubernetesApi
-    getWorkflowsFromK8s(clusterName: string | undefined, namespace: string | undefined, labels: string | undefined): Promise<Workflow[]>
-    getWorkflows(name: string): Promise<Workflow[]>
+    getWorkflowsFromK8s(clusterName: string, namespace: string | undefined, labels: string | undefined): Promise<IoArgoprojWorkflowV1alpha1WorkflowList>
+    getWorkflows(clusterName: string | undefined, namespace: string | undefined, labels: string | undefined): Promise<IoArgoprojWorkflowV1alpha1WorkflowList>
+    getWorkflowsFromProxy(namespace: string, labels: string | undefined): Promise<IoArgoprojWorkflowV1alpha1WorkflowList>
 }
 
-type Metadata = {
-    annotations: Record<string, string>
-    labels: Record<string, string>
-    name: string
-    namespace: string
-}
-
-export type Workflow = {
-    metadata: Metadata
-    status?: WorkflowStatus
-}
-
-type WorkflowStatus = {
-    finishedAt: string
-    startedAt: string
-    phase: string
-    progress: string
-}
-
-type workflowResponse = {
-    items: Workflow[]
-}
+// type Metadata = {
+//     annotations: Record<string, string>
+//     labels: Record<string, string>
+//     name: string
+//     namespace: string
+// }
+//
+// export type Workflow = {
+//     metadata: Metadata
+//     status?: WorkflowStatus
+// }
+//
+// type WorkflowStatus = {
+//     finishedAt: string
+//     startedAt: string
+//     phase: string
+//     progress: string
+// }
+//
+// type workflowResponse = {
+//     items: Workflow[]
+// }
 
 export class ArgoWorkflows implements ArgoWorkflowsApi {
     discoveryApi: DiscoveryApi
     kubernetesApi: KubernetesApi
     configApi: ConfigApi
-    oauthRequestApi: OAuthRequestApi
+    identityApi: IdentityApi
 
-    constructor(discoveryApi: DiscoveryApi, kubernetesApi: KubernetesApi, configApi: ConfigApi, oauthRequestApi: OAuthRequestApi) {
+    constructor(discoveryApi: DiscoveryApi, kubernetesApi: KubernetesApi, configApi: ConfigApi, identityApi: IdentityApi) {
         this.discoveryApi = discoveryApi
         this.kubernetesApi = kubernetesApi
         this.configApi = configApi
-        this.oauthRequestApi = oauthRequestApi
+        this.identityApi = identityApi
     }
 
-    async workflowsApiSvc(): Promise<WorkflowServiceApi> {
-        const proxyUrl = await this.discoveryApi.getBaseUrl('proxy')
-        const svcConf = createConfiguration({
-            baseServer: new ServerConfiguration(proxyUrl, {})
-        })
-        return new WorkflowServiceApi(svcConf)
-    }
-    async getWorkflows(namespace: string | undefined, labels: string | undefined): Promise<Workflow[]> {
-        const svc = await this.workflowsApiSvc()
-        const ns = namespace !== undefined ? namespace : 'default'
-        const ops = {
-            namespace: ns,
-            listOptionsLabelSelector: labels,
-            listOptionsTimeoutSeconds: "30"
-        }
-
-        const resp = await svc.workflowServiceListWorkflows(
-            ops.namespace,
-            ops.listOptionsLabelSelector,
-            undefined,
-            undefined,
-            undefined,
-            undefined,
-            undefined,
-            ops.listOptionsTimeoutSeconds
-        )
-
-    }
-
-    async getWorkflowsFromK8s(clusterName: string | undefined, namespace: string | undefined, labels: string | undefined): Promise<Workflow[]> {
+    async getWorkflowsFromK8s(clusterName: string | undefined, namespace: string | undefined, labels: string | undefined): Promise<IoArgoprojWorkflowV1alpha1WorkflowList> {
         const ns = namespace !== undefined ? namespace : 'default'
         const path = `/apis/${API_VERSION}/namespaces/${ns}/${WORKFLOW_PLURAL}`
-        const query = new URLSearchParams()
+        const query = new URLSearchParams({
+            [K8s_API_TIMEOUT]: "30"
+        })
         if (labels) {
             query.set('labelSelector', labels)
         }
@@ -102,9 +82,48 @@ export class ArgoWorkflows implements ArgoWorkflowsApi {
             return Promise.reject(`failed to fetch resources: ${resp.status}, ${resp.statusText}, ${await resp.json()}`)
         }
         // need validation
-        const workflows = JSON.parse(await resp.text()) as workflowResponse
+        return JSON.parse(await resp.text()) as IoArgoprojWorkflowV1alpha1WorkflowList
+    }
 
-        return Promise.resolve(workflows.items);
+    getWorkflows(clusterName: string | undefined, namespace: string, labels: string | undefined): Promise<IoArgoprojWorkflowV1alpha1WorkflowList> {
+        if (clusterName) {
+            return this.getWorkflowsFromK8s(clusterName, namespace, labels)
+        }
+        return this.getWorkflowsFromProxy(namespace, labels);
+    }
+
+    async getWorkflowsFromProxy(namespace: string | undefined, labels: string | undefined): Promise<IoArgoprojWorkflowV1alpha1WorkflowList> {
+        const proxyUrl = await this.discoveryApi.getBaseUrl('proxy')
+
+        const ns = namespace !== undefined ? namespace : 'default'
+        const url = `${proxyUrl}/${DEFAULT_WORKFLOW_PROXY}/api/v1/workflows/${ns}`
+
+        const query = new URLSearchParams(
+            {[API_TIMEOUT]: "30"}
+        )
+        if (labels) {
+            query.set(API_LABEL_SELECTOR, labels)
+        }
+
+        const { token } = await this.identityApi.getCredentials()
+
+        const headers = new Headers(
+            {
+                'Content-Type': 'application/json',
+                Authorization: `Bearer ${token}`,
+            }
+        )
+
+        const resp = await fetch(`${url}/${query.toString()}`, {
+            headers: headers
+        })
+
+        if (!resp.ok) {
+            return Promise.reject(`failed to fetch resources: ${resp.status}, ${resp.statusText}, ${await resp.json()}`)
+        }
+
+        // need validation
+        return Promise.resolve(JSON.parse(await resp.text()) as IoArgoprojWorkflowV1alpha1WorkflowList);
     }
 
 

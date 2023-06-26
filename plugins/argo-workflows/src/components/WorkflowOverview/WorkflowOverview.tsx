@@ -1,10 +1,11 @@
 import {useApi} from "@backstage/core-plugin-api";
-import {argoWorkflowsApiRef, Workflow} from "../../api/indext";
+import {argoWorkflowsApiRef} from "../../api/indext";
 import useAsync from "react-use/lib/useAsync";
 import {Progress, Table, TableColumn} from '@backstage/core-components'
 import React from "react";
 import Alert from "@material-ui/lab/Alert";
 import { useEntity } from '@backstage/plugin-catalog-react';
+import {IoArgoprojWorkflowV1alpha1WorkflowList} from "../../api/generated";
 
 
 type TableData = {
@@ -47,17 +48,18 @@ export const WorkflowOverviewComponent = () => {
     const k8sLabelSelector = entity.metadata.annotations?.['backstage.io/kubernetes-label-selector']
 
     const {value, loading, error} = useAsync(
-        async (): Promise<Workflow[]> => {
+        async (): Promise<IoArgoprojWorkflowV1alpha1WorkflowList> => {
             return await apiClient.getWorkflows(clusterName, ns, k8sLabelSelector)
         }
     )
+
     if (loading) {
         return <Progress />;
     } else if (error) {
         return <Alert severity="error">{error.message}</Alert>;
     }
 
-    const data = value?.map( val => {
+    const data = value?.items.map( val => {
         return {
             name: val.metadata.name,
             phase: val.status?.phase,
