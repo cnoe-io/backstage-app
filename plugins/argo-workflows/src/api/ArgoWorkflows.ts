@@ -1,7 +1,7 @@
 import {ConfigApi, DiscoveryApi, IdentityApi} from "@backstage/core-plugin-api";
 import {KubernetesApi} from "@backstage/plugin-kubernetes";
 import {IoArgoprojWorkflowV1alpha1WorkflowList} from "./generated";
-import {ArgoWorkflowsApi} from "./indext";
+import {ArgoWorkflowsApi} from "./index";
 
 const API_VERSION = 'argoproj.io/v1alpha1'
 const WORKFLOW_PLURAL = 'workflows'

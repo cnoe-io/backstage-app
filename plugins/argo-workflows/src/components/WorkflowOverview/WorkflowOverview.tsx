@@ -1,5 +1,5 @@
 import {configApiRef, useApi} from "@backstage/core-plugin-api";
-import {argoWorkflowsApiRef} from "../../api/indext";
+import {argoWorkflowsApiRef} from "../../api";
 import useAsync from "react-use/lib/useAsync";
 import {Link, Progress, Table, TableColumn} from '@backstage/core-components'
 import React from "react";

@@ -7,7 +7,7 @@ import {
 } from '@backstage/core-plugin-api';
 
 import { rootRouteRef } from './routes';
-import {ArgoWorkflows, argoWorkflowsApiRef} from "./api/indext";
+import {ArgoWorkflows, argoWorkflowsApiRef} from "./api";
 import {kubernetesApiRef} from "@backstage/plugin-kubernetes";
 
 
