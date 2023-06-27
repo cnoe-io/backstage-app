@@ -1,4 +1,4 @@
-import {ConfigApi, DiscoveryApi, IdentityApi} from "@backstage/core-plugin-api";
+import {ConfigApi, DiscoveryApi, FetchApi} from "@backstage/core-plugin-api";
 import {KubernetesApi} from "@backstage/plugin-kubernetes";
 import {IoArgoprojWorkflowV1alpha1WorkflowList} from "./generated";
 import {ArgoWorkflowsApi} from "./index";
@@ -14,13 +14,13 @@ export class ArgoWorkflows implements ArgoWorkflowsApi {
     discoveryApi: DiscoveryApi
     kubernetesApi: KubernetesApi
     configApi: ConfigApi
-    identityApi: IdentityApi
+    fetchApi: FetchApi
 
-    constructor(discoveryApi: DiscoveryApi, kubernetesApi: KubernetesApi, configApi: ConfigApi, identityApi: IdentityApi) {
+    constructor(discoveryApi: DiscoveryApi, kubernetesApi: KubernetesApi, configApi: ConfigApi, fetchApi: FetchApi) {
         this.discoveryApi = discoveryApi
         this.kubernetesApi = kubernetesApi
         this.configApi = configApi
-        this.identityApi = identityApi
+        this.fetchApi = fetchApi
     }
 
     async getWorkflowsFromK8s(clusterName: string | undefined, namespace: string | undefined, labels: string | undefined): Promise<IoArgoprojWorkflowV1alpha1WorkflowList> {
@@ -39,7 +39,7 @@ export class ArgoWorkflows implements ArgoWorkflowsApi {
         })
 
         if (!resp.ok) {
-            return Promise.reject(`failed to fetch resources: ${resp.status}, ${resp.statusText}, ${await resp.json()}`)
+            return Promise.reject(`failed to fetch resources: ${resp.status}, ${resp.statusText}, ${await resp.text()}`)
         }
         // need validation
         return JSON.parse(await resp.text()) as IoArgoprojWorkflowV1alpha1WorkflowList
@@ -64,19 +64,7 @@ export class ArgoWorkflows implements ArgoWorkflowsApi {
         if (labels) {
             query.set(API_LABEL_SELECTOR, labels)
         }
-
-        const { token } = await this.identityApi.getCredentials()
-
-        const headers = new Headers(
-            {
-                'Content-Type': 'application/json',
-                Authorization: `Bearer ${token}`,
-            }
-        )
-
-        const resp = await fetch(`${url}?${query.toString()}`, {
-            headers: headers
-        })
+        const resp = await this.fetchApi.fetch(`${url}?${query.toString()}`, {})
 
         if (!resp.ok) {
             return Promise.reject(`failed to fetch resources: ${resp.status}, ${resp.statusText}, ${await resp.json()}`)
