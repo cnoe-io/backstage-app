@@ -21,6 +21,13 @@ metadata:
     backstage.io/kubernetes-label-selector: env=dev,my=label
 ```
 
+Configure your Argo Workflows' instance base URL
+```yaml
+argoWorkflows:
+   baseUrl: https://my-argo-workflows.url
+```
+
+
 ### Authentication
 This plugin supports two methods of authentication.  
 
