@@ -1,1 +1,1 @@
-export { argoWorkflowsPlugin, ArgoWorkflowsPage } from './plugin';
+export { argoWorkflowsPlugin, ArgoWorkflowsPage } from "./plugin";

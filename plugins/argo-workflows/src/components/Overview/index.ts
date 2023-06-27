@@ -1,1 +1,1 @@
-export {OverviewComponent} from "./Overview";
+export { OverviewComponent } from "./Overview";

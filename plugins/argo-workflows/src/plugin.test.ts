@@ -1,7 +1,7 @@
-import { argoWorkflowsPlugin } from './plugin';
+import { argoWorkflowsPlugin } from "./plugin";
 
-describe('argo-workflows', () => {
-  it('should export plugin', () => {
+describe("argo-workflows", () => {
+  it("should export plugin", () => {
     expect(argoWorkflowsPlugin).toBeDefined();
   });
 });
