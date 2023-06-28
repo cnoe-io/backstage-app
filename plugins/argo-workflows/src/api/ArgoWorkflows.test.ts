@@ -82,12 +82,12 @@ describe("ArgoWorkflowsClient", () => {
       mockConfigApi,
       noopFetchApi
     );
-    const spy = jest.spyOn(a, "getCluster");
+    const spy = jest.spyOn(a, "getFirstCluster");
     const resp = await a.getWorkflowsFromK8s(undefined, "default", "my=env");
     expect(resp.items.length).toBe(1);
     expect(spy).toHaveBeenCalled();
   });
-  it("non ok status returned", async () => {
+  it("rejects when non-ok status returned", async () => {
     mockKClient.proxy.mockResolvedValue({
       status: 500,
       ok: false,
@@ -104,6 +104,40 @@ describe("ArgoWorkflowsClient", () => {
     await expect(
       a.getWorkflowsFromK8s("abc", "default", "not used")
     ).rejects.toEqual(
+      "failed to fetch resources: 500, something went wrong, oh no"
+    );
+  });
+  it("can get workflow from proxy", async () => {
+    const impl = jest.fn().mockResolvedValue({
+      status: 200,
+      ok: true,
+      text: async () => JSON.stringify(inProgress),
+    });
+    const fetchApi = new MockFetchApi({ baseImplementation: impl });
+    const a = new ArgoWorkflows(
+      mockDiscoveryApi,
+      mockKClient,
+      mockConfigApi,
+      fetchApi
+    );
+    const resp = await a.getWorkflowsFromProxy("default", "my=env");
+    expect(resp.items.length).toBe(1);
+  });
+  it("rejects when error is returned", async () => {
+    const impl = jest.fn().mockResolvedValue({
+      status: 500,
+      ok: false,
+      statusText: "something went wrong",
+      text: async () => "oh no",
+    });
+    const fetchApi = new MockFetchApi({ baseImplementation: impl });
+    const a = new ArgoWorkflows(
+      mockDiscoveryApi,
+      mockKClient,
+      mockConfigApi,
+      fetchApi
+    );
+    await expect(a.getWorkflowsFromProxy("default", "my=env")).rejects.toEqual(
       "failed to fetch resources: 500, something went wrong, oh no"
     );
   });

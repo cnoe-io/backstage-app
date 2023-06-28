@@ -36,6 +36,9 @@ export const WorkflowOverviewComponent = () => {
     entity.metadata.annotations?.["argo-workflows/cluster-name"];
   const k8sLabelSelector =
     entity.metadata.annotations?.["backstage.io/kubernetes-label-selector"];
+  if (!k8sLabelSelector) {
+    return null;
+  }
 
   const columns: TableColumn[] = [
     {
@@ -119,9 +122,5 @@ export const WorkflowOverviewComponent = () => {
     );
   }
 
-  return (
-    <Alert severity="warning">
-      No Workflows found with given filter. Check your entity's annotations.
-    </Alert>
-  );
+  return null;
 };

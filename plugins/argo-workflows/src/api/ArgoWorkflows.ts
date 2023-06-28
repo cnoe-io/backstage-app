@@ -44,7 +44,7 @@ export class ArgoWorkflows implements ArgoWorkflowsApi {
     // need limits and pagination
     const resp = await this.kubernetesApi.proxy({
       clusterName:
-        clusterName !== undefined ? clusterName : await this.getCluster(),
+        clusterName !== undefined ? clusterName : await this.getFirstCluster(),
       path: `${path}?${query.toString()}`,
     });
 
@@ -91,7 +91,7 @@ export class ArgoWorkflows implements ArgoWorkflowsApi {
       return Promise.reject(
         `failed to fetch resources: ${resp.status}, ${
           resp.statusText
-        }, ${await resp.json()}`
+        }, ${await resp.text()}`
       );
     }
 
@@ -101,7 +101,7 @@ export class ArgoWorkflows implements ArgoWorkflowsApi {
     );
   }
 
-  async getCluster(): Promise<string> {
+  async getFirstCluster(): Promise<string> {
     const clusters = await this.kubernetesApi.getClusters();
     if (clusters.length > 0) {
       return Promise.resolve(clusters[0].name);
