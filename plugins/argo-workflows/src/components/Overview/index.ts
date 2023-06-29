@@ -1,1 +1,4 @@
-export { OverviewComponent } from "./Overview";
+export {
+  ArgoWorkflowsOverviewPage,
+  ArgoWorkflowsOverviewCard,
+} from "./Overview";

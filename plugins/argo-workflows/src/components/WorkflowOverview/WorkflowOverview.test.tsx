@@ -15,8 +15,8 @@ import {
 import { ArgoWorkflowsApi, argoWorkflowsApiRef } from "../../api";
 import { KubernetesApi, kubernetesApiRef } from "@backstage/plugin-kubernetes";
 import { EntityProvider } from "@backstage/plugin-catalog-react";
-import { WorkflowOverviewComponent } from "./WorkflowOverview";
-import { empty, inProgress, mixResponse } from "../../test-data/testResponse";
+import { OverviewTable } from "./WorkflowOverview";
+import { inProgress, mixResponse } from "../../test-data/testResponse";
 import { IoArgoprojWorkflowV1alpha1WorkflowList } from "../../api/generated";
 
 const BASE_URL = "https://backstage.io";
@@ -84,7 +84,7 @@ describe("WorkflowOverviewComponent", () => {
     const r = await renderInTestApp(
       <TestApiProvider apis={apis}>
         <EntityProvider entity={entity}>
-          <WorkflowOverviewComponent />
+          <OverviewTable />
         </EntityProvider>
       </TestApiProvider>
     );
@@ -113,7 +113,7 @@ describe("WorkflowOverviewComponent", () => {
     const r = await renderInTestApp(
       <TestApiProvider apis={apis}>
         <EntityProvider entity={entity}>
-          <WorkflowOverviewComponent data-testid="test" />
+          <OverviewTable data-testid="test" />
         </EntityProvider>
       </TestApiProvider>
     );
@@ -124,25 +124,5 @@ describe("WorkflowOverviewComponent", () => {
       "href",
       `${BASE_URL}/workflows/default/${mixResponse.items[0].metadata.name}`
     );
-  });
-
-  it("should not display anything", async () => {
-    jest
-      .spyOn(mockArgoWorkflows, "getWorkflows")
-      .mockImplementation(
-        (_n, _ns, _l): Promise<IoArgoprojWorkflowV1alpha1WorkflowList> => {
-          return Promise.resolve(
-            empty as unknown as IoArgoprojWorkflowV1alpha1WorkflowList
-          );
-        }
-      );
-    const r = await renderInTestApp(
-      <TestApiProvider apis={apis}>
-        <EntityProvider entity={entity}>
-          <WorkflowOverviewComponent />
-        </EntityProvider>
-      </TestApiProvider>
-    );
-    expect(r.queryByRole("table")).toBeNull();
   });
 });

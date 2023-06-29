@@ -6,11 +6,14 @@ import {
   Content,
   ContentHeader,
   SupportButton,
+  InfoCard,
 } from "@backstage/core-components";
 import { Grid } from "@material-ui/core";
-import { WorkflowOverviewComponent } from "../WorkflowOverview/WorkflowOverview";
+import { OverviewTable } from "../WorkflowOverview/WorkflowOverview";
+import { useEntity } from "@backstage/plugin-catalog-react";
+import { isArgoWorkflowsAvailable } from "../../plugin";
 
-export const OverviewComponent = () => (
+export const ArgoWorkflowsOverviewPage = () => (
   <Page themeId="tool">
     <Header title="Argo Workflows">
       <HeaderLabel label="Lifecycle" value="Alpha" />
@@ -20,8 +23,19 @@ export const OverviewComponent = () => (
         <SupportButton>Overview of your Argo Workflows</SupportButton>
       </ContentHeader>
       <Grid item>
-        <WorkflowOverviewComponent />
+        <OverviewTable />
       </Grid>
     </Content>
   </Page>
 );
+
+export const ArgoWorkflowsOverviewCard = () => {
+  if (isArgoWorkflowsAvailable(useEntity().entity)) {
+    return (
+      <InfoCard>
+        <OverviewTable />
+      </InfoCard>
+    );
+  }
+  return null;
+};

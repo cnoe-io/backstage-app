@@ -1,1 +1,5 @@
-export { argoWorkflowsPlugin, ArgoWorkflowsPage } from "./plugin";
+export {
+  argoWorkflowsPlugin,
+  ArgoWorkflowsPage,
+  EntityArgoWorkflowsOverviewCard,
+} from "./plugin";

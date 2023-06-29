@@ -6,6 +6,12 @@ import React from "react";
 import Alert from "@material-ui/lab/Alert";
 import { useEntity } from "@backstage/plugin-catalog-react";
 import { IoArgoprojWorkflowV1alpha1WorkflowList } from "../../api/generated";
+import {
+  ARGO_WORKFLOWS_LABEL_SELECTOR_ANNOTATION,
+  CLUSTER_NAME_ANNOTATION,
+  K8S_LABEL_SELECTOR_ANNOTATION,
+  K8S_NAMESPACE_ANNOTATION,
+} from "../../plugin";
 
 type TableData = {
   name: string;
@@ -16,10 +22,7 @@ type TableData = {
   finishedAt?: string;
 };
 
-const CLUSTER_NAME_ANNOTATION = "argo-workflows/cluster-name";
-const K8S_LABEL_SELECTOR_ANNOTATION = "backstage.io/kubernetes-label-selector";
-const K8S_NAMESPACE_ANNOTATION = "backstage.io/kubernetes-namespace";
-export const WorkflowOverviewComponent = () => {
+export const OverviewTable = () => {
   const { entity } = useEntity();
   const apiClient = useApi(argoWorkflowsApiRef);
   const configApi = useApi(configApiRef);
@@ -36,18 +39,11 @@ export const WorkflowOverviewComponent = () => {
   const ln = entity.metadata.annotations?.[K8S_NAMESPACE_ANNOTATION];
   const ns = ln !== undefined ? ln : "default";
   const clusterName = entity.metadata.annotations?.[CLUSTER_NAME_ANNOTATION];
-  const k8sLabelSelector =
-    entity.metadata.annotations?.[K8S_LABEL_SELECTOR_ANNOTATION];
-
-  const { value, loading, error } = useAsync(
-    async (): Promise<IoArgoprojWorkflowV1alpha1WorkflowList> => {
-      return await apiClient.getWorkflows(clusterName, ns, k8sLabelSelector);
-    }
-  );
-
-  if (!k8sLabelSelector) {
-    return null;
-  }
+  const labelSelector =
+    entity.metadata?.annotations?.[ARGO_WORKFLOWS_LABEL_SELECTOR_ANNOTATION] !==
+    undefined
+      ? entity.metadata?.annotations?.[ARGO_WORKFLOWS_LABEL_SELECTOR_ANNOTATION]
+      : entity.metadata.annotations?.[K8S_LABEL_SELECTOR_ANNOTATION];
 
   const columns: TableColumn[] = [
     {
@@ -93,6 +89,12 @@ export const WorkflowOverviewComponent = () => {
     { title: "EndTime", field: "finishedAt", type: "datetime" },
     { title: "Namespace", field: "namespace", type: "string" },
   ];
+
+  const { value, loading, error } = useAsync(
+    async (): Promise<IoArgoprojWorkflowV1alpha1WorkflowList> => {
+      return await apiClient.getWorkflows(clusterName, ns, labelSelector);
+    }
+  );
 
   if (loading) {
     return <Progress />;
