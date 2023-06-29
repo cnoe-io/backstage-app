@@ -113,7 +113,7 @@ export const OverviewTable = () => {
     } as TableData;
   });
 
-  if (data && data.length !== 0) {
+  if (data && data.length > 0) {
     return (
       <Table
         options={{
@@ -126,6 +126,7 @@ export const OverviewTable = () => {
       />
     );
   }
-
-  return null;
+  return (
+    <Alert severity="info">"No workflows found with provided labels"</Alert>
+  );
 };

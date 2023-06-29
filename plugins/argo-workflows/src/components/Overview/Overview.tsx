@@ -30,9 +30,10 @@ export const ArgoWorkflowsOverviewPage = () => (
 );
 
 export const ArgoWorkflowsOverviewCard = () => {
-  if (isArgoWorkflowsAvailable(useEntity().entity)) {
+  const { entity } = useEntity();
+  if (isArgoWorkflowsAvailable(entity)) {
     return (
-      <InfoCard>
+      <InfoCard {...{ title: "Argo Workflows" }}>
         <OverviewTable />
       </InfoCard>
     );

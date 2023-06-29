@@ -1,10 +1,13 @@
 # argo-workflows
 
-Welcome to the argo-workflows plugin!
+Welcome to the Argo Workflows plugin!
 
 This plugin displays your Argo Workflows in Backstage
 
 ## Getting started
+
+![GIF](doc/images/demo1.gif)
+
 
 ### Configuration
 
@@ -16,17 +19,50 @@ kind: Component
 metadata:
   name: backstage
   annotations:
-    backstage.io/kubernetes-id: backstage
     backstage.io/kubernetes-namespace: default
     backstage.io/kubernetes-label-selector: env=dev,my=label
 ```
 
-Configure your Argo Workflows' instance base URL
+Configure your Argo Workflows' instance base URL. Ths is optional. If defined, workflows will have links to Argo Workflows UI.
 
 ```yaml
 argoWorkflows:
   baseUrl: https://my-argo-workflows.url
 ```
+
+Update your Entity page. For example: 
+```typescript
+// in packages/app/src/components/catalog/EntityPage.tsx
+import {
+    EntityArgoWorkflowsOverviewCard,
+    isArgoWorkflowsAvailable,
+} from '@internal/plugin-argo-workflows';
+
+
+const overviewContent = (
+<Grid container spacing={3} alignItems="stretch">
+    {entityWarningContent}
+    <Grid item md={6}>
+        <EntityAboutCard variant="gridItem" />
+    </Grid>
+    <EntitySwitch>
+        <EntitySwitch.Case if={e => isArgoWorkflowsAvailable(e)}>
+        <Grid item md={6}>
+            <EntityArgoWorkflowsOverviewCard />
+        </Grid>
+        </EntitySwitch.Case>
+    </EntitySwitch>
+        ...
+</Grid>
+);
+```
+
+
+#### Annotations
+- `backstage.io/kubernetes-namespace`: Optional. Defaults to the `default` namespace.
+- `backstage.io/kubernetes-label-selector`: Conditionally required. One of label selectors must be defined.
+- `argo-workflows/label-selector`: Conditionally required. One of label selectors must be defined. This value takes precedent over the one above. 
+- `argo-workflows/cluster-name`: Optional. Specifies the name of Kubernetes cluster to retrieve information from.
 
 ### Authentication
 
@@ -105,7 +141,7 @@ See [this documentation](https://argoproj.github.io/argo-workflows/access-token/
 The plugin can use configured Kubernetes clusters to fetch resources instead of going through the Argo Workflows API
 The entity must be annotated correctly for it to work.
 
-For example, for a Kubernetes cluster given in your `ap-config.yaml`
+For example, for a Kubernetes cluster given in your `app-config.yaml`
 
 ```yaml
 kubernetes:
@@ -129,7 +165,6 @@ kind: Component
 metadata:
   name: backstage
   annotations:
-    backstage.io/kubernetes-id: backstage
     backstage.io/kubernetes-namespace: default
     backstage.io/kubernetes-label-selector: env=dev,my=label
     argo-workflows/cluster-name: my-cluster-1
