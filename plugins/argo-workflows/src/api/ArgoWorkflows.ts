@@ -1,4 +1,4 @@
-import { ConfigApi, DiscoveryApi, FetchApi } from "@backstage/core-plugin-api";
+import { DiscoveryApi, FetchApi } from "@backstage/core-plugin-api";
 import { KubernetesApi } from "@backstage/plugin-kubernetes";
 import { IoArgoprojWorkflowV1alpha1WorkflowList } from "./generated";
 import { ArgoWorkflowsApi } from "./index";
@@ -11,20 +11,17 @@ const API_TIMEOUT = "listOptions.timeoutSeconds";
 const K8s_API_TIMEOUT = "timeoutSeconds";
 
 export class ArgoWorkflows implements ArgoWorkflowsApi {
-  discoveryApi: DiscoveryApi;
-  kubernetesApi: KubernetesApi;
-  configApi: ConfigApi;
-  fetchApi: FetchApi;
+  private discoveryApi: DiscoveryApi;
+  private kubernetesApi: KubernetesApi;
+  private fetchApi: FetchApi;
 
   constructor(
     discoveryApi: DiscoveryApi,
     kubernetesApi: KubernetesApi,
-    configApi: ConfigApi,
     fetchApi: FetchApi
   ) {
     this.discoveryApi = discoveryApi;
     this.kubernetesApi = kubernetesApi;
-    this.configApi = configApi;
     this.fetchApi = fetchApi;
   }
 

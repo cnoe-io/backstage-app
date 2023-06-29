@@ -1,5 +1,4 @@
 import {
-  configApiRef,
   createApiFactory,
   createPlugin,
   createRoutableExtension,
@@ -22,11 +21,10 @@ export const argoWorkflowsPlugin = createPlugin({
       deps: {
         discoveryApi: discoveryApiRef,
         kubernetesApi: kubernetesApiRef,
-        configApi: configApiRef,
         fetchApi: fetchApiRef,
       },
-      factory: ({ discoveryApi, kubernetesApi, configApi, fetchApi }) =>
-        new ArgoWorkflows(discoveryApi, kubernetesApi, configApi, fetchApi),
+      factory: ({ discoveryApi, kubernetesApi, fetchApi }) =>
+        new ArgoWorkflows(discoveryApi, kubernetesApi, fetchApi),
     }),
   ],
 });

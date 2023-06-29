@@ -1,10 +1,10 @@
 import { DiscoveryApi } from "@backstage/core-plugin-api";
 import { ArgoWorkflows } from "./ArgoWorkflows";
 import { KubernetesApi } from "@backstage/plugin-kubernetes";
-import { MockConfigApi, MockFetchApi } from "@backstage/test-utils";
+import { MockFetchApi } from "@backstage/test-utils";
 import { FrontendHostDiscovery } from "@backstage/core-app-api";
 import { UserIdentity } from "@backstage/core-components";
-import { inProgress } from "../test-data/in-progress";
+import { inProgress } from "../test-data/testResponse";
 
 describe("ArgoWorkflowsClient", () => {
   const mockDiscoveryApi: jest.Mocked<DiscoveryApi> = {
@@ -12,9 +12,6 @@ describe("ArgoWorkflowsClient", () => {
       return Promise.resolve(`https://backstage.io/${id}`);
     }),
   };
-  const mockConfigApi = new MockConfigApi({
-    app: { baseUrl: "https://backstage.io" },
-  });
   const noopFetchApi = new MockFetchApi({ baseImplementation: "none" });
 
   const mockKClient: jest.Mocked<KubernetesApi> = {
@@ -49,12 +46,7 @@ describe("ArgoWorkflowsClient", () => {
       text: async () => JSON.stringify(inProgress),
     } as Response);
 
-    const a = new ArgoWorkflows(
-      mockDiscoveryApi,
-      mockKClient,
-      mockConfigApi,
-      noopFetchApi
-    );
+    const a = new ArgoWorkflows(mockDiscoveryApi, mockKClient, noopFetchApi);
     const spy = jest.spyOn(mockKClient, "proxy");
     const resp = await a.getWorkflowsFromK8s("abc", "default", "my=env");
     expect(resp.items.length).toBe(1);
@@ -76,12 +68,7 @@ describe("ArgoWorkflowsClient", () => {
       },
     ]);
 
-    const a = new ArgoWorkflows(
-      mockDiscoveryApi,
-      mockKClient,
-      mockConfigApi,
-      noopFetchApi
-    );
+    const a = new ArgoWorkflows(mockDiscoveryApi, mockKClient, noopFetchApi);
     const spy = jest.spyOn(a, "getFirstCluster");
     const resp = await a.getWorkflowsFromK8s(undefined, "default", "my=env");
     expect(resp.items.length).toBe(1);
@@ -95,12 +82,7 @@ describe("ArgoWorkflowsClient", () => {
       text: async () => "oh no",
     } as Response);
 
-    const a = new ArgoWorkflows(
-      mockDiscoveryApi,
-      mockKClient,
-      mockConfigApi,
-      noopFetchApi
-    );
+    const a = new ArgoWorkflows(mockDiscoveryApi, mockKClient, noopFetchApi);
     await expect(
       a.getWorkflowsFromK8s("abc", "default", "not used")
     ).rejects.toEqual(
@@ -114,12 +96,7 @@ describe("ArgoWorkflowsClient", () => {
       text: async () => JSON.stringify(inProgress),
     });
     const fetchApi = new MockFetchApi({ baseImplementation: impl });
-    const a = new ArgoWorkflows(
-      mockDiscoveryApi,
-      mockKClient,
-      mockConfigApi,
-      fetchApi
-    );
+    const a = new ArgoWorkflows(mockDiscoveryApi, mockKClient, fetchApi);
     const resp = await a.getWorkflowsFromProxy("default", "my=env");
     expect(resp.items.length).toBe(1);
   });
@@ -131,12 +108,7 @@ describe("ArgoWorkflowsClient", () => {
       text: async () => "oh no",
     });
     const fetchApi = new MockFetchApi({ baseImplementation: impl });
-    const a = new ArgoWorkflows(
-      mockDiscoveryApi,
-      mockKClient,
-      mockConfigApi,
-      fetchApi
-    );
+    const a = new ArgoWorkflows(mockDiscoveryApi, mockKClient, fetchApi);
     await expect(a.getWorkflowsFromProxy("default", "my=env")).rejects.toEqual(
       "failed to fetch resources: 500, something went wrong, oh no"
     );

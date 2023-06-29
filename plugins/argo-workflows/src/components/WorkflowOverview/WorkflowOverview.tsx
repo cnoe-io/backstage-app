@@ -16,6 +16,9 @@ type TableData = {
   finishedAt?: string;
 };
 
+const CLUSTER_NAME_ANNOTATION = "argo-workflows/cluster-name";
+const K8S_LABEL_SELECTOR_ANNOTATION = "backstage.io/kubernetes-label-selector";
+const K8S_NAMESPACE_ANNOTATION = "backstage.io/kubernetes-namespace";
 export const WorkflowOverviewComponent = () => {
   const { entity } = useEntity();
   const apiClient = useApi(argoWorkflowsApiRef);
@@ -30,12 +33,18 @@ export const WorkflowOverviewComponent = () => {
     );
   }
 
-  const ln = entity.metadata.annotations?.["backstage.io/kubernetes-namespace"];
+  const ln = entity.metadata.annotations?.[K8S_NAMESPACE_ANNOTATION];
   const ns = ln !== undefined ? ln : "default";
-  const clusterName =
-    entity.metadata.annotations?.["argo-workflows/cluster-name"];
+  const clusterName = entity.metadata.annotations?.[CLUSTER_NAME_ANNOTATION];
   const k8sLabelSelector =
-    entity.metadata.annotations?.["backstage.io/kubernetes-label-selector"];
+    entity.metadata.annotations?.[K8S_LABEL_SELECTOR_ANNOTATION];
+
+  const { value, loading, error } = useAsync(
+    async (): Promise<IoArgoprojWorkflowV1alpha1WorkflowList> => {
+      return await apiClient.getWorkflows(clusterName, ns, k8sLabelSelector);
+    }
+  );
+
   if (!k8sLabelSelector) {
     return null;
   }
@@ -85,12 +94,6 @@ export const WorkflowOverviewComponent = () => {
     { title: "Namespace", field: "namespace", type: "string" },
   ];
 
-  const { value, loading, error } = useAsync(
-    async (): Promise<IoArgoprojWorkflowV1alpha1WorkflowList> => {
-      return await apiClient.getWorkflows(clusterName, ns, k8sLabelSelector);
-    }
-  );
-
   if (loading) {
     return <Progress />;
   } else if (error) {
@@ -108,7 +111,7 @@ export const WorkflowOverviewComponent = () => {
     } as TableData;
   });
 
-  if (data) {
+  if (data && data.length !== 0) {
     return (
       <Table
         options={{
@@ -117,7 +120,7 @@ export const WorkflowOverviewComponent = () => {
           sorting: true,
         }}
         columns={columns}
-        data={data.sort()}
+        data={data}
       />
     );
   }
