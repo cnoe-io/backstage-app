@@ -50,8 +50,7 @@ const columns: TableColumn[] = [
 const useDrawerStyles = makeStyles((theme: Theme) =>
   createStyles({
     paper: {
-      width: '50%',
-      justifyContent: 'space-between',
+      width: '60%',
       padding: theme.spacing(2.5),
     },
   }),

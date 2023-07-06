@@ -61,7 +61,7 @@ export type Status = {
     webUIServiceName: string;
   };
   executionAttempts: number;
-  executorState: Record<string, string>;
+  executorState: { [key: string]: string };
   lastSubmissionAttemptTime: string;
   sparkApplicationId: string;
   submissionAttempts: number;
@@ -81,4 +81,18 @@ export type ApacheSparkList = {
   apiVersion: string;
   kind: string;
   items?: ApacheSpark[];
+};
+
+export type Pod = {
+  apiVersion: string;
+  kind: string;
+  metadata: Metadata;
+  spec: PodSpec;
+};
+
+export type PodSpec = {
+  containers: {
+    image: string;
+    name: string;
+  }[];
 };
