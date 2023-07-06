@@ -4,19 +4,18 @@ import {
   createStyles,
   IconButton,
   makeStyles,
-  Paper,
   Theme,
   Typography,
 } from '@material-ui/core';
 import Close from '@material-ui/icons/Close';
-import React, { PropsWithChildren } from 'react';
+import React from 'react';
 import { stringify } from 'yaml';
 import { CopyTextButton, TabbedLayout } from '@backstage/core-components';
-import { MemoryRouter, Route, Routes } from 'react-router-dom';
 import {
   ApacheSparkDriverLogs,
   ApacheSparkExecutorLogs,
 } from '../ApacheSparkLogs/ApacheSparkLogs';
+import { DrawerOverview } from './DrawerOverview';
 
 const useDrawerContentStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -36,7 +35,12 @@ const useDrawerContentStyles = makeStyles((theme: Theme) =>
     },
     logs: {
       height: 500,
-      backgroundColor: '#EEEEEE',
+      display: 'flex',
+      flexDirection: 'column',
+      flexShrink: 0,
+    },
+    logs2: {
+      height: 600,
       display: 'flex',
       flexDirection: 'column',
     },
@@ -57,7 +61,14 @@ export const DrawerContent = ({
   const yamlString = stringify(apacheSpark);
   return (
     <TabbedLayout>
-      <TabbedLayout.Route path="/" title="Manifest">
+      <TabbedLayout.Route path="/" title="Overview">
+        <>
+          <div>
+            <DrawerOverview sparkApp={apacheSpark} />
+          </div>
+        </>
+      </TabbedLayout.Route>
+      <TabbedLayout.Route path="/manifests" title="Manifest">
         <>
           <div className={classes.header}>
             <Typography variant="h6">{apacheSpark.metadata.name}</Typography>
@@ -74,40 +85,25 @@ export const DrawerContent = ({
             <CopyTextButton text={yamlString} tooltipText="Copy" />
             <pre>{yamlString}</pre>
           </div>
-          <div>
-            <Button
-              variant="contained"
-              color="primary"
-              onClick={() => toggleDrawer(false)}
-            >
-              Primary Action
-            </Button>
-            <Button
-              className={classes.secondaryAction}
-              variant="outlined"
-              color="primary"
-              onClick={() => toggleDrawer(false)}
-            >
-              Secondary Action
-            </Button>
-          </div>
         </>
       </TabbedLayout.Route>
       <TabbedLayout.Route path="/logs" title="Logs">
         <>
-          <div className={classes.logs}>
-            <Typography variant="h6">
-              Driver Log for {apacheSpark.metadata.name}
-            </Typography>
-            {/*<ApacheSparkDriverLogs sparkApp={apacheSpark} />*/}
+          <div className={classes.logs2}>
+            <div className={classes.logs}>
+              <Typography variant="h6">
+                Driver Log for {apacheSpark.metadata.name}
+              </Typography>
+              <ApacheSparkDriverLogs sparkApp={apacheSpark} />
+            </div>
           </div>
-          <div className={classes.logs}>
-            <Typography variant="h6">
-              Executor Logs for {apacheSpark.metadata.name}
-            </Typography>
-            <ApacheSparkExecutorLogs
-              sparkApp={apacheSpark}
-            ></ApacheSparkExecutorLogs>
+          <div className={classes.logs2}>
+            <div className={classes.logs}>
+              <Typography variant="h6">
+                Executor Logs for {apacheSpark.metadata.name}
+              </Typography>
+              <ApacheSparkExecutorLogs sparkApp={apacheSpark} />
+            </div>
           </div>
         </>
       </TabbedLayout.Route>

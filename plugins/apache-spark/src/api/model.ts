@@ -8,42 +8,44 @@ export type Metadata = {
 };
 
 export type Spec = {
-  arguments: string[];
-  batchScheduler: string;
+  arguments?: string[];
+  batchScheduler?: string;
   driver: {
-    coreLimit: string;
-    coreRequest: string;
-    cores: number;
-    gpu: {
+    coreLimit?: string;
+    coreRequest?: string;
+    cores?: number;
+    gpu?: {
       name: string;
       quantity: number;
     };
-    labels: Record<string, string>;
-    memory: string;
-    memoryOverhead: string;
-    podName: string;
-    schedulerName: string;
-    serviceAccount: string;
+    labels?: Record<string, string>;
+    memory?: string;
+    memoryOverhead?: string;
+    podName?: string;
+    schedulerName?: string;
+    serviceAccount?: string;
   };
   executor: {
-    coreLimit: string;
-    coreRequest: string;
-    cores: number;
-    gpu: {
+    coreLimit?: string;
+    coreRequest?: string;
+    cores?: number;
+    gpu?: {
       name: string;
       quantity: number;
     };
-    instances: number;
-    labels: Record<string, string>;
-    memory: string;
-    memoryOverhead: string;
-    schedulerName: string;
-    serviceAccount: string;
+    instances?: number;
+    labels?: Record<string, string>;
+    memory?: string;
+    memoryOverhead?: string;
+    schedulerName?: string;
+    serviceAccount?: string;
   };
   image: string;
-  mainClass: string;
+  mainClass?: string;
+  mainApplicationFile?: string;
   mode: string;
-  pythonVersion: string;
+  pythonVersion?: string;
+  sparkVersion: string;
   type: string;
 };
 

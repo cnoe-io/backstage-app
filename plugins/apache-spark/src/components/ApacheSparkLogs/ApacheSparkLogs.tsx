@@ -1,7 +1,7 @@
 import { useApi } from '@backstage/core-plugin-api';
 import { apacheSparkApiRef } from '../../api';
 import useAsync from 'react-use/lib/useAsync';
-import { ApacheSpark, ApacheSparkList } from '../../api/model';
+import { ApacheSpark } from '../../api/model';
 import {
   LogViewer,
   Progress,
@@ -75,9 +75,7 @@ export const ApacheSparkExecutorLogs = (props: { sparkApp: ApacheSpark }) => {
   }
 
   const handleChange = (item: SelectedItems) => {
-    // setSelected(item);
-    // return;
-    if (typeof item === 'string' && item !== '' && item !== '[]') {
+    if (typeof item === 'string' && item !== '') {
       setSelected(item);
     }
   };
@@ -89,7 +87,7 @@ export const ApacheSparkExecutorLogs = (props: { sparkApp: ApacheSpark }) => {
         items={executors}
         onChange={handleChange}
       />
-      {ExecutorLogs({ name: selected })}
+      <ExecutorLogs name={selected} key={selected} />
     </>
   );
 };
