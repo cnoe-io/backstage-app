@@ -1,0 +1,15 @@
+---
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: ${{values.name | dump}}
+  annotations:
+    backstage.io/kubernetes-id: "${{values.clusterName}}"
+    apache-spark/cluster-name: "${{values.clusterName}}"
+    argo-workflows/cluster-name: "${{values.clusterName}}"
+    backstage.io/kubernetes-namespace: "${{values.namespace}}"
+    backstage.io/kubernetes-label-selector: "backstage.io/component-id=${{values.name}}"
+spec:
+  type: job
+  lifecycle: experimental
+  owner: ${{ values.owner | default('guest')}}

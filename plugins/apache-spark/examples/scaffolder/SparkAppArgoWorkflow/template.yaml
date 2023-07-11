@@ -1,0 +1,104 @@
+apiVersion: scaffolder.backstage.io/v1beta3
+kind: Template
+metadata:
+  name: apache-spark-argo-workflows
+  title: Apache Spark Application with Argo Workflows
+  description: Creates an Apache Spark Application with Argo Workflows
+spec:
+  owner: guest
+  type: service
+  # these are the steps which are rendered in the frontend with the form input
+  parameters:
+    - title: Fill in some steps
+      required:
+        - name
+        - owner
+      properties:
+        name:
+          title: Application Name
+          type: string
+          description: Unique name of the component
+          ui:autofocus: true
+          ui:options:
+            rows: 5
+        owner:
+          title: Owner
+          type: string
+          description: Owner of the component
+          ui:field: OwnerPicker
+          ui:options:
+            catalogFilter:
+              kind: Group
+#        labels:
+#          title: Labels
+#          type: object
+#          additionalProperties:
+#            type: string
+#          description: Labels to apply to the application
+#          ui:autofocus: true
+        namespace:
+          title: Namespace
+          type: string
+          default: default
+          description: Namespace to deploy this application into. Optional. Defaults to application name.
+          ui:options:
+            rows: 5
+    - title: Fill in some steps
+      required:
+        - manifest
+      properties:
+        manifest:
+          type: string
+          description: 'Paste your Spark Application manifest here'
+          "ui:widget": "textarea"
+          "ui:options": {
+            "inputType": "data",
+            "rows": 15
+          }
+          ui:autofocus: true
+          "ui:placeholder": |
+            apiVersion: "sparkoperator.k8s.io/v1beta2"
+            kind: SparkApplication
+            metadata:
+              name:
+            spec:
+  steps:
+    - id: fetch-base
+      name: Fetch Base
+      action: fetch:template
+      input:
+        url: ./templates
+        values:
+          name: ${{ parameters.name }}
+          namespace: ${{ parameters.namespace }}
+          clusterName: 'cnoe-packaging-2'
+#          labels: ${{ parameters.labels }}
+#          manifest: ${{ parameters.manifest }}
+    - id: write
+      name: write-to-file
+      action: roadiehq:utils:fs:write
+      input:
+        path: input.yaml
+        content: ${{ parameters.manifest }}
+    - id: parse
+      name: deserialize
+      action: roadiehq:utils:fs:parse
+      input:
+        path: input.yaml
+        parser: yaml
+    - id: merge
+      name: Merge
+      action: roadiehq:utils:json:merge
+      input:
+        path: merge.json
+        content: ${{ steps.parse.output.content }}
+    - id: register
+      name: Register
+      action: catalog:register
+      input:
+        catalogInfoPath: 'catalog-info.yaml'
+  output:
+    links:
+      - title: Open in catalog
+        icon: catalog
+        entityRef: ${{ steps['register'].output.entityRef }}

@@ -1,0 +1,130 @@
+apiVersion: scaffolder.backstage.io/v1beta3
+kind: Template
+metadata:
+  name: apache-spark-direct-ui
+  title: Apache Spark job through GUI
+  description: Creates an Apache Spark Application directly without using outside schedulers
+spec:
+  owner: guest
+  type: website
+  # these are the steps which are rendered in the frontend with the form input
+  parameters:
+    - title: About this Job
+      required:
+        - name
+        - owner
+      properties:
+        name:
+          title: Application Name
+          type: string
+          description: Unique name of the component
+          ui:autofocus: true
+        owner:
+          title: Owner
+          type: string
+          description: Owner of the component
+          default: guest
+#          ui:field: OwnerPicker
+#          ui:options:
+#            catalogFilter:
+#              kind: Group
+        namespace:
+          title: Namespace
+          type: string
+          default: default
+          description: Namespace to deploy this application into. Optional. Defaults to application name.
+    - title: Specs for this job
+      required:
+        - jobType
+        - image
+        - mainFile
+        - sparkVersion
+      properties:
+        jobType:
+          type: string
+          enum:
+            - "Python"
+            - "Java"
+            - "Scala"
+            - "R"
+        image:
+          type: string
+          default: "public.ecr.aws/r1l5w1y9/spark-operator:3.2.1-hadoop-3.3.1-java-11-scala-2.12-python-3.8-latest"
+        mainFile:
+          type: string
+          default: "local:///opt/spark/examples/src/main/python/pi.py"
+        sparkVersion:
+          type: string
+          enum:
+            - "3.1.1"
+            - "3.2.1"
+            - "3.3.1"
+            - "3.4.1"
+        driver:
+          type: object
+          properties:
+            driverCores:
+              type: integer
+              default: 1
+            driverMemory:
+              type: string
+              default: "512m"
+        executor:
+          type: object
+          properties:
+            executorCores:
+              type: integer
+              default: 1
+            executorMemory:
+              type: string
+              default: "512m"
+            executorInstances:
+              type: integer
+              default: 1
+  steps:
+    - id: create-repo
+      name: Create Repository
+      action: github:repo:create
+      input:
+        repoUrl: github.com?repo=spark-ui-${{parameters.name}}&owner=manabuOrg
+    - id: fetch-base
+      name: Fetch Base
+      action: fetch:template
+      input:
+        url: ./templates
+        values:
+          params: ${{parameters}}
+          clusterName: 'cnoe-packaging-2'
+          name: ${{parameters.name}}
+          namespace: ${{parameters.namespace}}
+    - id: init-repo
+      name: Initialize Repository
+      action: github:repo:push
+      input:
+        repoUrl: github.com?repo=spark-ui-${{parameters.name}}&owner=manabuOrg
+        defaultBranch: main
+    - id: deserialise
+      name: deserialize manifest
+      action: roadiehq:utils:fs:parse
+      input:
+        path: 'sparkJob.yaml'
+        parser: 'yaml'
+    - id: apply
+      name: apply manifest
+      action: cnoe:kubernetes:apply
+      input:
+        manifestObject: ${{ steps.deserialise.output.content }}
+        namespaced: true
+        clusterName: "cnoe-packaging-2"
+    - id: register
+      name: Register
+      action: catalog:register
+      input:
+        repoContentsUrl: ${{ steps['init-repo'].output.repoContentsUrl }}
+        catalogInfoPath: '/catalog-info.yaml'
+
+  output:
+    links:
+      - title: Open in catalog
+        icon: catalog
+        entityRef: ${{ steps['register'].output.entityRef }}
