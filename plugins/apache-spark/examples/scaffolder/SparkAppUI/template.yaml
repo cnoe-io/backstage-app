@@ -94,7 +94,7 @@ spec:
         url: ./templates
         values:
           params: ${{parameters}}
-          clusterName: 'cnoe-packaging-2'
+          clusterName: 'cnoe-packaging'
           name: ${{parameters.name}}
           namespace: ${{parameters.namespace}}
     - id: init-repo
@@ -115,7 +115,7 @@ spec:
       input:
         manifestObject: ${{ steps.deserialise.output.content }}
         namespaced: true
-        clusterName: "cnoe-packaging-2"
+        clusterName: "cnoe-packaging"
     - id: register
       name: Register
       action: catalog:register

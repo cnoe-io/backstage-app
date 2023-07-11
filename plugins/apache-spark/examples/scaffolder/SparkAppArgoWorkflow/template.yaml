@@ -6,7 +6,7 @@ metadata:
   description: Creates an Apache Spark Application with Argo Workflows
 spec:
   owner: guest
-  type: service
+  type: job
   # these are the steps which are rendered in the frontend with the form input
   parameters:
     - title: Fill in some steps
@@ -29,13 +29,6 @@ spec:
           ui:options:
             catalogFilter:
               kind: Group
-#        labels:
-#          title: Labels
-#          type: object
-#          additionalProperties:
-#            type: string
-#          description: Labels to apply to the application
-#          ui:autofocus: true
         namespace:
           title: Namespace
           type: string
@@ -43,7 +36,7 @@ spec:
           description: Namespace to deploy this application into. Optional. Defaults to application name.
           ui:options:
             rows: 5
-    - title: Fill in some steps
+    - title: Paste your Spark manifest
       required:
         - manifest
       properties:
@@ -67,13 +60,11 @@ spec:
       name: Fetch Base
       action: fetch:template
       input:
-        url: ./templates
+        url: ./templates/SparkManifest
         values:
           name: ${{ parameters.name }}
           namespace: ${{ parameters.namespace }}
-          clusterName: 'cnoe-packaging-2'
-#          labels: ${{ parameters.labels }}
-#          manifest: ${{ parameters.manifest }}
+          clusterName: 'cnoe-packaging'
     - id: write
       name: write-to-file
       action: roadiehq:utils:fs:write
@@ -92,11 +83,46 @@ spec:
       input:
         path: merge.json
         content: ${{ steps.parse.output.content }}
+    - id: deserialise
+      name: deserialize manifest
+      action: roadiehq:utils:fs:parse
+      input:
+        path: 'merge.json'
+        parser: 'json'
+    - id: fetch-base
+      name: Fetch Base
+      action: fetch:template
+      input:
+        url: ./templates/ArgoWorkflowsManifest
+        values:
+          name: ${{ parameters.name }}
+          namespace: ${{ parameters.namespace }}
+          clusterName: 'cnoe-packaging'
+          manifest: ${{ steps.deserialise.output.content }}
+    - id: apply
+      name: apply manifest
+      action: cnoe:kubernetes:apply
+      input:
+        manifestPath: manifest.yaml
+        namespaced: true
+        clusterName: "cnoe-packaging"
+    - id: create-repo
+      name: Create Repository
+      action: github:repo:create
+      input:
+        repoUrl: github.com?repo=spark-ui-${{parameters.name}}&owner=manabuOrg
+    - id: init-repo
+      name: Initialize Repository
+      action: github:repo:push
+      input:
+        repoUrl: github.com?repo=spark-ui-${{parameters.name}}&owner=manabuOrg
+        defaultBranch: main
     - id: register
       name: Register
       action: catalog:register
       input:
         catalogInfoPath: 'catalog-info.yaml'
+        repoContentsUrl: ${{ steps['init-repo'].output.repoContentsUrl }}
   output:
     links:
       - title: Open in catalog
