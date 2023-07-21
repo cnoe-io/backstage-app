@@ -1,6 +1,5 @@
 import { ApacheSpark } from '../../api/model';
 import {
-  Button,
   createStyles,
   IconButton,
   makeStyles,
@@ -87,7 +86,7 @@ export const DrawerContent = ({
           </div>
         </>
       </TabbedLayout.Route>
-      <TabbedLayout.Route path="/logs" title="Logs">
+      <TabbedLayout.Route path="/live-logs" title="Live logs">
         <>
           <div className={classes.logs2}>
             <div className={classes.logs}>

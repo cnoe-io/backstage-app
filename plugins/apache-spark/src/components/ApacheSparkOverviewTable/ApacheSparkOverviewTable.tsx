@@ -7,16 +7,16 @@ import {
   Table,
   TableColumn,
 } from '@backstage/core-components';
-import { useEntity } from '@backstage/plugin-catalog-react';
 import { useApi } from '@backstage/core-plugin-api';
 import { apacheSparkApiRef } from '../../api';
 import React, { useEffect, useState } from 'react';
-import { getAnnotationValues } from '../utils';
 import useAsync from 'react-use/lib/useAsync';
 import { ApacheSpark, ApacheSparkList } from '../../api/model';
 import Alert from '@material-ui/lab/Alert';
 import { createStyles, Drawer, makeStyles, Theme } from '@material-ui/core';
 import { DrawerContent } from '../DetailedDrawer/DetailedDrawer';
+import { getAnnotationValues } from '../utils';
+import { useEntity } from '@backstage/plugin-catalog-react';
 
 type TableData = {
   id: string;
@@ -28,7 +28,7 @@ type TableData = {
   raw: ApacheSpark;
 };
 
-const columns: TableColumn[] = [
+const columns: TableColumn<TableData>[] = [
   {
     title: 'Name',
     field: 'name',
@@ -57,21 +57,17 @@ const useDrawerStyles = makeStyles((theme: Theme) =>
 );
 
 export const ApacheSparkOverviewTable = () => {
-  // const { entity } = useEntity();
   const apiClient = useApi(apacheSparkApiRef);
   const [columnData, setColumnData] = useState([] as TableData[]);
   const [isOpen, toggleDrawer] = useState(false);
   const [drawerData, setDrawerData] = useState({} as ApacheSpark);
   const classes = useDrawerStyles();
-  // const { ns, clusterName, labelSelector } = getAnnotationValues(entity);
+  const { entity } = useEntity();
+  const { ns, clusterName, labelSelector } = getAnnotationValues(entity);
 
   const { value, loading, error } = useAsync(
     async (): Promise<ApacheSparkList> => {
-      return await apiClient.getSparkApps(
-        'cnoe-packaging-2',
-        'default',
-        undefined,
-      );
+      return await apiClient.getSparkApps(clusterName, ns, labelSelector);
     },
   );
 
@@ -124,6 +120,8 @@ export const ApacheSparkOverviewTable = () => {
           paging: true,
           search: true,
           sorting: true,
+          pageSize: 10,
+          pageSizeOptions: [5, 10, 20, 50],
         }}
         onRowClick={(_event, rowData: TableData | undefined) => {
           setDrawerData(rowData?.raw!);

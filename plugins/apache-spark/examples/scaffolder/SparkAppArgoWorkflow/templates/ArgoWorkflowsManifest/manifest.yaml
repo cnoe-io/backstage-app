@@ -1,7 +1,7 @@
 apiVersion: argoproj.io/v1alpha1
 kind: Workflow
 metadata:
-  generateName: "spark-${{values.name}}-"
+  name: "spark-${{values.name}}"
   namespace: "${{values.namespace}}"
   labels:
     backstage.io/component-id: "${{values.name}}"
@@ -15,16 +15,20 @@ spec:
   templates:
     - name: demo-workflow
       steps:
-        - - name: sleep
-            template: sleep
-        - - name: spark-operator
-            template: sparkapp
-    - name: sleep
+        - - name: prepare-resources
+            template: prepare-resources
+        - - name: run-sparkapp
+            template: run-sparkapp
+        - - name: cleanup-resources
+            template: cleanup-resources
+          - name: notify-users
+            template: cleanup-resources
+    - name: prepare-resources
       container:
         image: docker/whalesay
         command: [ sleep ]
-        args: [ "60" ]
-    - name: sparkapp
+        args: [ "10" ]
+    - name: run-sparkapp
       resource:
         action: create
         setOwnerReference: true
@@ -32,3 +36,8 @@ spec:
         failureCondition: status.applicationState.state in (FAILED, ERROR)
         manifest: |
           ${{values.manifest | dump}}
+    - name: cleanup-resources
+      container:
+        image: docker/whalesay
+        command: [ sleep ]
+        args: [ "5" ]

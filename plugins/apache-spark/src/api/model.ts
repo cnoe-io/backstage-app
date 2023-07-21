@@ -1,8 +1,8 @@
 export type Metadata = {
   name: string;
   namespace?: string;
-  labels: Record<string, string>;
-  annotations: Record<string, string>;
+  labels?: Record<string, string>;
+  annotations?: Record<string, string>;
   creationTimestamp: string;
   managedFields?: any;
 };
@@ -51,10 +51,10 @@ export type Spec = {
 
 export type Status = {
   applicationState: {
-    errorMessage: string;
+    errorMessage?: string;
     state: string;
   };
-  driverInfo: {
+  driverInfo?: {
     podName: string;
     webUIAddress: string;
     webUIIngressAddress: string;
@@ -62,13 +62,13 @@ export type Status = {
     webUIPort: string;
     webUIServiceName: string;
   };
-  executionAttempts: number;
-  executorState: { [key: string]: string };
-  lastSubmissionAttemptTime: string;
-  sparkApplicationId: string;
-  submissionAttempts: number;
-  submissionID: string;
-  terminationTime: string;
+  executionAttempts?: number;
+  executorState?: { [key: string]: string };
+  lastSubmissionAttemptTime?: string;
+  sparkApplicationId?: string;
+  submissionAttempts?: number;
+  submissionID?: string;
+  terminationTime?: string;
 };
 
 export type ApacheSpark = {

@@ -4,7 +4,7 @@ import {
   CLUSTER_NAME_ANNOTATION,
   K8S_LABEL_SELECTOR_ANNOTATION,
   K8S_NAMESPACE_ANNOTATION,
-} from '../plugin';
+} from '../consts';
 
 export type getAnnotationValuesOutput = {
   ns: string;

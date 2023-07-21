@@ -11,15 +11,19 @@ import {
 } from '@backstage/core-components';
 import Alert from '@material-ui/lab/Alert';
 import React, { useEffect, useState } from 'react';
+import { useEntity } from '@backstage/plugin-catalog-react';
+import { getAnnotationValues } from '../utils';
 
 export const ApacheSparkDriverLogs = (props: { sparkApp: ApacheSpark }) => {
   const apiClient = useApi(apacheSparkApiRef);
+  const { entity } = useEntity();
+  const { ns, clusterName } = getAnnotationValues(entity);
 
   const { value, loading, error } = useAsync(async (): Promise<string> => {
     return await apiClient.getLogs(
-      'cnoe-packaging-2',
-      'default',
-      props.sparkApp.status.driverInfo.podName,
+      clusterName,
+      ns,
+      props.sparkApp.status.driverInfo?.podName!,
       'spark-kubernetes-driver',
     );
   }, [props]);
@@ -33,13 +37,16 @@ export const ApacheSparkDriverLogs = (props: { sparkApp: ApacheSpark }) => {
 
 const ExecutorLogs = (props: { name: string }) => {
   const apiClient = useApi(apacheSparkApiRef);
+  const { entity } = useEntity();
   const [logs, setLogs] = useState('');
+  const { ns, clusterName } = getAnnotationValues(entity);
+
   useEffect(() => {
     async function getLogs() {
       try {
         const val = await apiClient.getLogs(
-          'cnoe-packaging-2',
-          'default',
+          clusterName,
+          ns,
           props.name,
           'spark-kubernetes-executor',
         );
@@ -53,7 +60,7 @@ const ExecutorLogs = (props: { name: string }) => {
     if (props.name !== '') {
       getLogs();
     }
-  }, [apiClient, props]);
+  }, [apiClient, clusterName, ns, props]);
 
   return <LogViewer text={logs!} />;
 };

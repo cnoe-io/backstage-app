@@ -1,4 +1,4 @@
-import { createStyles, makeStyles, Theme } from '@material-ui/core';
+import { createStyles, makeStyles } from '@material-ui/core';
 import { ApacheSpark } from '../../api/model';
 import {
   InfoCard,
@@ -47,7 +47,7 @@ function generateMetadata(sparkApp: ApacheSpark): generateMetadataOutput {
     }
   }
   out.app = app;
-  out.driver = sparkApp.status.driverInfo;
+  out.driver = sparkApp.status.driverInfo ? sparkApp.status.driverInfo : {};
   out.executor = executor;
   return out;
 }

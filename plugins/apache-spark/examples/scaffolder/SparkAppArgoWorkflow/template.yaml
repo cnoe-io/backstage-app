@@ -121,7 +121,7 @@ spec:
       name: Register
       action: catalog:register
       input:
-        catalogInfoPath: 'catalog-info.yaml'
+        catalogInfoPath: '/catalog-info.yaml'
         repoContentsUrl: ${{ steps['init-repo'].output.repoContentsUrl }}
   output:
     links:

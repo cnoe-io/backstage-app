@@ -11,10 +11,9 @@ This plugin allows you to display information related to your Apache Spark Appli
 
 ### Configuration
 
-Entities must be annotated with Kubernetes annotations. For example:
-
 [The Kubernetes plugin](https://backstage.io/docs/features/kubernetes/) must also be installed and enabled.  
 
+Entities must be annotated with Kubernetes annotations. For example:
 ```yaml
 apiVersion: backstage.io/v1alpha1
 kind: Component

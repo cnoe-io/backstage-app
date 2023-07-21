@@ -46,14 +46,16 @@ export class ApacheSparkClient implements ApacheSparkApi {
   async getSparkApps(
     clusterName: string | undefined,
     namespace: string | undefined,
-    labels: string,
+    labels: string | undefined,
   ): Promise<ApacheSparkList> {
     const ns = namespace !== undefined ? namespace : 'default';
     const path = `/apis/${API_VERSION}/namespaces/${ns}/${SPARK_APP_PLURAL}`;
     const query = new URLSearchParams({
       [K8s_API_TIMEOUT]: '30',
-      // labelSelector: labels,
     });
+    if (labels) {
+      query.set('labelSelector', labels);
+    }
     const resp = await this.kubernetesApi.proxy({
       clusterName:
         clusterName !== undefined ? clusterName : await this.getFirstCluster(),
