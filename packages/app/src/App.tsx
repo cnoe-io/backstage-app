@@ -11,6 +11,7 @@ import {
   catalogImportPlugin,
 } from '@backstage/plugin-catalog-import';
 import { ScaffolderPage, scaffolderPlugin } from '@backstage/plugin-scaffolder';
+import { ScaffolderFieldExtensions } from '@backstage/plugin-scaffolder-react';
 import { orgPlugin } from '@backstage/plugin-org';
 import { SearchPage } from '@backstage/plugin-search';
 import { TechRadarPage } from '@backstage/plugin-tech-radar';
@@ -22,35 +23,39 @@ import {
 import { TechDocsAddons } from '@backstage/plugin-techdocs-react';
 import { ReportIssue } from '@backstage/plugin-techdocs-module-addons-contrib';
 import { UserSettingsPage } from '@backstage/plugin-user-settings';
-import {apis} from './apis';
-import {keycloakOIDCAuthApiRef} from "@internal/plugin-workflows"
+import { apis, keycloakOIDCAuthApiRef } from './apis';
 import { entityPage } from './components/catalog/EntityPage';
 import { searchPage } from './components/search/SearchPage';
 import { Root } from './components/Root';
 
-import {AlertDisplay, OAuthRequestDialog, SignInPage} from '@backstage/core-components';
+import {
+  AlertDisplay,
+  OAuthRequestDialog,
+  SignInPage,
+} from '@backstage/core-components';
 import { createApp } from '@backstage/app-defaults';
 import { AppRouter, FlatRoutes } from '@backstage/core-app-api';
 import { CatalogGraphPage } from '@backstage/plugin-catalog-graph';
 import { RequirePermission } from '@backstage/plugin-permission-react';
 import { catalogEntityCreatePermission } from '@backstage/plugin-catalog-common/alpha';
+import { GetK8sOIDCTokenExtension } from './scaffolder/credentials';
 
 const app = createApp({
   apis,
   components: {
     // SignInPage: (props) => <ProxiedSignInPage {...props} provider="oauth2Proxy" />,
-      SignInPage: props => (
-          <SignInPage
-              {...props}
-              auto
-              provider={{
-                  id: 'keycloak-oidc',
-                  title: 'Keycloak',
-                  message: 'Sign in using Keycloak',
-                  apiRef: keycloakOIDCAuthApiRef,
-              }}
-          />
-      ),
+    SignInPage: props => (
+      <SignInPage
+        {...props}
+        auto
+        provider={{
+          id: 'keycloak-oidc',
+          title: 'Keycloak',
+          message: 'Sign in using Keycloak',
+          apiRef: keycloakOIDCAuthApiRef,
+        }}
+      />
+    ),
   },
   bindRoutes({ bind }) {
     bind(catalogPlugin.externalRoutes, {
@@ -88,7 +93,11 @@ const routes = (
         <ReportIssue />
       </TechDocsAddons>
     </Route>
-    <Route path="/create" element={<ScaffolderPage />} />
+    <Route path="/create" element={<ScaffolderPage />}>
+      <ScaffolderFieldExtensions>
+        <GetK8sOIDCTokenExtension />
+      </ScaffolderFieldExtensions>
+    </Route>
     <Route path="/api-docs" element={<ApiExplorerPage />} />
     <Route
       path="/tech-radar"

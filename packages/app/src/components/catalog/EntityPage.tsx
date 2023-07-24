@@ -58,7 +58,13 @@ import { ReportIssue } from '@backstage/plugin-techdocs-module-addons-contrib';
 
 import { EntityKubernetesContent } from '@backstage/plugin-kubernetes';
 
-import {EntityWorkflowsContent} from '@internal/plugin-workflows'
+import {
+  EntityArgoWorkflowsOverviewCard,
+  EntityArgoWorkflowsTemplateOverviewCard,
+  isArgoWorkflowsAvailable,
+} from '@cnoe-io/plugin-argo-workflows';
+
+import { ApacheSparkPage } from '@cnoe-io/plugin-apache-spark';
 
 const techdocsContent = (
   <EntityTechdocsContent>
@@ -121,6 +127,16 @@ const overviewContent = (
     <Grid item md={6}>
       <EntityAboutCard variant="gridItem" />
     </Grid>
+    <EntitySwitch>
+      <EntitySwitch.Case if={e => isArgoWorkflowsAvailable(e)}>
+        <Grid item md={6}>
+          <EntityArgoWorkflowsOverviewCard />
+        </Grid>
+        <Grid item md={6}>
+          <EntityArgoWorkflowsTemplateOverviewCard />
+        </Grid>
+      </EntitySwitch.Case>
+    </EntitySwitch>
     <Grid item md={6} xs={12}>
       <EntityCatalogGraphCard variant="gridItem" height={400} />
     </Grid>
@@ -199,6 +215,17 @@ const websiteEntityPage = (
   </EntityLayout>
 );
 
+const jobEntityPage = (
+  <EntityLayout>
+    <EntityLayout.Route path="/" title="Overview">
+      {overviewContent}
+    </EntityLayout.Route>
+    <EntityLayout.Route path="/apache-spark" title="Apache Spark">
+      <ApacheSparkPage />
+    </EntityLayout.Route>
+  </EntityLayout>
+);
+
 /**
  * NOTE: This page is designed to work on small screens such as mobile devices.
  * This is based on Material UI Grid. If breakpoints are used, each grid item must set the `xs` prop to a column size or to `true`,
@@ -226,6 +253,9 @@ const componentPage = (
 
     <EntitySwitch.Case if={isComponentType('website')}>
       {websiteEntityPage}
+    </EntitySwitch.Case>
+    <EntitySwitch.Case if={isComponentType('job')}>
+      {jobEntityPage}
     </EntitySwitch.Case>
 
     <EntitySwitch.Case>{defaultEntityPage}</EntitySwitch.Case>
@@ -348,9 +378,6 @@ const systemPage = (
     </EntityLayout.Route>
     <EntityLayout.Route path="/kubernetes" title="Kubernetes">
       <EntityKubernetesContent refreshIntervalMs={30000} />
-    </EntityLayout.Route>
-    <EntityLayout.Route path="/workflows" title="Workflows">
-      <EntityWorkflowsContent />
     </EntityLayout.Route>
   </EntityLayout>
 );
