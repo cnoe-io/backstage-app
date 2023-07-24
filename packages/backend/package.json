@@ -36,6 +36,8 @@
     "@backstage/plugin-search-backend-module-pg": "^0.5.6",
     "@backstage/plugin-search-backend-node": "^1.2.1",
     "@backstage/plugin-techdocs-backend": "^1.6.2",
+    "@backstage/types": "^1.1.0",
+    "@internal/plugin-argo-workflows-backend-backend": "^0.1.0",
     "@kubernetes/client-node": "^0.18.1",
     "@roadiehq/scaffolder-backend-module-utils": "^1.8.7",
     "app": "link:../app",
@@ -44,7 +46,8 @@
     "express": "^4.17.1",
     "express-promise-router": "^4.1.0",
     "pg": "^8.3.0",
-    "winston": "^3.2.1"
+    "winston": "^3.2.1",
+    "yaml": "^2.3.1"
   },
   "devDependencies": {
     "@backstage/cli": "^0.22.7",

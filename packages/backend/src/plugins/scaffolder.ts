@@ -1,9 +1,12 @@
 import { CatalogClient } from '@backstage/catalog-client';
-import {createBuiltinActions, createRouter} from '@backstage/plugin-scaffolder-backend';
+import {
+  createBuiltinActions,
+  createRouter,
+} from '@backstage/plugin-scaffolder-backend';
 import { Router } from 'express';
 import type { PluginEnvironment } from '../types';
 import { ScmIntegrations } from '@backstage/integration';
-import {createInvokeArgoAction} from './workflow-argo'
+import { createInvokeArgoAction } from './workflow-argo';
 import {
   createZipAction,
   createSleepAction,
@@ -18,6 +21,7 @@ import {
   createYamlJSONataTransformAction,
   createJsonJSONataTransformAction,
 } from '@roadiehq/scaffolder-backend-module-utils';
+import { kubernetesApply } from './kubernetes-apply';
 
 export default async function createPlugin(
   env: PluginEnvironment,
@@ -34,7 +38,7 @@ export default async function createPlugin(
     reader: env.reader,
   });
 
-  const scaffolderBackendModuleUtils =  [
+  const scaffolderBackendModuleUtils = [
     createZipAction(),
     createSleepAction(),
     createWriteFileAction(),
@@ -46,10 +50,15 @@ export default async function createPlugin(
     createSerializeJsonAction(),
     createJSONataAction(),
     createYamlJSONataTransformAction(),
-    createJsonJSONataTransformAction()
-  ]
-  
-  const actions = [...builtInActions, ...scaffolderBackendModuleUtils, createInvokeArgoAction(env.config, env.logger)];
+    createJsonJSONataTransformAction(),
+  ];
+
+  const actions = [
+    ...builtInActions,
+    ...scaffolderBackendModuleUtils,
+    createInvokeArgoAction(env.config, env.logger),
+    kubernetesApply(env.config),
+  ];
 
   return await createRouter({
     actions: actions,

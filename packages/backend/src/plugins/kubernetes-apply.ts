@@ -64,7 +64,7 @@ export const kubernetesApply = (config: Config) => {
       const words = obj.apiVersion.split('/');
       const group = words[0];
       const version = words[1];
-      //hack. needs fixing to correctly extract the plurals
+      // hack. needs fixing to correctly extract the plurals
       const plural = `${obj.kind.toLowerCase()}s`;
       const targetCluster = getClusterConfig(ctx.input.clusterName!, config);
       // hack. needs fixing to get the KubeConfig info from app-config.yaml
