@@ -1,8 +1,0 @@
-{
-  "metadata": {
-    "namespace": "${{values.namespace}}",
-    "labels": {
-      "backstage.io/component-id": "${{values.name}}"
-    }
-  }
-}
