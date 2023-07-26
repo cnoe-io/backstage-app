@@ -38,7 +38,7 @@ import { AppRouter, FlatRoutes } from '@backstage/core-app-api';
 import { CatalogGraphPage } from '@backstage/plugin-catalog-graph';
 import { RequirePermission } from '@backstage/plugin-permission-react';
 import { catalogEntityCreatePermission } from '@backstage/plugin-catalog-common/alpha';
-import { GetK8sOIDCTokenExtension } from './scaffolder/credentials';
+import { KubernetesClusterPickerExtension } from './scaffolder/kubernetesClusterPicker';
 
 const app = createApp({
   apis,
@@ -95,7 +95,7 @@ const routes = (
     </Route>
     <Route path="/create" element={<ScaffolderPage />}>
       <ScaffolderFieldExtensions>
-        <GetK8sOIDCTokenExtension />
+        <KubernetesClusterPickerExtension />
       </ScaffolderFieldExtensions>
     </Route>
     <Route path="/api-docs" element={<ApiExplorerPage />} />
