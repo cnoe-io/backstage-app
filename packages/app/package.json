@@ -46,7 +46,7 @@
     "@backstage/plugin-user-settings": "^0.7.5",
     "@backstage/theme": "^0.4.1",
     "@cnoe-io/plugin-apache-spark": "0.1.1",
-    "@cnoe-io/plugin-argo-workflows": "0.1.1",
+    "@cnoe-io/plugin-argo-workflows": "0.1.2",
     "@cnoe-io/plugin-scaffolder-actions-frontend": "0.1.1",
     "@internal/plugin-workflows": "^0.1.0",
     "@internal/cnoe-ui-plugin": "^0.1.0",
