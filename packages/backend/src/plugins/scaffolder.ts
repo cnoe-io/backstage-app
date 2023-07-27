@@ -21,7 +21,11 @@ import {
   createYamlJSONataTransformAction,
   createJsonJSONataTransformAction,
 } from '@roadiehq/scaffolder-backend-module-utils';
-import { kubernetesApply } from './kubernetes-apply';
+import {
+  createKubernetesApply,
+  createSanitizeResource,
+  createVerifyDependency,
+} from '@cnoe-io/plugin-scaffolder-actions';
 
 export default async function createPlugin(
   env: PluginEnvironment,
@@ -53,11 +57,17 @@ export default async function createPlugin(
     createJsonJSONataTransformAction(),
   ];
 
+  const cnoeActions = [
+    createSanitizeResource(),
+    createVerifyDependency(),
+    createKubernetesApply(env.config),
+  ];
+
   const actions = [
     ...builtInActions,
     ...scaffolderBackendModuleUtils,
+    ...cnoeActions,
     createInvokeArgoAction(env.config, env.logger),
-    kubernetesApply(env.config),
   ];
 
   return await createRouter({

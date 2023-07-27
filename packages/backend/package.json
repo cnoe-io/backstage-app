@@ -37,6 +37,7 @@
     "@backstage/plugin-search-backend-node": "^1.2.1",
     "@backstage/plugin-techdocs-backend": "^1.6.2",
     "@backstage/types": "^1.1.0",
+    "@cnoe-io/plugin-scaffolder-actions": "0.1.0",
     "@kubernetes/client-node": "^0.18.1",
     "@roadiehq/scaffolder-backend-module-utils": "^1.8.7",
     "app": "link:../app",
