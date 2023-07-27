@@ -40,6 +40,11 @@ import { RequirePermission } from '@backstage/plugin-permission-react';
 import { catalogEntityCreatePermission } from '@backstage/plugin-catalog-common/alpha';
 import { KubernetesClusterPickerExtension } from '@cnoe-io/plugin-scaffolder-actions-frontend';
 
+import { ThemeProvider } from '@material-ui/core/styles';
+import CssBaseline from '@material-ui/core/CssBaseline';
+import LightIcon from '@material-ui/icons/WbSunny';
+import {CNOEHomepage, cnoeLightTheme, cnoeDarkTheme} from '@internal/cnoe-ui-plugin'
+
 const app = createApp({
   apis,
   components: {
@@ -72,11 +77,36 @@ const app = createApp({
       catalogIndex: catalogPlugin.routes.catalogIndex,
     });
   },
+  themes: [
+    {
+      id: 'cnoe-light-theme',
+      title: 'Light Theme',
+      variant: 'light',
+      icon: <LightIcon />,
+      Provider: ({ children }) => (
+        <ThemeProvider theme={cnoeLightTheme}>
+          <CssBaseline>{children}</CssBaseline>
+        </ThemeProvider>
+      ),
+    },
+    {
+      id: 'cnoe-dark-theme',
+      title: 'Dark Theme',
+      variant: 'dark',
+      icon: <LightIcon />,
+      Provider: ({ children }) => (
+        <ThemeProvider theme={cnoeDarkTheme}>
+          <CssBaseline>{children}</CssBaseline>
+        </ThemeProvider>
+      ),
+    },
+  ]
 });
 
 const routes = (
   <FlatRoutes>
-    <Route path="/" element={<Navigate to="catalog" />} />
+    <Route path="/" element={<Navigate to="home" />} />
+    <Route path="/home" element={<CNOEHomepage/>} />
     <Route path="/catalog" element={<CatalogIndexPage />} />
     <Route
       path="/catalog/:namespace/:kind/:name"
