@@ -27,6 +27,9 @@ node_modules/
 # Node version directives
 .nvmrc
 
+# NPM config files
+.npmrc
+
 # dotenv environment variables file
 .env
 .env.test
@@ -49,3 +52,6 @@ site
 
 # vscode database functionality support files
 *.session.sql
+
+# JetBrains
+.idea

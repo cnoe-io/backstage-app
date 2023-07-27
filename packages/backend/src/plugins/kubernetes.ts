@@ -4,13 +4,15 @@ import { PluginEnvironment } from '../types';
 import { CatalogClient } from '@backstage/catalog-client';
 
 export default async function createPlugin(
-    env: PluginEnvironment,
+  env: PluginEnvironment,
 ): Promise<Router> {
-    const catalogApi = new CatalogClient({discoveryApi: env.discovery});
-    const {router} = await KubernetesBuilder.createBuilder({
-        logger: env.logger,
-        config: env.config,
-        catalogApi,
-    }).build();
-    return router;
+  const catalogApi = new CatalogClient({ discoveryApi: env.discovery });
+  const { router } = await KubernetesBuilder.createBuilder({
+    logger: env.logger,
+    config: env.config,
+    catalogApi,
+    permissions: env.permissions,
+  }).build();
+
+  return router;
 }

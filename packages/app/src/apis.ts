@@ -5,19 +5,24 @@ import {
 } from '@backstage/integration-react';
 import {
   AnyApiFactory,
+  ApiRef,
+  BackstageIdentityApi,
   configApiRef,
   createApiFactory,
+  createApiRef,
   discoveryApiRef,
   oauthRequestApiRef,
+  OpenIdConnectApi,
+  ProfileInfoApi,
+  SessionApi,
 } from '@backstage/core-plugin-api';
-import {OAuth2} from "@backstage/core-app-api";
-import {keycloakOIDCAuthApiRef} from "@internal/plugin-workflows"
+import { OAuth2 } from '@backstage/core-app-api';
 
-// export const keycloakOIDCAuthApiRef: ApiRef<
-//     OpenIdConnectApi & ProfileInfoApi & BackstageIdentityApi & SessionApi
-// > = createApiRef({
-//     id: 'auth.keycloak-oidc-provider',
-// });
+export const keycloakOIDCAuthApiRef: ApiRef<
+  OpenIdConnectApi & ProfileInfoApi & BackstageIdentityApi & SessionApi
+> = createApiRef({
+  id: 'auth.keycloak-oidc-provider',
+});
 export const apis: AnyApiFactory[] = [
   createApiFactory({
     api: scmIntegrationsApiRef,
@@ -32,7 +37,7 @@ export const apis: AnyApiFactory[] = [
       oauthRequestApi: oauthRequestApiRef,
       configApi: configApiRef,
     },
-    factory: ({discoveryApi, oauthRequestApi, configApi}) =>
+    factory: ({ discoveryApi, oauthRequestApi, configApi }) =>
       OAuth2.create({
         discoveryApi,
         oauthRequestApi,
@@ -42,7 +47,7 @@ export const apis: AnyApiFactory[] = [
           icon: () => null,
         },
         environment: configApi.getOptionalString('auth.environment'),
-        defaultScopes: ['openid', 'profile', 'email'],
+        defaultScopes: ['openid', 'profile', 'email', 'groups'],
       }),
   }),
 ];
