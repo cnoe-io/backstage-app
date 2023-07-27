@@ -3308,7 +3308,7 @@
     zen-observable "^0.10.0"
     zod "^3.21.4"
 
-"@backstage/core-components@^0.13.1", "@backstage/core-components@^0.13.3":
+"@backstage/core-components@^0.13.3":
   version "0.13.3"
   resolved "https://registry.npmmirror.com/@backstage/core-components/-/core-components-0.13.3.tgz#902250e78a8e4deac6d3d364a378d7ce0c7fb098"
   integrity sha512-nIggdzIOQmz6mrOLqX06R3akIDM0WWNnj1oGhuiF+vX8PoJC7ZLqeQRg2jpVkVYLkYTRnjcwb1aWFc4S7m89cQ==
@@ -3355,7 +3355,7 @@
     zen-observable "^0.10.0"
     zod "^3.21.4"
 
-"@backstage/core-plugin-api@^1.5.1", "@backstage/core-plugin-api@^1.5.3":
+"@backstage/core-plugin-api@^1.5.3":
   version "1.5.3"
   resolved "https://registry.npmmirror.com/@backstage/core-plugin-api/-/core-plugin-api-1.5.3.tgz#2b28aa74c97d012873f676479c477e26849e44d3"
   integrity sha512-GMqzfpyJkGoZyLOE0zj95kWUE9XC7hNyhiOCW81bq0MsjhoQ8PM4TyuvVi3WhiexC4/zmkZpNjhUKnx1yuhhvg==
@@ -3675,7 +3675,7 @@
     "@backstage/plugin-catalog-common" "^1.0.15"
     "@backstage/types" "^1.1.0"
 
-"@backstage/plugin-catalog-react@^1.7.0", "@backstage/plugin-catalog-react@^1.8.0":
+"@backstage/plugin-catalog-react@^1.8.0":
   version "1.8.0"
   resolved "https://registry.npmmirror.com/@backstage/plugin-catalog-react/-/plugin-catalog-react-1.8.0.tgz#bbd98c7ad04252ee1638295c60684cf6467e3bfe"
   integrity sha512-OOsm8ocvpy6kHgn2a/6zbz/CtMn3XCvAIy8sY6rTFYkwlauNsL9oktppkxzU5Vp1IWGu4Ot1kmjBP0tx6Z7POw==
@@ -3812,7 +3812,7 @@
     "@backstage/plugin-permission-common" "^0.7.7"
     "@kubernetes/client-node" "0.18.1"
 
-"@backstage/plugin-kubernetes@^0.9.2", "@backstage/plugin-kubernetes@^0.9.3":
+"@backstage/plugin-kubernetes@^0.9.3":
   version "0.9.3"
   resolved "https://cnoe-833162080385.d.codeartifact.us-west-2.amazonaws.com/npm/cnoe/@backstage/plugin-kubernetes/-/plugin-kubernetes-0.9.3.tgz#75b5d50b8338e35dbd9b8d1bc2c1fb7521ac7823"
   integrity sha512-gLQ6VZKDqZofMySV4ZJwLUNqedySRH4I1vaT37kl+cdJr62ingpfhqFdliwZyecauslxLfidZhq3KzaPm0hTsg==
@@ -3918,7 +3918,7 @@
     yn "^4.0.0"
     yup "^0.32.9"
 
-"@backstage/plugin-scaffolder-backend@^1.14.0", "@backstage/plugin-scaffolder-backend@^1.15.1", "@backstage/plugin-scaffolder-backend@^1.7.0":
+"@backstage/plugin-scaffolder-backend@^1.14.0", "@backstage/plugin-scaffolder-backend@^1.15.1":
   version "1.15.1"
   resolved "https://cnoe-833162080385.d.codeartifact.us-west-2.amazonaws.com/npm/cnoe/@backstage/plugin-scaffolder-backend/-/plugin-scaffolder-backend-1.15.1.tgz#81d25f84f84c6ec08e99358cc2972bbc692c2d1c"
   integrity sha512-7qiP0J+ueGBRjYuxpTLoOqHzZ5qZgNU2YqpVckrR7dMF3aTTxa9ggjH3AaL5ksxt8fuG1N5GC/3ltGITUMyc+Q==
@@ -4429,13 +4429,6 @@
     cross-fetch "^3.1.5"
     zen-observable "^0.10.0"
 
-"@backstage/theme@^0.3.0":
-  version "0.3.0"
-  resolved "https://registry.npmmirror.com/@backstage/theme/-/theme-0.3.0.tgz#453f1200578dac1a9e65182cccceb6e5bac14b50"
-  integrity sha512-em6tubxECvYBEJrboPGwc0pEtt0BZD0ujPSHbxXMslUfhpMfGELYvfupKmegm//iQl8D6wP8D/B6tIMx5YvjtQ==
-  dependencies:
-    "@material-ui/core" "^4.12.2"
-
 "@backstage/theme@^0.4.1":
   version "0.4.1"
   resolved "https://registry.npmmirror.com/@backstage/theme/-/theme-0.4.1.tgz#7156a7e781ed8cc42d767cba2f1c7f26e957200d"
@@ -4445,7 +4438,7 @@
     "@emotion/styled" "^11.10.5"
     "@mui/material" "^5.12.2"
 
-"@backstage/types@^1.0.0", "@backstage/types@^1.0.2", "@backstage/types@^1.1.0":
+"@backstage/types@^1.0.2", "@backstage/types@^1.1.0":
   version "1.1.0"
   resolved "https://registry.npmmirror.com/@backstage/types/-/types-1.1.0.tgz#cf33e0c20584e329308acca2e5fa0435f04d4ea5"
   integrity sha512-lpzZD52WHCg+i7anibmIwC3045KVOAUJ8Reoeh74+14SAQ8DTT9aUAxmH8mOFnWzDSr7XnbY5ms8Y8qWRzn2VA==
@@ -4477,17 +4470,17 @@
   resolved "https://registry.npmmirror.com/@changesets/types/-/types-4.1.0.tgz#fb8f7ca2324fd54954824e864f9a61a82cb78fe0"
   integrity sha512-LDQvVDv5Kb50ny2s25Fhm3d9QSZimsoUGBsUioj6MC3qbMUCuC8GPIvk/M6IvXx3lYhAs0lwWUQLb+VIEUCECw==
 
-"@cnoe-io/plugin-apache-spark@0.1.0":
-  version "0.1.0"
-  resolved "https://cnoe-833162080385.d.codeartifact.us-west-2.amazonaws.com/npm/cnoe/@cnoe-io/plugin-apache-spark/-/plugin-apache-spark-0.1.0.tgz#8f8919a75090542ddc1d9250e70511c6d6d28a31"
-  integrity sha512-2Is27wxSAj6ANeJLVQW6MT3hjsIxJND+G+lyK2i3m4SCvQbtJRQAmqGwoBziBzfgZSVI8zUWjQG/r8LrzDUWVQ==
+"@cnoe-io/plugin-apache-spark@0.1.1":
+  version "0.1.1"
+  resolved "https://cnoe-833162080385.d.codeartifact.us-west-2.amazonaws.com/npm/cnoe/@cnoe-io/plugin-apache-spark/-/plugin-apache-spark-0.1.1.tgz#dc2787cbe6f886eddb07888efae556c8a6224ffc"
+  integrity sha512-nlNkpSczoBV5WAB6OC+YRXUsbVrlxhGZ0rdeEqOvSu5pIgRa54OG9Wg7E8lPoBoM0WCbykdR8JyPBKF7CtLK2w==
   dependencies:
     "@backstage/catalog-model" "^1.4.1"
-    "@backstage/core-components" "^0.13.1"
-    "@backstage/core-plugin-api" "^1.5.1"
-    "@backstage/plugin-catalog-react" "^1.7.0"
-    "@backstage/plugin-kubernetes" "^0.9.2"
-    "@backstage/theme" "^0.3.0"
+    "@backstage/core-components" "^0.13.3"
+    "@backstage/core-plugin-api" "^1.5.3"
+    "@backstage/plugin-catalog-react" "^1.8.0"
+    "@backstage/plugin-kubernetes" "^0.9.3"
+    "@backstage/theme" "^0.4.1"
     "@material-ui/core" "^4.12.2"
     "@material-ui/icons" "^4.9.1"
     "@material-ui/lab" "4.0.0-alpha.61"
@@ -4496,34 +4489,34 @@
     react-router-dom "6.0.0-beta.0 || ^6.3.0"
     yaml "^2.3.1"
 
-"@cnoe-io/plugin-argo-workflows@0.1.0":
-  version "0.1.0"
-  resolved "https://cnoe-833162080385.d.codeartifact.us-west-2.amazonaws.com/npm/cnoe/@cnoe-io/plugin-argo-workflows/-/plugin-argo-workflows-0.1.0.tgz#50749419ffaf829b790583cbeda4a1429c979ad1"
-  integrity sha512-egCiZqSbFBkv5ueohxqs7WL72lKfc2tSi0TryFcKferSewKmv10kaDGWfoT73AUzPgAOckrSl+lpXzuGYh3hIA==
+"@cnoe-io/plugin-argo-workflows@0.1.1":
+  version "0.1.1"
+  resolved "https://cnoe-833162080385.d.codeartifact.us-west-2.amazonaws.com/npm/cnoe/@cnoe-io/plugin-argo-workflows/-/plugin-argo-workflows-0.1.1.tgz#33ca7c73614d797e9039e2aed1957a506c79a2d7"
+  integrity sha512-Z7y6EFVe3u/Sjv+2iGlVe9j7H5i6iP+50frSJi1Zjc2wOAeFGHWafRQiUI81AjjmNxI0kbZHM4YPa6rwecl5Uw==
   dependencies:
     "@backstage/catalog-model" "^1.4.1"
-    "@backstage/core-components" "^0.13.1"
-    "@backstage/core-plugin-api" "^1.5.1"
-    "@backstage/plugin-catalog-react" "^1.7.0"
-    "@backstage/plugin-kubernetes" "^0.9.2"
-    "@backstage/theme" "^0.3.0"
+    "@backstage/core-components" "^0.13.3"
+    "@backstage/core-plugin-api" "^1.5.3"
+    "@backstage/plugin-catalog-react" "^1.8.0"
+    "@backstage/plugin-kubernetes" "^0.9.3"
+    "@backstage/theme" "^0.4.1"
     "@material-ui/core" "^4.12.2"
     "@material-ui/icons" "^4.9.1"
     "@material-ui/lab" "4.0.0-alpha.61"
     react-use "^17.2.4"
 
-"@cnoe-io/plugin-scaffolder-actions-frontend@0.1.0":
-  version "0.1.0"
-  resolved "https://cnoe-833162080385.d.codeartifact.us-west-2.amazonaws.com/npm/cnoe/@cnoe-io/plugin-scaffolder-actions-frontend/-/plugin-scaffolder-actions-frontend-0.1.0.tgz#6a00e3e2b9fa3e1e8bf9a8504db189a8504a0cf8"
-  integrity sha512-SeXEA/Ngvpn4p7v+FJpCsvCVS+Tj7vonAFdhmr1sx5FVUqTi807zuTzcjnZWDlPAjBrIryospduokUKPzTz4Yw==
+"@cnoe-io/plugin-scaffolder-actions-frontend@0.1.1":
+  version "0.1.1"
+  resolved "https://cnoe-833162080385.d.codeartifact.us-west-2.amazonaws.com/npm/cnoe/@cnoe-io/plugin-scaffolder-actions-frontend/-/plugin-scaffolder-actions-frontend-0.1.1.tgz#8d7cb82c9a673e324e00371347a5b17e5af0c4a1"
+  integrity sha512-uopuDShOprwM5CONps5GPCRktS0YKDtn0wJ1ghkh8B20202iRuW1YowLgS67axR9W0QpsD00A223iL1febtBsg==
   dependencies:
     "@backstage/catalog-model" "^1.4.1"
-    "@backstage/core-components" "^0.13.1"
-    "@backstage/core-plugin-api" "^1.5.1"
-    "@backstage/plugin-catalog-react" "^1.7.0"
-    "@backstage/plugin-kubernetes" "^0.9.2"
+    "@backstage/core-components" "^0.13.3"
+    "@backstage/core-plugin-api" "^1.5.3"
+    "@backstage/plugin-catalog-react" "^1.8.0"
+    "@backstage/plugin-kubernetes" "^0.9.3"
     "@backstage/plugin-scaffolder" "^1.14.1"
-    "@backstage/theme" "^0.3.0"
+    "@backstage/theme" "^0.4.1"
     "@material-ui/core" "^4.12.2"
     "@material-ui/icons" "^4.9.1"
     "@material-ui/lab" "4.0.0-alpha.61"
@@ -4532,14 +4525,14 @@
     react-router-dom "6.0.0-beta.0 || ^6.3.0"
     yaml "^2.3.1"
 
-"@cnoe-io/plugin-scaffolder-actions@0.1.0":
-  version "0.1.0"
-  resolved "https://cnoe-833162080385.d.codeartifact.us-west-2.amazonaws.com/npm/cnoe/@cnoe-io/plugin-scaffolder-actions/-/plugin-scaffolder-actions-0.1.0.tgz#b4f8f5b178b4abf55caec62847af5bad01a471ad"
-  integrity sha512-DuuvbGSLYoJB2RHar9T+AI8K7TpX5eW38qgXMRB3SH0DzwJsZOz3R2HkkTIQnrHqK1HXIbm/7PIPzrM33BEDVw==
+"@cnoe-io/plugin-scaffolder-actions@0.1.1":
+  version "0.1.1"
+  resolved "https://cnoe-833162080385.d.codeartifact.us-west-2.amazonaws.com/npm/cnoe/@cnoe-io/plugin-scaffolder-actions/-/plugin-scaffolder-actions-0.1.1.tgz#5a6abab095d898aac9f2686b10392e8e8cc60bd2"
+  integrity sha512-5uQQbQUlT8xvw5HAfnGR0iHGvknS3TazIc66cOpNZUoOo9vuLOwEwIa4uOHEaE+AT8yY/LNMjKxYXzsozrtGKA==
   dependencies:
     "@backstage/integration" "^1.5.1"
-    "@backstage/plugin-scaffolder-backend" "^1.7.0"
-    "@backstage/types" "^1.0.0"
+    "@backstage/plugin-scaffolder-backend" "^1.15.1"
+    "@backstage/types" "^1.1.0"
     "@kubernetes/client-node" "^0.17.1"
     "@octokit/rest" "^19.0.5"
     command-exists "^1.2.9"
@@ -9290,7 +9283,7 @@
   resolved "https://registry.npmmirror.com/@types/range-parser/-/range-parser-1.2.4.tgz#cd667bcfdd025213aafb7ca5915a932590acdcdc"
   integrity sha512-EEhsLsD6UsDM1yFhAvy0Cjr6VwmpMWqFBCb9w07wVugF7w9nfajxLuVmngTIpgS6svCnm6Vaw+MZhoDCKnOfsw==
 
-"@types/react-dom@*", "@types/react-dom@<18.0.0", "@types/react-dom@^17":
+"@types/react-dom@*", "@types/react-dom@<18.0.0":
   version "17.0.20"
   resolved "https://registry.npmmirror.com/@types/react-dom/-/react-dom-17.0.20.tgz#e0c8901469d732b36d8473b40b679ad899da1b53"
   integrity sha512-4pzIjSxDueZZ90F52mU3aPoogkHIoSIDG+oQ+wQK7Cy2B9S+MvOqY0uEA/qawKz381qrEDkvpwyt8Bm31I8sbA==
@@ -10084,9 +10077,9 @@ anymatch@^3.0.3, anymatch@~3.1.2:
     "@backstage/plugin-techdocs-react" "^1.1.8"
     "@backstage/plugin-user-settings" "^0.7.5"
     "@backstage/theme" "^0.4.1"
-    "@cnoe-io/plugin-apache-spark" "0.1.0"
-    "@cnoe-io/plugin-argo-workflows" "0.1.0"
-    "@cnoe-io/plugin-scaffolder-actions-frontend" "0.1.0"
+    "@cnoe-io/plugin-apache-spark" "0.1.1"
+    "@cnoe-io/plugin-argo-workflows" "0.1.1"
+    "@cnoe-io/plugin-scaffolder-actions-frontend" "0.1.1"
     "@internal/plugin-workflows" "^0.1.0"
     "@material-ui/core" "^4.12.2"
     "@material-ui/icons" "^4.9.1"
