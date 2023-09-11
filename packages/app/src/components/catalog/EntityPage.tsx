@@ -63,7 +63,6 @@ import {
   EntityArgoWorkflowsTemplateOverviewCard,
   isArgoWorkflowsAvailable,
 } from '@cnoe-io/plugin-argo-workflows';
-
 import { ApacheSparkPage } from '@cnoe-io/plugin-apache-spark';
 
 const techdocsContent = (
@@ -208,7 +207,9 @@ const websiteEntityPage = (
         </Grid>
       </Grid>
     </EntityLayout.Route>
-
+    <EntityLayout.Route path="/kubernetes" title="Kubernetes">
+      <EntityKubernetesContent refreshIntervalMs={30000} />
+    </EntityLayout.Route>
     <EntityLayout.Route path="/docs" title="Docs">
       {techdocsContent}
     </EntityLayout.Route>

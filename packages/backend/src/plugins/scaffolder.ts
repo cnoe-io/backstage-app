@@ -22,10 +22,12 @@ import {
   createJsonJSONataTransformAction,
 } from '@roadiehq/scaffolder-backend-module-utils';
 import {
-  createKubernetesApply,
+  // createKubernetesApply,
   createSanitizeResource,
   createVerifyDependency,
 } from '@cnoe-io/plugin-scaffolder-actions';
+
+import { createKubernetesApply } from './cnoe-kube';
 
 export default async function createPlugin(
   env: PluginEnvironment,
