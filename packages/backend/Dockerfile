@@ -9,15 +9,18 @@
 #
 # Once the commands have been run, you can build the image using `yarn build-image`
 
-FROM node:16-bullseye-slim
+FROM node:18-bullseye-slim
 
 # Install sqlite3 dependencies. You can skip this if you don't use sqlite3 in the image,
 # in which case you should also move better-sqlite3 to "devDependencies" in package.json.
 RUN --mount=type=cache,target=/var/cache/apt,sharing=locked \
     --mount=type=cache,target=/var/lib/apt,sharing=locked \
     apt-get update && \
-    apt-get install -y --no-install-recommends libsqlite3-dev python3 build-essential && \
+    apt-get install -y --no-install-recommends libsqlite3-dev python3 build-essential wget ca-certificates && \
     yarn config set python /usr/bin/python3
+
+RUN wget -P /usr/local/bin/ https://dl.k8s.io/release/v1.27.0/bin/linux/amd64/kubectl \
+      && chmod +x /usr/local/bin/kubectl
 
 # From here on we use the least-privileged `node` user to run the backend.
 USER node
