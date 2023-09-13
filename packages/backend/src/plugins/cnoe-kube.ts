@@ -105,6 +105,17 @@ export const createKubernetesApply = (config: Config) => {
             },
           ],
         };
+
+        if (
+          targetCluster
+            .getString('caData')
+            .startsWith('-----BEGIN CERTIFICATE-----')
+        ) {
+          confFile.clusters[0].cluster['certificate-authority-data'] =
+            Buffer.from(targetCluster.getString('caData'), 'utf8').toString(
+              'base64',
+            );
+        }
         const confString = dumpYaml(confFile);
         const confFilePath = resolveSafeChildPath(ctx.workspacePath, 'config');
         fs.writeFileSync(confFilePath, confString, {
