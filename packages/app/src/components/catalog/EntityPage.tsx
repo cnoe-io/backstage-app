@@ -64,6 +64,10 @@ import {
   isArgoWorkflowsAvailable,
 } from '@cnoe-io/plugin-argo-workflows';
 import { ApacheSparkPage } from '@cnoe-io/plugin-apache-spark';
+import {
+  EntityArgoCDHistoryCard,
+  isArgocdAvailable,
+} from '@roadiehq/backstage-plugin-argo-cd';
 
 const techdocsContent = (
   <EntityTechdocsContent>
@@ -134,6 +138,11 @@ const overviewContent = (
         <Grid item md={6}>
           <EntityArgoWorkflowsTemplateOverviewCard />
         </Grid>
+        <EntitySwitch.Case if={e => Boolean(isArgocdAvailable(e))}>
+          <Grid item sm={6}>
+            <EntityArgoCDHistoryCard />
+          </Grid>
+        </EntitySwitch.Case>
       </EntitySwitch.Case>
     </EntitySwitch>
     <Grid item md={6} xs={12}>

@@ -6,7 +6,6 @@ import {
 import { Router } from 'express';
 import type { PluginEnvironment } from '../types';
 import { ScmIntegrations } from '@backstage/integration';
-import { createInvokeArgoAction } from './workflow-argo';
 import {
   createZipAction,
   createSleepAction,
@@ -69,7 +68,6 @@ export default async function createPlugin(
     ...builtInActions,
     ...scaffolderBackendModuleUtils,
     ...cnoeActions,
-    createInvokeArgoAction(env.config, env.logger),
   ];
 
   return await createRouter({

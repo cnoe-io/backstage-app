@@ -54,6 +54,7 @@
     "@material-ui/icons": "^4.9.1",
     "@rjsf/core": "^5.8.1",
     "@rjsf/utils": "^5.8.1",
+    "@roadiehq/backstage-plugin-argo-cd": "^2.3.4",
     "@types/fs-extra": "^11.0.1",
     "fs-extra": "^11.1.1",
     "history": "^5.0.0",
