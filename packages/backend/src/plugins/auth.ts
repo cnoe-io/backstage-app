@@ -14,7 +14,7 @@ import { JsonArray } from '@backstage/types';
 export default async function createPlugin(
   env: PluginEnvironment,
 ): Promise<Router> {
-  return await createRouter({
+  const opts = {
     logger: env.logger,
     config: env.config,
     database: env.database,
@@ -22,24 +22,36 @@ export default async function createPlugin(
     tokenManager: env.tokenManager,
     providerFactories: {
       ...defaultAuthProviderFactories,
-      'keycloak-oidc': providers.oidc.create({
-        signIn: {
-          resolver(info, ctx) {
-            const userRef = stringifyEntityRef({
-              kind: 'User',
-              name: info.result.userinfo.sub,
-              namespace: DEFAULT_NAMESPACE,
-            });
-            return ctx.issueToken({
-              claims: {
-                sub: userRef,
-                ent: [userRef],
-                groups: (info.result.userinfo.groups as JsonArray) || [],
-              },
-            });
-          },
-        },
-      }),
     },
-  });
+  };
+
+  const envName = env.config
+    .getOptionalConfig('auth')
+    ?.getOptionalString('auth');
+  if (envName === 'local') {
+    return await createRouter(opts);
+  }
+
+  const keycloakAuth = (opts.providerFactories['keycloak-oidc'] =
+    providers.oidc.create({
+      signIn: {
+        resolver(info, ctx) {
+          const userRef = stringifyEntityRef({
+            kind: 'User',
+            name: info.result.userinfo.sub,
+            namespace: DEFAULT_NAMESPACE,
+          });
+          return ctx.issueToken({
+            claims: {
+              sub: userRef,
+              ent: [userRef],
+              groups: (info.result.userinfo.groups as JsonArray) || [],
+            },
+          });
+        },
+      },
+    }));
+  opts.providerFactories['keycloak-oidc'] = keycloakAuth;
+
+  return await createRouter(opts);
 }

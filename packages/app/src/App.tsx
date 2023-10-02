@@ -43,24 +43,34 @@ import { KubernetesClusterPickerExtension } from '@cnoe-io/plugin-scaffolder-act
 import { ThemeProvider } from '@material-ui/core/styles';
 import CssBaseline from '@material-ui/core/CssBaseline';
 import LightIcon from '@material-ui/icons/WbSunny';
-import {CNOEHomepage, cnoeLightTheme, cnoeDarkTheme} from '@internal/cnoe-ui-plugin'
+import {
+  CNOEHomepage,
+  cnoeLightTheme,
+  cnoeDarkTheme,
+} from '@internal/cnoe-ui-plugin';
+import { configApiRef, useApi } from '@backstage/core-plugin-api';
 
 const app = createApp({
   apis,
   components: {
-    // SignInPage: (props) => <ProxiedSignInPage {...props} provider="oauth2Proxy" />,
-    SignInPage: props => (
-      <SignInPage
-        {...props}
-        auto
-        provider={{
-          id: 'keycloak-oidc',
-          title: 'Keycloak',
-          message: 'Sign in using Keycloak',
-          apiRef: keycloakOIDCAuthApiRef,
-        }}
-      />
-    ),
+    SignInPage: props => {
+      const configApi = useApi(configApiRef);
+      if (configApi.getString('auth.environment') === 'local') {
+        return <SignInPage {...props} auto providers={['guest']} />;
+      }
+      return (
+        <SignInPage
+          {...props}
+          auto
+          provider={{
+            id: 'keycloak-oidc',
+            title: 'Keycloak',
+            message: 'Sign in using Keycloak',
+            apiRef: keycloakOIDCAuthApiRef,
+          }}
+        />
+      );
+    },
   },
   bindRoutes({ bind }) {
     bind(catalogPlugin.externalRoutes, {
@@ -100,13 +110,13 @@ const app = createApp({
         </ThemeProvider>
       ),
     },
-  ]
+  ],
 });
 
 const routes = (
   <FlatRoutes>
     <Route path="/" element={<Navigate to="home" />} />
-    <Route path="/home" element={<CNOEHomepage/>} />
+    <Route path="/home" element={<CNOEHomepage />} />
     <Route path="/catalog" element={<CatalogIndexPage />} />
     <Route
       path="/catalog/:namespace/:kind/:name"
