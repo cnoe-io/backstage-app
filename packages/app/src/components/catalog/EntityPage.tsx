@@ -138,11 +138,11 @@ const overviewContent = (
         <Grid item md={6}>
           <EntityArgoWorkflowsTemplateOverviewCard />
         </Grid>
-        <EntitySwitch.Case if={e => Boolean(isArgocdAvailable(e))}>
-          <Grid item sm={6}>
-            <EntityArgoCDHistoryCard />
-          </Grid>
-        </EntitySwitch.Case>
+      </EntitySwitch.Case>
+      <EntitySwitch.Case if={e => Boolean(isArgocdAvailable(e))}>
+        <Grid item sm={6}>
+          <EntityArgoCDHistoryCard />
+        </Grid>
       </EntitySwitch.Case>
     </EntitySwitch>
     <Grid item md={6} xs={12}>
