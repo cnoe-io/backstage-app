@@ -22,7 +22,6 @@ RUN --mount=type=cache,target=/var/cache/apt,sharing=locked \
 RUN wget -P /usr/local/bin/ https://dl.k8s.io/release/v1.27.0/bin/linux/amd64/kubectl \
       && chmod +x /usr/local/bin/kubectl
 
-RUN npm install -g node-gyp
 # From here on we use the least-privileged `node` user to run the backend.
 USER node
 
