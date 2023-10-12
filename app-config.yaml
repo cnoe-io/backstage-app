@@ -1,9 +1,9 @@
 app:
-  title: Scaffolded Backstage App
+  title: CNOE
   baseUrl: http://localhost:3000
 
 organization:
-  name: My Company
+  name: CNOE
 
 backend:
   # Used for enabling authentication, secret is shared by all backend plugins
@@ -34,11 +34,7 @@ backend:
     store: memory
   # workingDirectory: /tmp # Use this to configure a working directory for the scaffolder, defaults to the OS temp-dir
 
-integrations:
-  github:
-    - host: github.com
-      apps:
-        - $include: github-integration.yaml
+integrations: {}
 #    - host: github.com
 #      # This is a Personal Access Token or PAT from GitHub. You can find out how to generate this token, and more information
 #      # about setting up the GitHub integration here: https://backstage.io/docs/getting-started/configuration#setting-up-a-github-integration
@@ -68,6 +64,7 @@ techdocs:
 
 auth:
   # see https://backstage.io/docs/auth/ to learn about auth providers
+  environment: local
   providers: {}
 
 scaffolder:
@@ -108,8 +105,5 @@ catalog:
     #   target: https://github.com/backstage/backstage/blob/master/packages/catalog-model/examples/acme-corp.yaml
     #   rules:
     #     - allow: [User, Group]
-kubernetes:
-  serviceLocatorMethod:
-    type: 'multiTenant'
-  clusterLocatorMethods:
-    - $include: k8s-config.yaml
+kubernetes: {}
+

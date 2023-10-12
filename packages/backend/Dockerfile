@@ -22,6 +22,7 @@ RUN --mount=type=cache,target=/var/cache/apt,sharing=locked \
 RUN wget -P /usr/local/bin/ https://dl.k8s.io/release/v1.27.0/bin/linux/amd64/kubectl \
       && chmod +x /usr/local/bin/kubectl
 
+RUN npm install -g node-gyp
 # From here on we use the least-privileged `node` user to run the backend.
 USER node
 
@@ -40,6 +41,7 @@ COPY --chown=node:node yarn.lock package.json packages/backend/dist/skeleton.tar
 RUN tar xzf skeleton.tar.gz && rm skeleton.tar.gz
 
 RUN --mount=type=cache,target=/home/node/.cache/yarn,sharing=locked,uid=1000,gid=1000 \
+    --mount=type=secret,id=npmrc,target=./.npmrc,uid=1000 \
     yarn install --frozen-lockfile --production --network-timeout 300000
 
 # Then copy the rest of the backend bundle, along with any other files we might want.
