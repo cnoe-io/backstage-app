@@ -22,20 +22,49 @@ import {
 import { TechDocsAddons } from '@backstage/plugin-techdocs-react';
 import { ReportIssue } from '@backstage/plugin-techdocs-module-addons-contrib';
 import { UserSettingsPage } from '@backstage/plugin-user-settings';
-import { apis } from './apis';
+import {apis, keycloakOIDCAuthApiRef} from './apis';
 import { entityPage } from './components/catalog/EntityPage';
 import { searchPage } from './components/search/SearchPage';
 import { Root } from './components/Root';
 
-import { AlertDisplay, OAuthRequestDialog } from '@backstage/core-components';
+import {AlertDisplay, OAuthRequestDialog, SignInPage} from '@backstage/core-components';
 import { createApp } from '@backstage/app-defaults';
 import { AppRouter, FlatRoutes } from '@backstage/core-app-api';
 import { CatalogGraphPage } from '@backstage/plugin-catalog-graph';
 import { RequirePermission } from '@backstage/plugin-permission-react';
+import { ThemeProvider } from '@material-ui/core/styles';
+import CssBaseline from '@material-ui/core/CssBaseline';
 import { catalogEntityCreatePermission } from '@backstage/plugin-catalog-common/alpha';
+import LightIcon from '@material-ui/icons/WbSunny';
+import {
+  CNOEHomepage,
+  cnoeLightTheme,
+  cnoeDarkTheme,
+} from '@internal/plugin-cnoe-ui';
+import {configApiRef, useApi} from "@backstage/core-plugin-api";
 
 const app = createApp({
   apis,
+  components: {
+    SignInPage: props => {
+      const configApi = useApi(configApiRef);
+      if (configApi.getString('auth.environment') === 'local') {
+        return <SignInPage {...props} auto providers={['guest']} />;
+      }
+      return (
+        <SignInPage
+          {...props}
+          provider={{
+            id: 'keycloak-oidc',
+            title: 'Keycloak',
+            message: 'Sign in using Keycloak',
+            apiRef: keycloakOIDCAuthApiRef,
+          }}
+        />
+      );
+    },
+  },
+
   bindRoutes({ bind }) {
     bind(catalogPlugin.externalRoutes, {
       createComponent: scaffolderPlugin.routes.root,
@@ -53,11 +82,36 @@ const app = createApp({
       catalogIndex: catalogPlugin.routes.catalogIndex,
     });
   },
+  themes: [
+    {
+      id: 'cnoe-light-theme',
+      title: 'Light Theme',
+      variant: 'light',
+      icon: <LightIcon />,
+      Provider: ({ children }) => (
+        <ThemeProvider theme={cnoeLightTheme}>
+          <CssBaseline>{children}</CssBaseline>
+        </ThemeProvider>
+      ),
+    },
+    {
+      id: 'cnoe-dark-theme',
+      title: 'Dark Theme',
+      variant: 'dark',
+      icon: <LightIcon />,
+      Provider: ({ children }) => (
+        <ThemeProvider theme={cnoeDarkTheme}>
+          <CssBaseline>{children}</CssBaseline>
+        </ThemeProvider>
+      ),
+    },
+  ],
 });
 
 const routes = (
   <FlatRoutes>
     <Route path="/" element={<Navigate to="catalog" />} />
+    <Route path="/home" element={<CNOEHomepage />} />
     <Route path="/catalog" element={<CatalogIndexPage />} />
     <Route
       path="/catalog/:namespace/:kind/:name"

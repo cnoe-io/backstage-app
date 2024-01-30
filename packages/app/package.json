@@ -28,6 +28,8 @@
     "@backstage/plugin-catalog-import": "^0.10.5",
     "@backstage/plugin-catalog-react": "^1.9.3",
     "@backstage/plugin-github-actions": "^0.6.10",
+    "@backstage/plugin-home": "^0.6.1",
+    "@backstage/plugin-kubernetes": "^0.11.4",
     "@backstage/plugin-org": "^0.6.19",
     "@backstage/plugin-permission-react": "^0.4.19",
     "@backstage/plugin-scaffolder": "^1.17.1",
@@ -39,6 +41,7 @@
     "@backstage/plugin-techdocs-react": "^1.1.15",
     "@backstage/plugin-user-settings": "^0.8.0",
     "@backstage/theme": "^0.5.0",
+    "@internal/plugin-cnoe-ui": "^0.1.0",
     "@material-ui/core": "^4.12.2",
     "@material-ui/icons": "^4.9.1",
     "history": "^5.0.0",
@@ -51,10 +54,10 @@
   "devDependencies": {
     "@backstage/test-utils": "^1.4.7",
     "@playwright/test": "^1.32.3",
+    "@testing-library/dom": "^9.0.0",
     "@testing-library/jest-dom": "^6.0.0",
     "@testing-library/react": "^14.0.0",
     "@testing-library/user-event": "^14.0.0",
-    "@testing-library/dom": "^9.0.0",
     "@types/react-dom": "*",
     "cross-env": "^7.0.0"
   },
