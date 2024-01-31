@@ -42,6 +42,8 @@ import {
   cnoeDarkTheme,
 } from '@internal/plugin-cnoe-ui';
 import {configApiRef, useApi} from "@backstage/core-plugin-api";
+import { ArgoWorkflowsPage } from '@internal/plugin-argo-workflows';
+import { ApacheSparkPage } from '@internal/plugin-apache-spark';
 
 const app = createApp({
   apis,
@@ -147,6 +149,8 @@ const routes = (
     </Route>
     <Route path="/settings" element={<UserSettingsPage />} />
     <Route path="/catalog-graph" element={<CatalogGraphPage />} />
+    <Route path="/argo-workflows" element={<ArgoWorkflowsPage />} />
+    <Route path="/apache-spark" element={<ApacheSparkPage />} />
   </FlatRoutes>
 );
 

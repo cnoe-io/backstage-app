@@ -1,9 +1,9 @@
 app:
-  title: Scaffolded Backstage App
+  title: CNOE
   baseUrl: http://localhost:3000
 
 organization:
-  name: My Company
+  name: CNOE
 
 backend:
   # Used for enabling authentication, secret is shared by all backend plugins
@@ -33,15 +33,15 @@ backend:
   # workingDirectory: /tmp # Use this to configure a working directory for the scaffolder, defaults to the OS temp-dir
 
 integrations:
-  github:
-    - host: github.com
-      # This is a Personal Access Token or PAT from GitHub. You can find out how to generate this token, and more information
-      # about setting up the GitHub integration here: https://backstage.io/docs/getting-started/configuration#setting-up-a-github-integration
-      token: ${GITHUB_TOKEN}
-    ### Example for how to add your GitHub Enterprise instance using the API:
-    # - host: ghe.example.net
-    #   apiBaseUrl: https://ghe.example.net/api/v3
-    #   token: ${GHE_TOKEN}
+  gitea:
+    - baseUrl: https://gitea.cnoe.localtest.me:8443
+      host: gitea.cnoe.localtest.me:8443
+      username: giteaAdmin
+      password: giteaPassword
+    - baseUrl: https://gitea.cnoe.localtest.me
+      host: gitea.cnoe.localtest.me:8443
+      username: giteaAdmin
+      password: giteaPassword
 
 proxy:
   ### Example for how to add a proxy endpoint for the frontend.
@@ -64,33 +64,45 @@ techdocs:
 
 auth:
   # see https://backstage.io/docs/auth/ to learn about auth providers
-  providers: {}
+  environment: local # set this to development to enable SSO
+  session:
+    secret: abcdfkjalskdfjkla
+  providers:
+    keycloak-oidc:
+      development:
+        metadataUrl: https://keycloak.cnoe.localtest.me:8443/realms/cnoe/.well-known/openid-configuration
+        clientId: backstage
+        clientSecret: ${KEYCLOAK_CLIENT_SECRET}
+        scope: 'openid profile email groups'
+        prompt: auto
 
 scaffolder:
   # see https://backstage.io/docs/features/software-templates/configuration for software template options
-
+  defaultAuthor:
+    name: backstage-scaffolder
+    email: noreply
+  defaultCommitMessage: "backstage scaffolder"
 catalog:
   import:
     entityFilename: catalog-info.yaml
     pullRequestBranchName: backstage-integration
   rules:
-    - allow: [Component, System, API, Resource, Location]
+    - allow: [ Component, System, API, Resource, Location, Template ]
   locations:
-    # Local example data, file locations are relative to the backend process, typically `packages/backend`
-    - type: file
-      target: ../../examples/entities.yaml
+    - type: url
+      target: https://gitea.cnoe.localtest.me:8443/giteaAdmin/entities/src/branch/main/catalog-info.yaml
 
-    # Local example template
-    - type: file
-      target: ../../examples/template/template.yaml
-      rules:
-        - allow: [Template]
-
-    # Local example organizational data
-    - type: file
-      target: ../../examples/org.yaml
-      rules:
-        - allow: [User, Group]
+#    # Local example template
+#    - type: file
+#      target: ../../examples/template/template.yaml
+#      rules:
+#        - allow: [Template]
+#
+#    # Local example organizational data
+#    - type: file
+#      target: ../../examples/org.yaml
+#      rules:
+#        - allow: [User, Group]
 
     ## Uncomment these lines to add more example data
     # - type: url
@@ -101,3 +113,26 @@ catalog:
     #   target: https://github.com/backstage/backstage/blob/master/packages/catalog-model/examples/acme-corp.yaml
     #   rules:
     #     - allow: [User, Group]
+kubernetes:
+  serviceLocatorMethod:
+    type: 'multiTenant'
+  clusterLocatorMethods:
+    - type: 'config'
+      clusters:
+        - url: https://127.0.0.1:33277 # you may need to change this
+          name: local
+          authProvider: 'serviceAccount'
+          skipTLSVerify: true
+          # replace with your own service account token value. e.g. kubectl -n backstage exec -it deploy/backstage  -- cat /var/run/secrets/kubernetes.io/serviceaccount/token
+          serviceAccountToken: eyJhbG......
+argocd:
+  appLocatorMethods:
+    - type: 'config'
+      instances:
+        - name: in-cluster
+          url: https://argocd.cnoe.localtest.me:8443
+          username: admin
+          # replace with your argocd password e.g. kubectl -n argocd get secret argocd-initial-admin-secret -o jsonpath="{.data.password}" | base64 -d
+          password: ${ARGOCD_ADMIN_PASSWORD}
+argoWorkflows:
+  baseUrl: https://argo.cnoe.localtest.me:8443

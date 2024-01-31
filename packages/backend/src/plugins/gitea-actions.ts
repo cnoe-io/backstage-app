@@ -1,3 +1,4 @@
+// this is necessary until https://github.com/backstage/backstage/pull/21890/ is merged and released.
 import { InputError } from '@backstage/errors';
 import { Config } from '@backstage/config';
 import {
@@ -6,7 +7,6 @@ import {
   ScmIntegrationRegistry, ScmIntegrations,
 } from '@backstage/integration';
 import {
-  ActionContext,
   createTemplateAction,
   getRepoSourceDirectory,
   initRepoAndPush,
@@ -232,32 +232,32 @@ function checkRequiredParams(repoUrl: URL, ...params: string[]) {
     }
   }
 }
-const checkGiteaContentUrl = async (
-  config: GiteaIntegrationConfig,
-  options: {
-    owner?: string;
-    repo: string;
-    defaultBranch?: string;
-  },
-): Promise<Response> => {
-  const { owner, repo, defaultBranch } = options;
-  let response: Response;
-  const getOptions: RequestInit = {
-    method: 'GET',
-  };
-
-  try {
-    response = await fetch(
-      `${config.baseUrl}/${owner}/${repo}/src/branch/${defaultBranch}`,
-      getOptions,
-    );
-  } catch (e) {
-    throw new Error(
-      `Unable to get the repository: ${owner}/${repo} metadata , ${e}`,
-    );
-  }
-  return response;
-};
+// const checkGiteaContentUrl = async (
+//   config: GiteaIntegrationConfig,
+//   options: {
+//     owner?: string;
+//     repo: string;
+//     defaultBranch?: string;
+//   },
+// ): Promise<Response> => {
+//   const { owner, repo, defaultBranch } = options;
+//   let response: Response;
+//   const getOptions: RequestInit = {
+//     method: 'GET',
+//   };
+//
+//   try {
+//     response = await fetch(
+//       `${config.baseUrl}/${owner}/${repo}/src/branch/${defaultBranch}`,
+//       getOptions,
+//     );
+//   } catch (e) {
+//     throw new Error(
+//       `Unable to get the repository: ${owner}/${repo} metadata , ${e}`,
+//     );
+//   }
+//   return response;
+// };
 
 const checkGiteaOrg = async (
   config: GiteaIntegrationConfig,
@@ -372,63 +372,58 @@ const generateCommitMessage = (
   return msg;
 };
 
-/**
- * Checks if the provided function can be executed within a specific period of time limit.
- * @param fn
- * @param timeLimit
- */
-async function checkDurationLimit(fn: () => void, timeLimit: number): Promise<boolean> {
-
-  const startTime = process.hrtime();
-
-  // Call the function
-  await fn();
-
-  const endTime = process.hrtime(startTime);
-  const durationInMs = endTime[0] * 1000 + endTime[1] / 1e6;
-
-  // Check if the duration exceeds the time limit
-  return durationInMs <= timeLimit;
-}
-
-async function checkAvailabilityGiteaRepository(
-  integrationConfig: GiteaIntegrationConfig,
-  options: {
-    owner?: string;
-    repo: string;
-    defaultBranch: string;
-    ctx: ActionContext<any>;
-  },
-) {
-  const { owner, repo, defaultBranch, ctx } = options;
-  const sleep = (ms: number | undefined) => new Promise(r => setTimeout(r, ms));
-  let response: Response;
-
-  const p = new Promise<void>((resolve, reject) => {
-     setTimeout(async () => {
-      response = await checkGiteaContentUrl(integrationConfig, {
-        owner,
-        repo,
-        defaultBranch,
-      });
-
-      while (response.status !== 200) {
-        if (ctx.signal?.aborted) return;
-        await sleep(1000);
-        response = await checkGiteaContentUrl(integrationConfig, {
-          owner,
-          repo,
-          defaultBranch,
-        });
-      }
-      resolve()
-    },
-      5000
-    )
-  })
-  return p
-
-}
+// async function checkDurationLimit(fn: () => void, timeLimit: number): Promise<boolean> {
+//
+//   const startTime = process.hrtime();
+//
+//   // Call the function
+//   await fn();
+//
+//   const endTime = process.hrtime(startTime);
+//   const durationInMs = endTime[0] * 1000 + endTime[1] / 1e6;
+//
+//   // Check if the duration exceeds the time limit
+//   return durationInMs <= timeLimit;
+// }
+//
+// async function checkAvailabilityGiteaRepository(
+//   integrationConfig: GiteaIntegrationConfig,
+//   options: {
+//     owner?: string;
+//     repo: string;
+//     defaultBranch: string;
+//     ctx: ActionContext<any>;
+//   },
+// ) {
+//   const { owner, repo, defaultBranch, ctx } = options;
+//   const sleep = (ms: number | undefined) => new Promise(r => setTimeout(r, ms));
+//   let response: Response;
+//
+//   const p = new Promise<void>((resolve, reject) => {
+//      setTimeout(async () => {
+//       response = await checkGiteaContentUrl(integrationConfig, {
+//         owner,
+//         repo,
+//         defaultBranch,
+//       });
+//
+//       while (response.status !== 200) {
+//         if (ctx.signal?.aborted) return;
+//         await sleep(1000);
+//         response = await checkGiteaContentUrl(integrationConfig, {
+//           owner,
+//           repo,
+//           defaultBranch,
+//         });
+//       }
+//       resolve()
+//     },
+//       5000
+//     )
+//   })
+//   return p
+//
+// }
 
 /**
  * Creates a new action that initializes a git repository using the content of the workspace.

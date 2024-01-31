@@ -58,6 +58,19 @@ import {
 import { TechDocsAddons } from '@backstage/plugin-techdocs-react';
 import { ReportIssue } from '@backstage/plugin-techdocs-module-addons-contrib';
 
+import { EntityKubernetesContent } from '@backstage/plugin-kubernetes';
+
+import {
+  EntityArgoCDOverviewCard,
+  isArgocdAvailable
+} from '@roadiehq/backstage-plugin-argo-cd';
+
+import {
+  EntityArgoWorkflowsOverviewCard, EntityArgoWorkflowsTemplateOverviewCard,
+  isArgoWorkflowsAvailable,
+} from '@internal/plugin-argo-workflows';
+import {ApacheSparkPage, isApacheSparkAvailable} from "@internal/plugin-apache-spark";
+
 const techdocsContent = (
   <EntityTechdocsContent>
     <TechDocsAddons>
@@ -127,6 +140,23 @@ const overviewContent = (
     <Grid item md={6}>
       <EntityAboutCard variant="gridItem" />
     </Grid>
+    <EntitySwitch>
+      <EntitySwitch.Case if={e => Boolean(isArgocdAvailable(e))}>
+        <Grid item md={6}>
+          <EntityArgoCDOverviewCard />
+        </Grid>
+      </EntitySwitch.Case>
+    </EntitySwitch>
+    <EntitySwitch>
+      <EntitySwitch.Case if={e => isArgoWorkflowsAvailable(e)}>
+        <Grid item md={6}>
+          <EntityArgoWorkflowsOverviewCard />
+        </Grid>
+        <Grid item md={6}>
+          <EntityArgoWorkflowsTemplateOverviewCard />
+        </Grid>
+      </EntitySwitch.Case>
+    </EntitySwitch>
     <Grid item md={6} xs={12}>
       <EntityCatalogGraphCard variant="gridItem" height={400} />
     </Grid>
@@ -137,6 +167,7 @@ const overviewContent = (
     <Grid item md={8} xs={12}>
       <EntityHasSubcomponentsCard variant="gridItem" />
     </Grid>
+
   </Grid>
 );
 
@@ -148,6 +179,14 @@ const serviceEntityPage = (
 
     <EntityLayout.Route path="/ci-cd" title="CI/CD">
       {cicdContent}
+    </EntityLayout.Route>
+
+    <EntityLayout.Route path="/kubernetes" title="Kubernetes">
+      <EntityKubernetesContent refreshIntervalMs={30000} />
+    </EntityLayout.Route>
+
+    <EntityLayout.Route path="/apache-spark" title="Spark" if={isApacheSparkAvailable}>
+      <ApacheSparkPage />
     </EntityLayout.Route>
 
     <EntityLayout.Route path="/api" title="API">

@@ -4,6 +4,23 @@ import { Router } from 'express';
 import type { PluginEnvironment } from '../types';
 import { ScmIntegrations } from '@backstage/integration';
 import {createPublishGiteaAction} from "./gitea-actions";
+import {createArgoCDApp} from "./argocd";
+
+import {
+  createZipAction,
+  createSleepAction,
+  createWriteFileAction,
+  createAppendFileAction,
+  createMergeJSONAction,
+  createMergeAction,
+  createParseFileAction,
+  createSerializeYamlAction,
+  createSerializeJsonAction,
+  createJSONataAction,
+  createYamlJSONataTransformAction,
+  createJsonJSONataTransformAction,
+  createReplaceInFileAction
+} from '@roadiehq/scaffolder-backend-module-utils';
 
 export default async function createPlugin(
   env: PluginEnvironment,
@@ -24,12 +41,36 @@ export default async function createPlugin(
     integrations: integrations,
     config: env.config,
   }
+  const argocdOptions = {
+    config: env.config,
+    logger: env.logger
+  }
 
-  const cnoeActions = [createPublishGiteaAction(options)]
+  const cnoeActions = [
+    createPublishGiteaAction(options),
+    createArgoCDApp(argocdOptions)
+  ]
+
+  const roadieUtilActions = [
+    createZipAction(),
+    createSleepAction(),
+    createWriteFileAction(),
+    createAppendFileAction(),
+    createMergeJSONAction({}),
+    createMergeAction(),
+    createParseFileAction(),
+    createSerializeYamlAction(),
+    createSerializeJsonAction(),
+    createJSONataAction(),
+    createYamlJSONataTransformAction(),
+    createJsonJSONataTransformAction(),
+    createReplaceInFileAction()
+  ]
 
   const actions = [
     ...builtInActions,
     ...cnoeActions,
+    ...roadieUtilActions
   ];
 
   return await createRouter({
