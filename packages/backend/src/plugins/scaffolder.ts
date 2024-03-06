@@ -26,7 +26,7 @@ import {
   createSanitizeResource,
   createVerifyDependency,
   createKubernetesApply,
-} from 'scaffolder-actions@https://github.com/cnoe-io/scaffolder-actions-plugin';
+} from 'scaffolder-actions';
 
 export default async function createPlugin(
   env: PluginEnvironment,
