@@ -22,6 +22,12 @@ import {
   createReplaceInFileAction
 } from '@roadiehq/scaffolder-backend-module-utils';
 
+import {
+  createSanitizeResource,
+  createVerifyDependency,
+  createKubernetesApply,
+} from 'scaffolder-actions@https://github.com/cnoe-io/scaffolder-actions-plugin';
+
 export default async function createPlugin(
   env: PluginEnvironment,
 ): Promise<Router> {
@@ -48,7 +54,10 @@ export default async function createPlugin(
 
   const cnoeActions = [
     createPublishGiteaAction(options),
-    createArgoCDApp(argocdOptions)
+    createArgoCDApp(argocdOptions),
+    createSanitizeResource(),
+    createVerifyDependency(),
+    createKubernetesApply(env.config)
   ]
 
   const roadieUtilActions = [
