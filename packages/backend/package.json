@@ -50,7 +50,6 @@
     "express-promise-router": "^4.1.0",
     "node-gyp": "^9.0.0",
     "pg": "^8.11.3",
-    "scaffolder-actions": "https://github.com/cnoe-io/scaffolder-actions-plugin",
     "winston": "^3.2.1"
   },
   "devDependencies": {
