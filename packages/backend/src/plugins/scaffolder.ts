@@ -21,6 +21,9 @@ import {
   createJsonJSONataTransformAction,
   createReplaceInFileAction
 } from '@roadiehq/scaffolder-backend-module-utils';
+import {createKubernetesApply} from "./k8s-apply";
+import {createSanitizeResource} from "./sanitize";
+import {createVerifyDependency} from "./verify";
 
 export default async function createPlugin(
   env: PluginEnvironment,
@@ -48,7 +51,10 @@ export default async function createPlugin(
 
   const cnoeActions = [
     createPublishGiteaAction(options),
-    createArgoCDApp(argocdOptions)
+    createArgoCDApp(argocdOptions),
+    createKubernetesApply(env.config),
+    createSanitizeResource(),
+    createVerifyDependency()
   ]
 
   const roadieUtilActions = [

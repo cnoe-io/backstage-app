@@ -1,0 +1,30 @@
+apiVersion: scaffolder.backstage.io/v1beta3
+kind: Template
+metadata:
+  name: deploy-resources
+  title: Deploy Resources
+  description: Deploy Resource to Kubernetes
+spec:
+  owner: guest
+  type: service
+  # these are the steps which are rendered in the frontend with the form input
+  parameters:
+    - title: file name
+      properties:
+        path:
+          type: string
+          description: file name
+          default: cm.yaml
+  steps:
+    - id: template
+      name: Generating component
+      action: fetch:template
+      input:
+        url: ./skeleton
+    - id: apply
+      name: apply-manifest
+      action: cnoe:kubernetes:apply
+      input:
+        namespaced: true
+        manifestPath: cm.yaml
+        clusterName: local
