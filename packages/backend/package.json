@@ -22,7 +22,7 @@
     "@backstage/catalog-model": "~1.4.3",
     "@backstage/config": "~1.1.1",
     "@backstage/errors": "~1.2.3",
-    "@backstage/integration": "~1.8.0",
+    "@backstage/integration": "^1.9.0",
     "@backstage/plugin-app-backend": "~0.3.57",
     "@backstage/plugin-auth-backend": "~0.20.3",
     "@backstage/plugin-auth-node": "~0.4.3",
