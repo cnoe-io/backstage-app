@@ -1,6 +1,6 @@
 import { createTemplateAction, executeShellCommand} from '@backstage/plugin-scaffolder-node';
 import { dumpYaml } from '@kubernetes/client-node';
-import YAML from 'yaml';
+import yaml from 'js-yaml';
 import { Config } from '@backstage/config';
 import { resolveSafeChildPath } from '@backstage/backend-common';
 import fs from 'fs-extra';
@@ -57,17 +57,27 @@ export const createKubernetesApply = (config: Config) => {
     },
     async handler(ctx) {
       let obj: any;
+      let manifestPath = resolveSafeChildPath(ctx.workspacePath, 'to-be-applied.yaml');
       if (ctx.input.manifestString) {
-        obj = YAML.parse(ctx.input.manifestString);
+        obj = yaml.load(ctx.input.manifestString)
+        fs.writeFileSync(manifestPath, ctx.input.manifestString, {
+          encoding: 'utf8',
+          mode: '600',
+        });
       } else if (ctx.input.manifestObject) {
         obj = ctx.input.manifestObject;
+        fs.writeFileSync(manifestPath, yaml.dump(ctx.input.manifestObject), {
+          encoding: 'utf8',
+          mode: '600',
+        });
       } else {
         const filePath = resolveSafeChildPath(
           ctx.workspacePath,
           ctx.input.manifestPath!,
         );
         const fileContent = fs.readFileSync(filePath, 'utf8');
-        obj = YAML.parse(fileContent);
+        manifestPath = filePath
+        obj = yaml.load(fileContent);
       }
 
       if (ctx.input.clusterName) {
@@ -122,10 +132,7 @@ export const createKubernetesApply = (config: Config) => {
           encoding: 'utf8',
           mode: '600',
         });
-        const manifestPath = resolveSafeChildPath(
-          ctx.workspacePath,
-          ctx.input.manifestPath!,
-        );
+
         if (obj.metadata.generateName !== undefined) {
           await executeShellCommand({
             command: 'kubectl',
