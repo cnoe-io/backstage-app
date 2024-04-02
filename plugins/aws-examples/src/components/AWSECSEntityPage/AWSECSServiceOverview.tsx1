@@ -1,0 +1,342 @@
+/**
+ * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Licensed under the Apache License, Version 2.0 (the "License").
+ * You may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+import React from 'react';
+import {
+  Typography,
+  Grid,
+  makeStyles,
+  LinearProgress,
+  Link
+} from '@material-ui/core';
+import { Entity } from '@backstage/catalog-model';
+import { 
+  MissingAnnotationEmptyState, 
+  InfoCard, 
+  ResponseErrorPanel, 
+  StatusOK, 
+  StatusWarning, 
+  StatusPending, 
+  TableColumn, 
+  Table, 
+  StatusRunning, 
+  StatusError,
+  StatusAborted 
+} 
+from '@backstage/core-components';
+import { useEntity } from "@backstage/plugin-catalog-react";
+import { AWS_ECS_SERVICE_ANNOTATION } from '../../constants';
+import { useECSServiceArnFromEntity } from '../../hooks/useECSServiceArnFromEntity';
+import { useECSService } from '../../hooks/useECSService';
+import { isAWSECSServiceAvailable } from '../../plugin';
+import { Service, LaunchType, Deployment } from '@aws-sdk/client-ecs';
+import { parse } from '@aws-sdk/util-arn-parser';
+import moment from 'moment';
+
+const deploymentStatusComponent = (state: string | undefined) => {
+  switch (state) {
+    case 'PRIMARY':
+      return (
+        <span>
+          <StatusOK /> Primary
+        </span>
+      );
+    case 'ACTIVE':
+      return (
+        <span>
+          <StatusRunning /> Active
+        </span>
+      );
+    case 'INACTIVE':
+      return (
+        <span>
+          <StatusError /> Inactive
+        </span>
+      );
+    default:
+      return (
+        <span>
+          <StatusAborted /> Unknown
+        </span>
+      );
+  }
+};
+
+const deploymentTaskDefinition = (taskDefinitionArn: string | undefined) => {
+  if(taskDefinitionArn === undefined) {
+    return '-'
+  }
+
+  const arnParts = parse(taskDefinitionArn);
+
+  return arnParts.resource
+}
+
+const deploymentTimeComponent = (deploymentTime: Date | undefined) => {
+  if(deploymentTime === undefined) {
+    return '-'
+  }
+  return moment(deploymentTime).fromNow()
+}
+
+export const DeploymentTable = ({ service }: { service: Service }) => {
+  const columns: TableColumn[] = [
+    {
+      title: 'Created',
+      field: 'createdAt',
+      render: (row: Partial<Deployment>) => deploymentTimeComponent(row.createdAt),
+    },
+    {
+      title: 'Task Definition',
+      field: 'taskDefinition',
+      render: (row: Partial<Deployment>) => deploymentTaskDefinition(row.taskDefinition),
+    },
+    {
+      title: 'Status',
+      field: 'deploymentStatus',
+      render: (row: Partial<Deployment>) => deploymentStatusComponent(row.status)
+    }
+  ];
+
+  return (
+    <div>
+      <Table
+        options={{ paging: false, search: false, toolbar: false, padding: 'dense' }}
+        data={service.deployments?.slice(0, 3) || []}
+        columns={columns}
+      />
+    </div>
+  );
+};
+
+
+const useStyles = makeStyles((theme) => ({
+  wrapper: {
+    padding: '16px',
+  },
+  links: {
+    margin: theme.spacing(2, 0),
+    display: 'grid',
+    gridAutoFlow: 'column',
+    gridAutoColumns: 'min-content',
+    gridGap: theme.spacing(3),
+  },
+  label: {
+    color: theme.palette.text.secondary,
+    textTransform: 'uppercase',
+    fontSize: '10px',
+    fontWeight: 'bold',
+    letterSpacing: 0.5,
+    overflow: 'hidden',
+    whiteSpace: 'nowrap',
+  },
+  value: {
+    fontWeight: 'bold',
+    overflow: 'hidden',
+    lineHeight: '24px',
+    wordBreak: 'break-word',
+  },
+  description: {
+    wordBreak: 'break-word',
+  },
+}));
+
+const AboutField = ({
+  label,
+  value,
+  gridSizes,
+  children,
+}: {
+  label: string;
+  value?: string | JSX.Element;
+  gridSizes?: Record<string, number>;
+  children?: React.ReactNode;
+}) => {
+  const classes = useStyles();
+
+  // Content is either children or a string prop `value`
+  const content = React.Children.count(children) ? (
+    children
+  ) : (
+    <Typography variant="body2" className={classes.value}>
+      {value || `unknown`}
+    </Typography>
+  );
+  return (
+    <Grid item {...gridSizes}>
+      <Typography variant="subtitle2" className={classes.label}>
+        {label}
+      </Typography>
+      {content}
+    </Grid>
+  );
+};
+
+const serviceStatusComponent = (state: string | undefined) => {
+  switch (state) {
+    case 'ACTIVE':
+      return (
+        <span>
+          <StatusOK /> Active
+        </span>
+      );
+    case 'INACTIVE':
+      return (
+        <span>
+          <StatusPending /> Inactive
+        </span>
+      );
+    case 'DRAINING':
+      return (
+        <span>
+          <StatusWarning /> Draining
+        </span>
+      );
+    default:
+      return (
+        <span>
+          <StatusWarning /> Unknown
+        </span>
+      );
+  }
+};
+
+const serviceLaunchTypeComponent = (state: string | undefined) => {
+  switch (state) {
+    case LaunchType.EC2:
+      return (
+        <span>
+          EC2
+        </span>
+      );
+    case LaunchType.FARGATE:
+      return (
+        <span>
+          Fargate
+        </span>
+      );
+    case LaunchType.EXTERNAL:
+      return (
+        <span>
+          External
+        </span>
+      );
+    default:
+      return (
+        <span>
+          <StatusWarning /> Unknown
+        </span>
+      );
+  }
+};
+
+const OverviewComponent = ({ service }: { service: Service }) => {
+  const arnParts = parse(service.serviceArn!);
+  const ecsConsoleUrl = `https://${arnParts.region}.console.aws.amazon.com/ecs/home?region=${arnParts.region}#/services/detail/${service.serviceName}`;
+
+  const classes = useStyles();
+  return (
+    <InfoCard title='Amazon ECS Service' noPadding>
+      <div className={classes.wrapper}>
+        <Grid container>
+          <AboutField label="Service Name"
+            gridSizes={{ xs: 12, sm: 6, lg: 4 }}>
+            <Link href={ecsConsoleUrl} 
+              target="_blank" >
+              {service.serviceName}
+            </Link>
+          </AboutField>
+          <AboutField label="Running Tasks"
+            gridSizes={{ xs: 12, sm: 6, lg: 4 }}>
+            <Typography
+              variant="body2"
+              paragraph
+              className={classes.description}>
+              {service.runningCount} / {service.desiredCount}
+            </Typography>
+          </AboutField>
+          <AboutField
+              label="Status"
+              gridSizes={{ xs: 12, sm: 6, lg: 4 }}>
+              {serviceStatusComponent(service.status)}
+          </AboutField>
+          { service.launchType && 
+            <AboutField
+              label="Status"
+              gridSizes={{ xs: 12, sm: 6, lg: 4 }}>
+              {serviceLaunchTypeComponent(service.launchType)}
+            </AboutField>
+          }
+          <AboutField label="Platform Version"
+            gridSizes={{ xs: 12, sm: 6, lg: 4 }}>
+            <Typography
+              variant="body2"
+              paragraph
+              className={classes.description}>
+              {service.platformVersion}
+            </Typography>
+          </AboutField>
+          <AboutField label="Platform Family"
+            gridSizes={{ xs: 12, sm: 6, lg: 4 }}>
+            <Typography
+              variant="body2"
+              paragraph
+              className={classes.description}>
+              {service.platformFamily}
+            </Typography>
+          </AboutField>
+        </Grid>
+      </div>
+      <DeploymentTable service={service}/>
+    </InfoCard>
+  );
+};
+
+const AWSECSServiceOverview = ({ entity }: { entity: Entity }) => {
+  const { arn } = useECSServiceArnFromEntity(entity);
+
+  const [serviceData] = useECSService({
+    arn
+  });
+  if (serviceData.loading) {
+    return (
+      <InfoCard title="Amazon ECS Service">
+        <LinearProgress />
+      </InfoCard>
+    );
+  }
+  if (serviceData.error) {
+    return (
+      <InfoCard title="Amazon ECS Service">
+        <ResponseErrorPanel error={serviceData.error} />
+      </InfoCard>
+    );
+  }
+  return (
+    <>{serviceData.service && <OverviewComponent service={serviceData.service} />}</>
+  );
+};
+
+type Props = {
+  /** @deprecated The entity is now grabbed from context instead */
+  entity?: Entity;
+};
+
+export const AWSECSServiceOverviewWidget = (_props: Props) => {
+  const { entity } = useEntity();
+  return !isAWSECSServiceAvailable(entity) ? (
+    <MissingAnnotationEmptyState annotation={AWS_ECS_SERVICE_ANNOTATION} />
+  ) : (
+    <AWSECSServiceOverview entity={entity} />
+  );
+};

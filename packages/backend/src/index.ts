@@ -34,6 +34,8 @@ import { DefaultIdentityClient } from '@backstage/plugin-auth-node';
 
 import kubernetes from './plugins/kubernetes';
 import argocd from './plugins/argocd';
+import awsEcs from './plugins/awsExamples';
+
 function makeCreateEnv(config: Config) {
   const root = getRootLogger();
   const reader = UrlReaders.default({ logger: root, config });
@@ -90,6 +92,7 @@ async function main() {
 
   const kubernetesEnv = useHotMemoize(module, () => createEnv('kubernetes'));
   const argocdEnv = useHotMemoize(module, () => createEnv('argocd'));
+  const awsExamplesEnv = useHotMemoize(module, () => createEnv('aws-examples-backend'));
 
   const apiRouter = Router();
   apiRouter.use('/catalog', await catalog(catalogEnv));
@@ -101,6 +104,7 @@ async function main() {
 
   apiRouter.use('/kubernetes', await kubernetes(kubernetesEnv));
   apiRouter.use('/argocd', await argocd(argocdEnv));
+  apiRouter.use('/aws-examples-backend', await awsEcs(awsExamplesEnv));
 
   // Add backends ABOVE this line; this 404 handler is the catch-all fallback
   apiRouter.use(notFoundHandler());

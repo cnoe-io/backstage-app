@@ -1,1 +1,1 @@
-export { awsExamplesPlugin, AwsExamplesPage } from './plugin';
+export { awsExamplesPlugin } from './plugin';
