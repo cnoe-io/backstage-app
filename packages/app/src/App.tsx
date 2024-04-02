@@ -44,6 +44,7 @@ import {
 import {configApiRef, useApi} from "@backstage/core-plugin-api";
 import { ArgoWorkflowsPage } from '@internal/plugin-argo-workflows';
 import { ApacheSparkPage } from '@internal/plugin-apache-spark';
+import { AwsExamplesPage } from '@internal/plugin-aws-examples';
 
 const app = createApp({
   apis,
@@ -151,6 +152,7 @@ const routes = (
     <Route path="/catalog-graph" element={<CatalogGraphPage />} />
     <Route path="/argo-workflows" element={<ArgoWorkflowsPage />} />
     <Route path="/apache-spark" element={<ApacheSparkPage />} />
+    <Route path="/aws-examples" element={<AwsExamplesPage />} />
   </FlatRoutes>
 );
 

@@ -43,6 +43,7 @@
     "@backstage/theme": "~0.5.0",
     "@internal/plugin-apache-spark": "^0.1.0",
     "@internal/plugin-argo-workflows": "^0.1.0",
+    "@internal/plugin-aws-examples": "^0.1.0",
     "@internal/plugin-cnoe-ui": "^0.1.0",
     "@material-ui/core": "^4.12.2",
     "@material-ui/icons": "^4.9.1",
