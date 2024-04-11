@@ -1,0 +1,1 @@
+export { AmazonQComponent } from './AmazonQComponent';

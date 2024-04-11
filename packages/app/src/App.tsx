@@ -44,6 +44,8 @@ import {
 import {configApiRef, useApi} from "@backstage/core-plugin-api";
 import { ArgoWorkflowsPage } from '@internal/plugin-argo-workflows';
 import { ApacheSparkPage } from '@internal/plugin-apache-spark';
+import { AmazonQChatAssistant } from '@internal/plugin-aws-examples/src/plugin';
+
 
 const app = createApp({
   apis,
@@ -151,6 +153,8 @@ const routes = (
     <Route path="/catalog-graph" element={<CatalogGraphPage />} />
     <Route path="/argo-workflows" element={<ArgoWorkflowsPage />} />
     <Route path="/apache-spark" element={<ApacheSparkPage />} />
+    <Route path="/chat-assistant" element={<AmazonQChatAssistant />} />
+
   </FlatRoutes>
 );
 

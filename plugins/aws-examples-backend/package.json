@@ -1,0 +1,71 @@
+{
+  "name": "@internal/plugin-aws-examples-backend",
+  "version": "0.1.0",
+  "main": "src/index.ts",
+  "types": "src/index.ts",
+  "license": "Apache-2.0",
+  "private": true,
+  "publishConfig": {
+    "access": "public",
+    "main": "dist/index.cjs.js",
+    "types": "dist/index.d.ts"
+  },
+  "backstage": {
+    "role": "backend-plugin"
+  },
+  "scripts": {
+    "start": "backstage-cli package start",
+    "build": "backstage-cli package build",
+    "lint": "backstage-cli package lint",
+    "test": "backstage-cli package test",
+    "clean": "backstage-cli package clean",
+    "prepack": "backstage-cli package prepack",
+    "postpack": "backstage-cli package postpack"
+  },
+  "dependencies": {
+    "@aws-sdk/client-athena": "^3.425.0",
+    "@aws-sdk/client-cloudwatch": "^3.427.0",
+    "@aws-sdk/client-config-service": "^3.425.0",
+    "@aws-sdk/client-ecs": "^3.425.0",
+    "@aws-sdk/client-qbusiness": "^3.477.0",
+    "@aws-sdk/client-resource-explorer-2": "^3.454.0",
+    "@aws-sdk/client-resource-groups-tagging-api": "^3.441.0",
+    "@aws-sdk/client-securityhub": "^3.454.0",
+    "@aws-sdk/client-sts": "^3.425.0",
+    "@aws-sdk/client-wellarchitected": "^3.425.0",
+    "@aws-sdk/credential-provider-node": "^3.425.0",
+    "@aws-sdk/node-http-handler": "^3.374.0",
+    "@aws-sdk/util-arn-parser": "^3.52.0",
+    "@backstage/backend-common": "^0.19.7",
+    "@backstage/catalog-model": "^1.4.3",
+    "@backstage/config": "^1.1.0",
+    "@backstage/plugin-cost-insights-common": "^0.1.2",
+    "@internal/plugin-aws-examples-common": "^0.1.0",
+    "@types/express": "*",
+    "crypto-js": "^4.1.1",
+    "date-format": "^4.0.14",
+    "express": "^4.17.1",
+    "express-promise-router": "^4.1.0",
+    "link2aws": "^1.0.14",
+    "node-fetch": "^2.6.7",
+    "regression": "^2.0.1",
+    "string-template": "^1.0.0",
+    "tinyduration": "^3.3.0",
+    "uuid": "^8.0.0",
+    "winston": "^3.2.1",
+    "yn": "^4.0.0"
+  },
+  "devDependencies": {
+    "@backstage/cli": "^0.22.13",
+    "@types/crypto-js": "^4.1.1",
+    "@types/regression": "^2.0.3",
+    "@types/string-template": "^1.0.2",
+    "@types/supertest": "^2.0.12",
+    "@types/uuid": "^9.0.4",
+    "msw": "^1.0.0",
+    "supertest": "^6.2.4"
+  },
+  "files": [
+    "dist"
+  ]
+}

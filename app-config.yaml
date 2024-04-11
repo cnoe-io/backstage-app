@@ -21,6 +21,7 @@ backend:
     connect-src: ["'self'", 'http:', 'https:']
     # Content-Security-Policy directives follow the Helmet format: https://helmetjs.github.io/#reference
     # Default Helmet Content-Security-Policy values can be removed by setting the key to false
+    default-src: ["'self'", "raw.githubusercontent.com"]
   cors:
     origin: http://localhost:3000
     methods: [GET, HEAD, PATCH, POST, PUT, DELETE]
@@ -136,3 +137,9 @@ argocd:
           password: ${ARGOCD_ADMIN_PASSWORD}
 argoWorkflows:
   baseUrl: https://argo.cnoe.localtest.me:8443
+
+awsPlugins:
+  locator:
+    type: resourceExplorer
+    resourceExplorer:
+      viewArn: arn:aws:resource-explorer-2:us-west-2:445379542150:view/test-view/627506ef-c409-439b-b42d-0646b53f3ee8

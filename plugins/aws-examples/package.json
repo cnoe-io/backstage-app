@@ -1,0 +1,65 @@
+{
+  "name": "@internal/plugin-aws-examples",
+  "version": "0.1.0",
+  "main": "src/index.ts",
+  "types": "src/index.ts",
+  "license": "Apache-2.0",
+  "private": true,
+  "publishConfig": {
+    "access": "public",
+    "main": "dist/index.esm.js",
+    "types": "dist/index.d.ts"
+  },
+  "backstage": {
+    "role": "frontend-plugin"
+  },
+  "scripts": {
+    "start": "backstage-cli package start",
+    "build": "backstage-cli package build",
+    "lint": "backstage-cli package lint",
+    "test": "backstage-cli package test",
+    "clean": "backstage-cli package clean",
+    "prepack": "backstage-cli package prepack",
+    "postpack": "backstage-cli package postpack"
+  },
+  "dependencies": {
+    "@aws-sdk/client-cloudwatch": "^3.427.0",
+    "@aws-sdk/client-ecs": "^3.63.0",
+    "@aws-sdk/client-securityhub": "^3.454.0",
+    "@aws-sdk/client-wellarchitected": "^3.425.0",
+    "@aws-sdk/util-arn-parser": "^3.52.0",
+    "@backstage/catalog-model": "^1.4.2",
+    "@backstage/core-components": "^0.13.5",
+    "@backstage/core-plugin-api": "^1.6.0",
+    "@backstage/errors": "^1.2.2",
+    "@backstage/plugin-catalog-react": "^1.8.4",
+    "@backstage/theme": "^0.4.2",
+    "@internal/plugin-aws-examples-common": "^0.1.0",
+    "@material-ui/core": "^4.12.2",
+    "@material-ui/icons": "^4.9.1",
+    "@material-ui/lab": "4.0.0-alpha.61",
+    "humanize-duration": "^3.27.3",
+    "moment": "^2.29.2",
+    "react-icons": "^4.11.0",
+    "react-use": "^17.2.4",
+    "recharts": "^2.8.0"
+  },
+  "peerDependencies": {
+    "react": "^16.13.1 || ^17.0.0"
+  },
+  "devDependencies": {
+    "@backstage/cli": "^0.22.13",
+    "@backstage/core-app-api": "^1.10.0",
+    "@backstage/dev-utils": "^1.0.21",
+    "@backstage/test-utils": "^1.4.3",
+    "@testing-library/jest-dom": "^5.10.1",
+    "@testing-library/react": "^12.1.3",
+    "@testing-library/user-event": "^14.0.0",
+    "@types/humanize-duration": "^3.27.1",
+    "@types/node": "*",
+    "msw": "^1.0.0"
+  },
+  "files": [
+    "dist"
+  ]
+}

@@ -43,6 +43,7 @@
     "@backstage/types": "~1.1.1",
     "@kubernetes/client-node": "~0.20.0",
     "@roadiehq/backstage-plugin-argo-cd-backend": "~2.14.0",
+    "@internal/plugin-aws-examples-backend": "^0.1.0",
     "@roadiehq/scaffolder-backend-module-utils": "~1.13.1",
     "app": "link:../app",
     "better-sqlite3": "^9.0.0",
