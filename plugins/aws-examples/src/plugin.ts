@@ -84,18 +84,18 @@ export const EntityAwsEcsDashboard = awsExamplesPlugin.provide(
   }),
 );
 
-export const EntityAwsWellArchitectedReviewOverviewCard =
-  awsExamplesPlugin.provide(
-    createComponentExtension({
-      name: 'EntityAwsWellArchitectedReviewOverviewCard',
-      component: {
-        lazy: () =>
-          import(
-            './components/AWSWellArchitectedOverview/AWSWellArchitectedOverview'
-          ).then(m => m.AWSWellArchitectedOverviewWidget),
-      },
-    }),
-  );
+// export const EntityAwsWellArchitectedReviewOverviewCard =
+//   awsExamplesPlugin.provide(
+//     createComponentExtension({
+//       name: 'EntityAwsWellArchitectedReviewOverviewCard',
+//       component: {
+//         lazy: () =>
+//           import(
+//             './components/AWSWellArchitectedOverview/AWSWellArchitectedOverview'
+//           ).then(m => m.AWSWellArchitectedOverviewWidget),
+//       },
+//     }),
+//   );
 
 export const EntityAwsCloudWatchAlarmsOverviewCard = awsExamplesPlugin.provide(
   createComponentExtension({

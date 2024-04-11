@@ -20,7 +20,7 @@ export interface RouterOptions {
 export async function createRouter(
   options: RouterOptions,
 ): Promise<express.Router> {
-  const { logger, config, catalogApi } = options;
+  const { logger, config } = options;
 
   // const awsResourceLocator = await AwsResourceLocatorFactory.fromConfig(
   //   config,
