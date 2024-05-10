@@ -115,3 +115,4 @@ COPY --chown=node:node app-config.yaml ./
 ENV NODE_ENV production
 
 CMD ["node", "packages/backend", "--config", "app-config.yaml"]
+LABEL org.opencontainers.image.source=https://github.com/OmriShiv/backstage-app
