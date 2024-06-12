@@ -1,15 +1,23 @@
-import {createTheme, darkTheme, genPageTheme, shapes} from '@backstage/theme';
 
-export const cnoeDarkTheme = createTheme({
-  palette: {
-    ...darkTheme.palette,
-    primary: {
-      main: '#25a0c2',
+import {
+  genPageTheme,
+  shapes,
+  createUnifiedTheme,
+  createBaseThemeOptions, palettes,
+} from '@backstage/theme';
+
+export const cnoeDarkTheme = createUnifiedTheme({
+  ...createBaseThemeOptions({
+    palette: {
+      ...palettes.dark,
+      primary: {
+        main: '#25a0c2',
+      },
+      secondary: {
+        main: '#00568c',
+      },
     },
-    secondary: {
-      main: '#00568c',
-    },
-  },
+  }),
   defaultPageTheme: 'home',
   pageTheme: {
     home: genPageTheme({colors: ['#25a0c2', '#00568c'], shape: shapes.wave}),
@@ -35,4 +43,3 @@ export const cnoeDarkTheme = createTheme({
     apis: genPageTheme({colors: ['#25a0c2', '#00568c'], shape: shapes.wave}),
   },
 });
-
