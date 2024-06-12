@@ -1,15 +1,22 @@
-import {createTheme, lightTheme, genPageTheme, shapes} from '@backstage/theme';
+import {
+  genPageTheme,
+  shapes,
+  createUnifiedTheme,
+  createBaseThemeOptions, palettes,
+} from '@backstage/theme';
 
-export const cnoeLightTheme = createTheme({
-  palette: {
-    ...lightTheme.palette,
-    primary: {
-      main: '#00568c',
+export const cnoeLightTheme = createUnifiedTheme({
+  ...createBaseThemeOptions({
+    palette: {
+      ...palettes.light,
+      primary: {
+        main: '#00568c',
+      },
+      secondary: {
+        main: '#00adee',
+      },
     },
-    secondary: {
-      main: '#00adee',
-    },
-  },
+  }),
   defaultPageTheme: 'home',
   pageTheme: {
     home: genPageTheme({colors: ['#00568c', '#00adee'], shape: shapes.wave}),

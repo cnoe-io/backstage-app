@@ -32,8 +32,6 @@ import { createApp } from '@backstage/app-defaults';
 import { AppRouter, FlatRoutes } from '@backstage/core-app-api';
 import { CatalogGraphPage } from '@backstage/plugin-catalog-graph';
 import { RequirePermission } from '@backstage/plugin-permission-react';
-import { ThemeProvider } from '@material-ui/core/styles';
-import CssBaseline from '@material-ui/core/CssBaseline';
 import { catalogEntityCreatePermission } from '@backstage/plugin-catalog-common/alpha';
 import LightIcon from '@material-ui/icons/WbSunny';
 import {
@@ -44,6 +42,10 @@ import {
 import {configApiRef, useApi} from "@backstage/core-plugin-api";
 import { ArgoWorkflowsPage } from '@internal/plugin-argo-workflows';
 import { ApacheSparkPage } from '@internal/plugin-apache-spark';
+import {
+  UnifiedThemeProvider
+} from "@backstage/theme";
+
 
 const app = createApp({
   apis,
@@ -66,7 +68,6 @@ const app = createApp({
       );
     },
   },
-
   bindRoutes({ bind }) {
     bind(catalogPlugin.externalRoutes, {
       createComponent: scaffolderPlugin.routes.root,
@@ -91,9 +92,7 @@ const app = createApp({
       variant: 'light',
       icon: <LightIcon />,
       Provider: ({ children }) => (
-        <ThemeProvider theme={cnoeLightTheme}>
-          <CssBaseline>{children}</CssBaseline>
-        </ThemeProvider>
+        <UnifiedThemeProvider theme={cnoeLightTheme} children={children} />
       ),
     },
     {
@@ -102,9 +101,7 @@ const app = createApp({
       variant: 'dark',
       icon: <LightIcon />,
       Provider: ({ children }) => (
-        <ThemeProvider theme={cnoeDarkTheme}>
-          <CssBaseline>{children}</CssBaseline>
-        </ThemeProvider>
+        <UnifiedThemeProvider theme={cnoeDarkTheme} children={children} />
       ),
     },
   ],
@@ -112,7 +109,7 @@ const app = createApp({
 
 const routes = (
   <FlatRoutes>
-    <Route path="/" element={<Navigate to="catalog" />} />
+    <Route path="/" element={<Navigate to="home" />} />
     <Route path="/home" element={<CNOEHomepage />} />
     <Route path="/catalog" element={<CatalogIndexPage />} />
     <Route
@@ -163,3 +160,4 @@ export default app.createRoot(
     </AppRouter>
   </>,
 );
+
