@@ -1,6 +1,6 @@
 import { executeShellCommand } from '@backstage/plugin-scaffolder-node';
-import { createTemplateAction }from '@backstage/plugin-scaffolder-node';
-import {Writable} from 'stream';
+import { createTemplateAction } from '@backstage/plugin-scaffolder-node';
+import { Writable } from 'stream';
 
 class ConsoleLogStream extends Writable {
   data: string;
@@ -11,8 +11,8 @@ class ConsoleLogStream extends Writable {
   }
 
   _write(chunk: any, _: any, callback: any) {
-    this.data += chunk.toString();  // Convert the chunk to a string and append it to this.data
-    console.log(this.data)
+    this.data += chunk.toString(); // Convert the chunk to a string and append it to this.data
+    console.log(this.data);
     callback();
   }
 }
@@ -39,29 +39,31 @@ export const createVerifyDependency = () => {
       },
     },
     async handler(ctx) {
-      const verifiers = ctx.input.verifiers
+      const verifiers = ctx.input.verifiers;
 
       if (verifiers === null || verifiers.length === 0) {
-        ctx.logger.error('no verifier was supplied for the object')
-        return
+        ctx.logger.error('no verifier was supplied for the object');
+        return;
       }
 
-      const baseCommand = 'cnoe'
-      const baseArguments = ['k8s', 'verify']
+      const baseCommand = 'cnoe';
+      const baseArguments = ['k8s', 'verify'];
 
-      verifiers.forEach((verifier: string) => baseArguments.push("--config", verifier))
+      verifiers.forEach((verifier: string) =>
+        baseArguments.push('--config', verifier),
+      );
 
       const logStream = new ConsoleLogStream({});
       await executeShellCommand({
         command: baseCommand,
         args: baseArguments,
         logStream: logStream,
-      }).then(() =>
-        ctx.logger.info("verification succeeded")
-      ).catch((error) => {
-        ctx.logger.error(error)
-        throw new Error(logStream.data)
-      });
+      })
+        .then(() => ctx.logger.info('verification succeeded'))
+        .catch(error => {
+          ctx.logger.error(error);
+          throw new Error(logStream.data);
+        });
     },
   });
 };

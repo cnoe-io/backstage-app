@@ -1,16 +1,16 @@
-// this is necessary until https://github.com/backstage/backstage/pull/21890/ is merged and released.
 import { InputError } from '@backstage/errors';
 import { Config } from '@backstage/config';
 import {
   getGiteaRequestOptions,
   GiteaIntegrationConfig,
-  ScmIntegrationRegistry, ScmIntegrations,
+  ScmIntegrationRegistry,
+  ScmIntegrations,
 } from '@backstage/integration';
 import {
   createTemplateAction,
   getRepoSourceDirectory,
   initRepoAndPush,
-  TemplateExample
+  TemplateExample,
 } from '@backstage/plugin-scaffolder-node';
 import crypto from 'crypto';
 import yaml from 'yaml';
@@ -290,7 +290,6 @@ const checkGiteaOrg = async (
   }
 };
 
-
 const createGiteaProject = async (
   config: GiteaIntegrationConfig,
   options: {
@@ -357,8 +356,6 @@ const createGiteaProject = async (
       );
     }
   }
-
-
 };
 
 const generateCommitMessage = (
@@ -508,7 +505,6 @@ export function createPublishGiteaAction(options: {
       },
     },
     async handler(ctx) {
-
       const {
         repoUrl,
         description,
@@ -555,7 +551,7 @@ export function createPublishGiteaAction(options: {
           : config.getOptionalString('scaffolder.defaultAuthor.email'),
       };
       // The owner to be used should be either the org name or user authenticated with the gitea server
-      const repoOwner = owner ? owner: username
+      const repoOwner = owner ? owner : username;
       const remoteUrl = `${integrationConfig.config.baseUrl}/${repoOwner}/${repo}.git`;
       const commitResult = await initRepoAndPush({
         dir: getRepoSourceDirectory(ctx.workspacePath, sourcePath),
@@ -569,7 +565,8 @@ export function createPublishGiteaAction(options: {
 
       // Check if the gitea repo URL is available before to exit
       const operationTimeLimit = 5000; // 20 seconds
-      const sleep = (ms: number | undefined) => new Promise(r => setTimeout(r, ms));
+      const sleep = (ms: number | undefined) =>
+        new Promise(r => setTimeout(r, ms));
       await sleep(operationTimeLimit);
       // await checkAvailabilityGiteaRepository(
       //   integrationConfig.config, {
@@ -601,5 +598,3 @@ export function createPublishGiteaAction(options: {
     },
   });
 }
-
-

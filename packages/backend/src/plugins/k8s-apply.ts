@@ -1,4 +1,7 @@
-import { createTemplateAction, executeShellCommand} from '@backstage/plugin-scaffolder-node';
+import {
+  createTemplateAction,
+  executeShellCommand,
+} from '@backstage/plugin-scaffolder-node';
 import { dumpYaml } from '@kubernetes/client-node';
 import yaml from 'js-yaml';
 import { Config } from '@backstage/config';
@@ -57,9 +60,12 @@ export const createKubernetesApply = (config: Config) => {
     },
     async handler(ctx) {
       let obj: any;
-      let manifestPath = resolveSafeChildPath(ctx.workspacePath, 'to-be-applied.yaml');
+      let manifestPath = resolveSafeChildPath(
+        ctx.workspacePath,
+        'to-be-applied.yaml',
+      );
       if (ctx.input.manifestString) {
-        obj = yaml.load(ctx.input.manifestString)
+        obj = yaml.load(ctx.input.manifestString);
         fs.writeFileSync(manifestPath, ctx.input.manifestString, {
           encoding: 'utf8',
           mode: '600',
@@ -76,7 +82,7 @@ export const createKubernetesApply = (config: Config) => {
           ctx.input.manifestPath!,
         );
         const fileContent = fs.readFileSync(filePath, 'utf8');
-        manifestPath = filePath
+        manifestPath = filePath;
         obj = yaml.load(fileContent);
       }
 
@@ -100,10 +106,13 @@ export const createKubernetesApply = (config: Config) => {
             {
               name: ctx.input.clusterName,
               cluster: {
-                'certificate-authority-data': targetCluster.getOptionalString('caData'),
-                'certificate-authority': targetCluster.getOptionalString('caFile'),
+                'certificate-authority-data':
+                  targetCluster.getOptionalString('caData'),
+                'certificate-authority':
+                  targetCluster.getOptionalString('caFile'),
                 server: targetCluster.getString('url'),
-                'insecure-skip-tls-verify': !!targetCluster.getOptionalBoolean('skipTLSVerify'),
+                'insecure-skip-tls-verify':
+                  !!targetCluster.getOptionalBoolean('skipTLSVerify'),
               },
             },
           ],
@@ -116,14 +125,16 @@ export const createKubernetesApply = (config: Config) => {
             },
           ],
         };
-        if (!confFile.clusters[0].cluster["insecure-skip-tls-verify"]) {
-          let caDataRaw = targetCluster.getOptionalString('caData')
+        if (!confFile.clusters[0].cluster['insecure-skip-tls-verify']) {
+          let caDataRaw = targetCluster.getOptionalString('caData');
           if (caDataRaw?.startsWith('-----BEGIN CERTIFICATE-----')) {
-            caDataRaw = Buffer.from(targetCluster.getString('caData'), 'utf8').toString(
-                'base64',
-              );
+            caDataRaw = Buffer.from(
+              targetCluster.getString('caData'),
+              'utf8',
+            ).toString('base64');
           }
-          confFile.clusters[0].cluster['certificate-authority-data'] = caDataRaw
+          confFile.clusters[0].cluster['certificate-authority-data'] =
+            caDataRaw;
         }
         const confString = dumpYaml(confFile);
         const confFilePath = resolveSafeChildPath(ctx.workspacePath, 'config');
@@ -156,7 +167,7 @@ export const createKubernetesApply = (config: Config) => {
         });
         return;
       }
-      throw new Error("please specify a valid cluster name")
+      throw new Error('please specify a valid cluster name');
     },
   });
 };

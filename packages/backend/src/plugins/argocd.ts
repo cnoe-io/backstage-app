@@ -1,7 +1,7 @@
-import {Config} from "@backstage/config";
-import {createTemplateAction} from "@backstage/plugin-scaffolder-node";
-import {examples} from "./gitea-actions";
-import {Logger} from "winston";
+import { Config } from '@backstage/config';
+import { createTemplateAction } from '@backstage/plugin-scaffolder-node';
+import { examples } from './gitea-actions';
+import { Logger } from 'winston';
 
 import { ArgoService } from '@roadiehq/backstage-plugin-argo-cd-backend';
 
@@ -9,16 +9,13 @@ import { createRouter } from '@roadiehq/backstage-plugin-argo-cd-backend';
 import { PluginEnvironment } from '../types';
 
 export default async function createPlugin({
-                                             logger,
-                                             config,
-                                           }: PluginEnvironment) {
+  logger,
+  config,
+}: PluginEnvironment) {
   return await createRouter({ logger, config });
 }
 
-export function createArgoCDApp(options: {
-  config: Config;
-  logger: Logger
-}) {
+export function createArgoCDApp(options: { config: Config; logger: Logger }) {
   const { config, logger } = options;
 
   return createTemplateAction<{
@@ -28,16 +25,22 @@ export function createArgoCDApp(options: {
     argoInstance: string;
     path: string;
     labelValue?: string;
-    appNamespace: string
+    appNamespace: string;
   }>({
     id: 'cnoe:create-argocd-app',
-    description:
-      'creates argocd app',
+    description: 'creates argocd app',
     examples,
     schema: {
       input: {
         type: 'object',
-        required: ['repoUrl', 'projectName', 'appName', 'argoInstance', 'path', 'appNamespace'],
+        required: [
+          'repoUrl',
+          'projectName',
+          'appName',
+          'argoInstance',
+          'path',
+          'appNamespace',
+        ],
         properties: {
           repoUrl: {
             title: 'Repository Location',
@@ -66,14 +69,12 @@ export function createArgoCDApp(options: {
           labelValue: {
             title: 'for argocd plugin to locate this app',
             type: 'string',
-          }
+          },
         },
       },
-      output: {
-      },
+      output: {},
     },
     async handler(ctx) {
-
       const {
         repoUrl,
         projectName,
@@ -81,7 +82,7 @@ export function createArgoCDApp(options: {
         argoInstance,
         path,
         labelValue,
-        appNamespace
+        appNamespace,
       } = ctx.input;
 
       const argoUserName =
@@ -130,7 +131,7 @@ export function createArgoCDApp(options: {
         sourceRepo: repoUrl,
         sourcePath: path,
         labelValue: labelValue ? labelValue : appName,
-      })
+      });
     },
   });
 }
