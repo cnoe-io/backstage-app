@@ -1,6 +1,6 @@
-# CNOE [Backstage](https://backstage.io)
+# CNOE Backstge 
 
-This repository contains code for the Backstage images used by the CNOE stacks.
+This repository contains code for the [Backstage](https://backstage.io) images used by the CNOE stacks.
 
 ## Container Images
 
@@ -98,6 +98,23 @@ Data:
   username : admin
 ```
 
+#### Update Gitea Credentials
+
+Gitea admin passwords are generated on each fresh installation as well. To obtain your password, run: `./idpbuilder get secrets -p argocd`.
+Then update [this line](https://github.com/cnoe-io/backstage-app/blob/9ee3514e51c1a354b7fe85a90117faf8328bfa0b/app-config.yaml#L40) and [this line](https://github.com/cnoe-io/backstage-app/blob/9ee3514e51c1a354b7fe85a90117faf8328bfa0b/app-config.yaml#L44).
+
+For example:
+
+```bash
+$ ./idpbuilder get secrets -p gitea
+
+---------------------------
+Name: gitea-credential
+Namespace: gitea
+Data:
+  password : abc
+  username : giteaAdmin
+````
 
 ### Start Backstage processes
 

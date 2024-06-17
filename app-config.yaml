@@ -31,17 +31,16 @@ backend:
     client: better-sqlite3
     connection: ':memory:'
   # workingDirectory: /tmp # Use this to configure a working directory for the scaffolder, defaults to the OS temp-dir
-
 integrations:
   gitea:
-    - baseUrl: https://gitea.cnoe.localtest.me:8443
-      host: gitea.cnoe.localtest.me:8443
+    - baseUrl: https://cnoe.localtest.me:8443/gitea
+      host: cnoe.localtest.me:8443
       username: giteaAdmin
-      password: giteaPassword
-    - baseUrl: https://gitea.cnoe.localtest.me
-      host: gitea.cnoe.localtest.me:8443
+      password: ${GITEA_PASSWORD}
+    - baseUrl: https://cnoe.localtest.me/gitea
+      host: cnoe.localtest.me
       username: giteaAdmin
-      password: giteaPassword
+      password: ${GITEA_PASSWORD}
 
 proxy:
   ### Example for how to add a proxy endpoint for the frontend.
@@ -61,16 +60,16 @@ techdocs:
     runIn: 'docker' # Alternatives - 'local'
   publisher:
     type: 'local' # Alternatives - 'googleGcs' or 'awsS3'. Read documentation for using alternatives.
-
 auth:
   # see https://backstage.io/docs/auth/ to learn about auth providers
   environment: local # set this to development to enable SSO
   session:
     secret: abcdfkjalskdfjkla
   providers:
+    guest: {}
     keycloak-oidc:
       development:
-        metadataUrl: https://keycloak.cnoe.localtest.me:8443/realms/cnoe/.well-known/openid-configuration
+        metadataUrl: https://cnoe.localtest.me:8443/keycloak/realms/cnoe/.well-known/openid-configuration
         clientId: backstage
         clientSecret: ${KEYCLOAK_CLIENT_SECRET}
         scope: 'openid profile email groups'
@@ -90,8 +89,7 @@ catalog:
     - allow: [ Component, System, API, Resource, Location, Template ]
   locations:
     - type: url
-      target: https://gitea.cnoe.localtest.me:8443/giteaAdmin/entities/src/branch/main/catalog-info.yaml
-
+      target: https://cnoe.localtest.me:8443/gitea/giteaAdmin/idpbuilder-localdev-backstage-templates-entities/src/branch/main/catalog-info.yaml
 #    # Local example template
 #    - type: file
 #      target: ../../examples/template/template.yaml
@@ -129,10 +127,10 @@ argocd:
   appLocatorMethods:
     - type: 'config'
       instances:
-        - name: in-cluster
-          url: https://argocd.cnoe.localtest.me:8443
+        - name: local
+          url: https://cnoe.localtest.me:8443/argocd
           username: admin
           # replace with your argocd password e.g. kubectl -n argocd get secret argocd-initial-admin-secret -o jsonpath="{.data.password}" | base64 -d
           password: ${ARGOCD_ADMIN_PASSWORD}
 argoWorkflows:
-  baseUrl: https://argo.cnoe.localtest.me:8443
+  baseUrl: https://cnoe.localtest.me:8443/argo-workflows

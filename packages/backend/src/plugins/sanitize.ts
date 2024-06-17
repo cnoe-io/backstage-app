@@ -30,10 +30,10 @@ export const createSanitizeResource = () => {
         properties: {
           sanitized: {
             type: 'string',
-            description: 'The sanitized yaml string'
-          }
-        }
-      }
+            description: 'The sanitized yaml string',
+          },
+        },
+      },
     },
     async handler(ctx) {
       const obj = yaml.load(ctx.input.document);
