@@ -70,6 +70,7 @@ import {
   isArgoWorkflowsAvailable,
 } from '@internal/plugin-argo-workflows';
 import {ApacheSparkPage, isApacheSparkAvailable} from "@internal/plugin-apache-spark";
+import { isTerraformAvailable, TerraformPluginPage } from '@internal/plugin-terraform';
 
 const techdocsContent = (
   <EntityTechdocsContent>
@@ -157,6 +158,13 @@ const overviewContent = (
         </Grid>
       </EntitySwitch.Case>
     </EntitySwitch>
+    <EntitySwitch>
+      <EntitySwitch.Case if={e => isTerraformAvailable(e)}>
+        <Grid item md={6}>
+          <TerraformPluginPage />
+        </Grid>
+      </EntitySwitch.Case>
+    </EntitySwitch>
     <Grid item md={6} xs={12}>
       <EntityCatalogGraphCard variant="gridItem" height={400} />
     </Grid>
@@ -169,6 +177,10 @@ const overviewContent = (
     </Grid>
 
   </Grid>
+);
+
+const terraFormContent = (
+  <TerraformPluginPage />
 );
 
 const serviceEntityPage = (

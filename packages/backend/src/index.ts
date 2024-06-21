@@ -32,5 +32,6 @@ backend.add(legacyPlugin('argocd', import('./plugins/argocd')));
 // cnoe plugins
 backend.add(authModuleKeycloakOIDCProvider);
 backend.add(cnoeScaffolderActions);
+backend.add(import('@internal/backstage-plugin-terraformv2-backend'));
 
 backend.start();
