@@ -1,0 +1,1 @@
+export { MainPageComponent } from './MainPageComponent';
