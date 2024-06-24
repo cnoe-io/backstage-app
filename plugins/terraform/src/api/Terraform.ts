@@ -41,7 +41,7 @@ export class Terraform implements TerraformApi {
       tfState
     };
 
-    const response = await this.fetchURL('/api/terraformv2/deflate', 'post', requestBody);
+    const response = await this.fetchURL('/api/terraform/deflate', 'post', requestBody);
     
     if (!response.ok) {
       return Promise.reject(
@@ -62,7 +62,7 @@ export class Terraform implements TerraformApi {
       Prefix
     };
 
-    const response = await this.fetchURL('/api/terraformv2/getFileList', 'post', requestBody);
+    const response = await this.fetchURL('/api/terraform/getFileList', 'post', requestBody);
     if (!response.ok) {
       return Promise.reject(
         `failed to fetch resources: ${response.status}, ${
@@ -80,7 +80,7 @@ export class Terraform implements TerraformApi {
       FileLocation,
     };
 
-    const response = await this.fetchURL('/api/terraformv2/getLocalFileList', 'post', requestBody);
+    const response = await this.fetchURL('/api/terraform/getLocalFileList', 'post', requestBody);
     if (!response.ok) {
       return Promise.reject(
         `failed to fetch resources: ${response.status}, ${
@@ -102,7 +102,7 @@ export class Terraform implements TerraformApi {
       bodyObj.Bucket = Bucket;
     }
 
-    const response = await this.fetchURL('/api/terraformv2/getTFStateFile', 'post', bodyObj);
+    const response = await this.fetchURL('/api/terraform/getTFStateFile', 'post', bodyObj);
     if (!response.ok) {
       return Promise.reject(
         `failed to fetch resources: ${response.status}, ${

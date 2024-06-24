@@ -5,12 +5,12 @@ import {
 import { createRouter } from './service/router';
 
 /**
- * terraformv2Plugin backend plugin
+ * terraformPlugin backend plugin
  *
  * @public
  */
-export const terraformv2Plugin = createBackendPlugin({
-  pluginId: 'terraformv2',
+export const terraformPlugin = createBackendPlugin({
+  pluginId: 'terraform',
   register(env) {
     env.registerInit({
       deps: {

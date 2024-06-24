@@ -1,13 +1,13 @@
-# terraformv2
+# terraform
 
-Welcome to the terraformv2 backend plugin!
+Welcome to the terraform backend plugin!
 
 _This plugin was created through the Backstage CLI_
 
 ## Getting started
 
 Your plugin has been added to the example app in this repository, meaning you'll be able to access it by running `yarn
-start` in the root directory, and then navigating to [/terraformv2Plugin/health](http://localhost:7007/api/terraformv2Plugin/health).
+start` in the root directory, and then navigating to [/terraformPlugin/health](http://localhost:7007/api/terraformv2Plugin/health).
 
 You can also serve the plugin in isolation by running `yarn start` in the plugin directory.
 This method of serving the plugin provides quicker iteration speed and a faster startup and hot reloads.
