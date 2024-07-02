@@ -1,10 +1,12 @@
 import { errorHandler } from '@backstage/backend-common';
-import { coreServices } from '@backstage/backend-plugin-api';
+import { LoggerService } from '@backstage/backend-plugin-api';
+import { Config } from '@backstage/config';
 import express from 'express';
 import Router from 'express-promise-router';
 import {DefaultAwsCredentialsManager} from '@backstage/integration-aws-node';
 import {S3Client, ListObjectsV2Command, GetObjectCommand} from "@aws-sdk/client-s3";
 import * as fs from 'fs';
+
 const {inflate} = require('pako'); 
 
 type ListObjectsInput = {
@@ -14,8 +16,8 @@ type ListObjectsInput = {
 };
 
 export interface RouterOptions {
-  logger: coreServices.logger;
-  config: coreServices.rootConfig,
+  logger: LoggerService;
+  config: Config,
 }
 
 export async function createRouter(
@@ -40,10 +42,10 @@ export async function createRouter(
     let jsonData:any = {};
 
     if(req.body.tfState) {
-      var bytes = [];
+      const bytes = [];
       const inputString = atob(req.body.tfState);
-      for (var i = 0; i < inputString.length; i++) {
-          var abyte = inputString.charCodeAt(i) & 0xff;
+      for (let i = 0; i < inputString.length; i++) {
+          const abyte = inputString.charCodeAt(i) & 0xff;
           bytes.push(abyte);
       }
       const binData = new Uint8Array(bytes);
@@ -58,7 +60,7 @@ export async function createRouter(
     let responseObject: any = [];
     let token: string | undefined = "1";
     while (token) {
-      let input: ListObjectsInput = {
+      const input: ListObjectsInput = {
         Bucket: req.body.Bucket,
         Prefix: req.body.Key,
       }
@@ -75,15 +77,15 @@ export async function createRouter(
   });
 
   router.post('/getLocalFileList', async (req, res) => {
-    let responseObject: any[] = [];
+    const responseObject: any[] = [];
 
     try {
       const fsstat = fs.lstatSync(req.body.FileLocation);
       if (fsstat.isDirectory()) {
         const filenames = fs.readdirSync(req.body.FileLocation);
-        for (let i in filenames) {
+        for (const i in filenames) {
           responseObject.push({
-            Key: req.body.FileLocation + "/" + filenames[i]
+            Key: `${req.body.FileLocation  }/${  filenames[i]}`
           });
         }
       } else if (fsstat.isFile()) {
@@ -92,7 +94,7 @@ export async function createRouter(
         });
       }
     } catch (e) {
-      logger.error(e)
+      logger.error(String(e))
     }
 
     res.json(responseObject);
@@ -114,7 +116,7 @@ export async function createRouter(
         const data = fs.readFileSync(req.body.Key, {encoding: 'utf8', flag: 'r'});
         jsonData = JSON.parse(data);
       } catch (e) {
-        logger.error(e);
+        logger.error(String(e));
       }
 
       res.json(jsonData);

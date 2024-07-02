@@ -201,7 +201,7 @@ export const MainPageFetchComponent = () => {
   const [resources, setResources] = useState<any[]>([]);
   const [outputs, setOutputs] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<ResponseError>();
+  const [error] = useState<ResponseError>();
 
   function parseResources(resourcesArr:any[]) {
     let resourcesObj:any = {};
