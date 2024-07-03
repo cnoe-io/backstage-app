@@ -2,15 +2,44 @@ import { Terraform } from "./Terraform";
 import { KubernetesApi } from "@backstage/plugin-kubernetes";
 import { FrontendHostDiscovery } from "@backstage/core-app-api";
 import { UserIdentity } from "@backstage/core-components";
+import { IdentityApi, ConfigApi } from "@backstage/core-plugin-api"
 
 describe("TerraformClient", () => {
   const mockKClient: jest.Mocked<KubernetesApi> = {
     getObjectsByEntity: jest.fn(),
     getClusters: jest.fn(),
+    getCluster: jest.fn(),
     getWorkloadsByEntity: jest.fn(),
     getCustomObjectsByEntity: jest.fn(),
     proxy: jest.fn(),
   };
+
+  const mockIdentity: jest.Mocked<IdentityApi> = {
+    getProfileInfo:jest.fn(),
+    getBackstageIdentity: jest.fn(),
+    getCredentials: jest.fn(),
+    signOut: jest.fn(),
+
+  }
+
+  const mockConfig: jest.Mocked<ConfigApi> = {
+    has: jest.fn(),
+    keys: jest.fn(),
+    get: jest.fn(),
+    getOptional: jest.fn(),
+    getConfig: jest.fn(),
+    getOptionalConfig: jest.fn(),
+    getConfigArray: jest.fn(),
+    getOptionalConfigArray: jest.fn(),
+    getNumber: jest.fn(),
+    getOptionalNumber: jest.fn(),
+    getBoolean: jest.fn(),
+    getOptionalBoolean: jest.fn(),
+    getString: jest.fn(),
+    getOptionalString: jest.fn(),
+    getStringArray: jest.fn(),
+    getOptionalStringArray: jest.fn(),
+  }
 
   beforeAll(() => {
     jest
@@ -35,7 +64,7 @@ describe("TerraformClient", () => {
       ok: true,
       text: async () => "teststring",
     } as Response);
-    const a = new Terraform(mockKClient);
+    const a = new Terraform(mockKClient, mockIdentity, mockConfig);
     const spy = jest.spyOn(mockKClient, "proxy");
     const resp = await a.getSecret("abc", "default", "test");
     expect(resp).toBeDefined();
@@ -57,7 +86,7 @@ describe("TerraformClient", () => {
       },
     ]);
 
-    const a = new Terraform(mockKClient);
+    const a = new Terraform(mockKClient, mockIdentity, mockConfig);
     const spy = jest.spyOn(a, "getFirstCluster");
     const resp = await a.getSecret(undefined, "default", "test");
     expect(resp).toBeDefined();
@@ -71,7 +100,7 @@ describe("TerraformClient", () => {
       text: async () => "oh no",
     } as Response);
 
-    const a = new Terraform(mockKClient);
+    const a = new Terraform(mockKClient, mockIdentity, mockConfig);
     await expect(
       a.getSecret("abc", "default", "test")
     ).rejects.toEqual(

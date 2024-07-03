@@ -23,7 +23,7 @@ export class Terraform implements TerraformApi {
   async fetchURL(url: string, type: string, requestBody: any) {
     const { token } = await this.identityApi.getCredentials();
     const backendUrl = this.configApi.getString('backend.baseUrl');
-    const response = await fetch(backendUrl+""+url, {
+    const response = await fetch(`${backendUrl}${url}`, {
       method: type,
       body: JSON.stringify(requestBody),
       headers: {
@@ -95,7 +95,7 @@ export class Terraform implements TerraformApi {
     Bucket:string,
     file:any
   ):Promise<any> {
-    let bodyObj:any = {
+    const bodyObj:any = {
       Key: file.Key
     };
     if(Bucket) {

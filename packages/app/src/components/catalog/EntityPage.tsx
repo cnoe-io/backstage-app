@@ -179,10 +179,6 @@ const overviewContent = (
   </Grid>
 );
 
-const terraFormContent = (
-  <TerraformPluginPage />
-);
-
 const serviceEntityPage = (
   <EntityLayout>
     <EntityLayout.Route path="/" title="Overview">
