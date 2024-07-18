@@ -1,0 +1,19 @@
+name: PR
+
+on:
+  pull_request:
+    types: [opened, ready_for_review, synchronize]
+
+jobs:
+  build:
+    runs-on: ubuntu-22.04
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 18
+      - name: Run tests
+        run: |
+          yarn install --frozen-lockfile --network-timeout 600000
+          yarn tsc
