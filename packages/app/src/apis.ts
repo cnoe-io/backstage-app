@@ -13,7 +13,7 @@ import {OAuth2} from "@backstage/core-app-api";
 export const keycloakOIDCAuthApiRef: ApiRef<
   OpenIdConnectApi & ProfileInfoApi & BackstageIdentityApi & SessionApi
 > = createApiRef({
-  id: 'auth.keyloak-oidc',
+  id: 'auth.keycloak-oidc',
 });
 export const apis: AnyApiFactory[] = [
   createApiFactory({
