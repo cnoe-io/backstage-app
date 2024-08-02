@@ -43,6 +43,7 @@ export const authModuleKeycloakOIDCProvider = createBackendModule({
                   'Login failed, user profile does not contain a valid name',
                 );
               }
+              // should use users from catalog
               const userRef = stringifyEntityRef({
                 kind: 'User',
                 name: info.profile.displayName!,
