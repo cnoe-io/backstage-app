@@ -125,7 +125,10 @@ export const createKubernetesApply = (config: Config) => {
             },
           ],
         };
-        if (!confFile.clusters[0].cluster['insecure-skip-tls-verify']) {
+        if(confFile.clusters[0].cluster['insecure-skip-tls-verify']) {
+          // Remove insecure-skip-tls-verify from k8s configfile
+          delete confFile.clusters[0].cluster['insecure-skip-tls-verify']
+        } else {
           let caDataRaw = targetCluster.getOptionalString('caData');
           if (caDataRaw?.startsWith('-----BEGIN CERTIFICATE-----')) {
             caDataRaw = Buffer.from(
