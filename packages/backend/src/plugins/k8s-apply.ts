@@ -106,10 +106,6 @@ export const createKubernetesApply = (config: Config) => {
             {
               name: ctx.input.clusterName,
               cluster: {
-                'certificate-authority-data':
-                  targetCluster.getOptionalString('caData'),
-                'certificate-authority':
-                  targetCluster.getOptionalString('caFile'),
                 server: targetCluster.getString('url'),
                 'insecure-skip-tls-verify':
                   !!targetCluster.getOptionalBoolean('skipTLSVerify'),
@@ -125,10 +121,7 @@ export const createKubernetesApply = (config: Config) => {
             },
           ],
         };
-        if(confFile.clusters[0].cluster['insecure-skip-tls-verify']) {
-          // Remove certificate-authority-data from Conffile
-          delete confFile.clusters[0].cluster['certificate-authority-data']
-        } else {
+        if(!confFile.clusters[0].cluster['insecure-skip-tls-verify']) {
           let caDataRaw = targetCluster.getOptionalString('caData');
           if (caDataRaw?.startsWith('-----BEGIN CERTIFICATE-----')) {
             caDataRaw = Buffer.from(
@@ -136,8 +129,10 @@ export const createKubernetesApply = (config: Config) => {
               'utf8',
             ).toString('base64');
           }
-          confFile.clusters[0].cluster['certificate-authority-data'] =
+          (confFile.clusters[0].cluster as any)['certificate-authority-data'] =
             caDataRaw;
+          (confFile.clusters[0].cluster as any)['certificate-authority'] =
+            targetCluster.getOptionalString('caFile');
         }
         const confString = dumpYaml(confFile);
         const confFilePath = resolveSafeChildPath(ctx.workspacePath, 'config');
