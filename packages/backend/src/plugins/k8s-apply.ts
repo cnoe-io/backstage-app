@@ -208,7 +208,6 @@ export const createKubernetesApply = (config: Config) => {
               ],
               logStream: ctx.logStream,
             });
-            return;
           } else {
             await executeShellCommand({
               command: 'kubectl',
