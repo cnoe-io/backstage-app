@@ -8,6 +8,39 @@ import { Config } from '@backstage/config';
 import { resolveSafeChildPath } from '@backstage/backend-common';
 import fs from 'fs-extra';
 
+interface Cluster {
+  name: string;
+  cluster: {
+    "server": string;
+    "insecure-skip-tls-verify": boolean;
+    "certificate-authority-data"?: string;
+    "certificate-authority"?: string;
+  };
+}
+
+interface Context {
+  name: string;
+  context: {
+    cluster: string;
+    user: string;
+  };
+}
+
+interface User {
+  name: string;
+  user: {
+    token?: string;
+  };
+}
+interface ConfFile {
+  apiVersion: string;
+  kind: string;
+  'current-context': string;
+  contexts: Context[];
+  clusters: Cluster[];
+  users: User[];
+}
+
 export const createKubernetesApply = (config: Config) => {
   return createTemplateAction<{
     manifestString?: string;
@@ -89,39 +122,6 @@ export const createKubernetesApply = (config: Config) => {
       if (ctx.input.clusterName) {
         // Supports SA token authentication only
         const targetCluster = getClusterConfig(ctx.input.clusterName!, config);
-        interface Cluster {
-          name: string;
-          cluster: {
-            "server": string;
-            "insecure-skip-tls-verify": boolean;
-            "certificate-authority-data"?: string;
-            "certificate-authority"?: string;
-          };
-        }
-
-        interface Context {
-          name: string;
-          context: {
-            cluster: string;
-            user: string;
-          };
-        }
-
-        interface User {
-          name: string;
-          user: {
-            token?: string;
-          };
-        }
-        interface ConfFile {
-          apiVersion: string;
-          kind: string;
-          'current-context': string;
-          contexts: Context[];
-          clusters: Cluster[];
-          users: User[];
-        }
-
         const confFile: ConfFile = {
           apiVersion: 'v1',
           kind: 'Config',
