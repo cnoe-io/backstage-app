@@ -11,10 +11,10 @@ import fs from 'fs-extra';
 interface Cluster {
   name: string;
   cluster: {
-    "server": string;
-    "insecure-skip-tls-verify": boolean;
-    "certificate-authority-data"?: string;
-    "certificate-authority"?: string;
+    server: string;
+    'insecure-skip-tls-verify': boolean;
+    'certificate-authority-data'?: string;
+    'certificate-authority'?: string;
   };
 }
 interface Context {
@@ -150,7 +150,7 @@ export const createKubernetesApply = (config: Config) => {
               },
             },
           ],
-        }
+        };
         if (!confFile.clusters[0].cluster['insecure-skip-tls-verify']) {
           let caDataRaw = targetCluster.getOptionalString('caData');
           if (caDataRaw?.startsWith('-----BEGIN CERTIFICATE-----')) {
@@ -158,13 +158,14 @@ export const createKubernetesApply = (config: Config) => {
               targetCluster.getString('caData'),
               'utf8',
             ).toString('base64');
-          };
+          }
           confFile.clusters[0].cluster['certificate-authority-data'] =
             caDataRaw;
           if (
-            (
-              targetCluster.getOptionalString('caFile') && 
-              !(targetCluster.getOptionalString('caFile')?.length === 0 || targetCluster.getOptionalString('caFile') === null)
+            targetCluster.getOptionalString('caFile') &&
+            !(
+              targetCluster.getOptionalString('caFile')?.length === 0 ||
+              targetCluster.getOptionalString('caFile') === null
             )
           ) {
             confFile.clusters[0].cluster['certificate-authority'] =
