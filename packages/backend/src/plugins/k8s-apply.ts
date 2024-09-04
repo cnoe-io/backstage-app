@@ -89,19 +89,16 @@ export const createKubernetesApply = (config: Config) => {
       },
     },
     async handler(ctx) {
-      let obj: any;
       let manifestPath = resolveSafeChildPath(
         ctx.workspacePath,
         'to-be-applied.yaml',
       );
       if (ctx.input.manifestString) {
-        obj = yaml.load(ctx.input.manifestString);
         fs.writeFileSync(manifestPath, ctx.input.manifestString, {
           encoding: 'utf8',
           mode: '600',
         });
       } else if (ctx.input.manifestObject) {
-        obj = ctx.input.manifestObject;
         fs.writeFileSync(manifestPath, yaml.dump(ctx.input.manifestObject), {
           encoding: 'utf8',
           mode: '600',
@@ -111,10 +108,10 @@ export const createKubernetesApply = (config: Config) => {
           ctx.workspacePath,
           ctx.input.manifestPath!,
         );
-        const fileContent = fs.readFileSync(filePath, 'utf8');
         manifestPath = filePath;
-        obj = yaml.load(fileContent);
       }
+      const fileContent = fs.readFileSync(manifestPath, 'utf8');
+      const objList: any[] = yaml.loadAll(fileContent);
 
       if (ctx.input.clusterName) {
         // Supports SA token authentication only
@@ -189,19 +186,43 @@ export const createKubernetesApply = (config: Config) => {
           args: [manifestPath],
           logStream: ctx.logStream,
         });
-        if (obj.metadata.generateName !== undefined) {
-          await executeShellCommand({
-            command: 'kubectl',
-            args: ['--kubeconfig', confFilePath, 'create', '-f', manifestPath],
-            logStream: ctx.logStream,
+        let counter = 1;
+        for (const obj of objList) {
+          let manifestFilePath = resolveSafeChildPath(
+            ctx.workspacePath,
+            'to-be-applied-' + counter.toString() + '.yaml',
+          );
+          fs.writeFileSync(manifestFilePath, yaml.dump(obj), {
+            encoding: 'utf8',
+            mode: '600',
           });
-          return;
+          if (obj.metadata.generateName !== undefined) {
+            await executeShellCommand({
+              command: 'kubectl',
+              args: [
+                '--kubeconfig',
+                confFilePath,
+                'create',
+                '-f',
+                manifestFilePath,
+              ],
+              logStream: ctx.logStream,
+            });
+          } else {
+            await executeShellCommand({
+              command: 'kubectl',
+              args: [
+                '--kubeconfig',
+                confFilePath,
+                'apply',
+                '-f',
+                manifestFilePath,
+              ],
+              logStream: ctx.logStream,
+            });
+          }
+          counter += 1;
         }
-        await executeShellCommand({
-          command: 'kubectl',
-          args: ['--kubeconfig', confFilePath, 'apply', '-f', manifestPath],
-          logStream: ctx.logStream,
-        });
         return;
       }
       throw new Error('please specify a valid cluster name');
