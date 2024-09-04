@@ -8,6 +8,36 @@ import { Config } from '@backstage/config';
 import { resolveSafeChildPath } from '@backstage/backend-common';
 import fs from 'fs-extra';
 
+interface Cluster {
+  name: string;
+  cluster: {
+    server: string;
+    'insecure-skip-tls-verify': boolean;
+    'certificate-authority-data'?: string;
+    'certificate-authority'?: string;
+  };
+}
+interface Context {
+  name: string;
+  context: {
+    cluster: string;
+    user: string;
+  };
+}
+interface User {
+  name: string;
+  user: {
+    token?: string;
+  };
+}
+interface ConfFile {
+  apiVersion: string;
+  kind: string;
+  'current-context': string;
+  contexts: Context[];
+  clusters: Cluster[];
+  users: User[];
+}
 export const createKubernetesApply = (config: Config) => {
   return createTemplateAction<{
     manifestString?: string;
@@ -89,7 +119,7 @@ export const createKubernetesApply = (config: Config) => {
       if (ctx.input.clusterName) {
         // Supports SA token authentication only
         const targetCluster = getClusterConfig(ctx.input.clusterName!, config);
-        const confFile = {
+        const confFile: ConfFile = {
           apiVersion: 'v1',
           kind: 'Config',
           'current-context': ctx.input.clusterName,
@@ -106,10 +136,6 @@ export const createKubernetesApply = (config: Config) => {
             {
               name: ctx.input.clusterName,
               cluster: {
-                'certificate-authority-data':
-                  targetCluster.getOptionalString('caData'),
-                'certificate-authority':
-                  targetCluster.getOptionalString('caFile'),
                 server: targetCluster.getString('url'),
                 'insecure-skip-tls-verify':
                   !!targetCluster.getOptionalBoolean('skipTLSVerify'),
@@ -135,7 +161,18 @@ export const createKubernetesApply = (config: Config) => {
           }
           confFile.clusters[0].cluster['certificate-authority-data'] =
             caDataRaw;
+          if (
+            targetCluster.getOptionalString('caFile') &&
+            !(
+              targetCluster.getOptionalString('caFile')?.length === 0 ||
+              targetCluster.getOptionalString('caFile') === null
+            )
+          ) {
+            confFile.clusters[0].cluster['certificate-authority'] =
+              targetCluster.getString('caFile');
+          }
         }
+
         const confString = dumpYaml(confFile);
         const confFilePath = resolveSafeChildPath(ctx.workspacePath, 'config');
         fs.writeFileSync(confFilePath, confString, {
