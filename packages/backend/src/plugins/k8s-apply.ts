@@ -17,7 +17,7 @@ export const createKubernetesApply = (config: Config) => {
       "certificate-authority-data"?: string;
       "certificate-authority"?: string;
     };
-  };
+  }
   interface Context {
     name: string;
     context: {
