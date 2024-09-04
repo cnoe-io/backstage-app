@@ -89,14 +89,40 @@ export const createKubernetesApply = (config: Config) => {
       if (ctx.input.clusterName) {
         // Supports SA token authentication only
         const targetCluster = getClusterConfig(ctx.input.clusterName!, config);
-        type Cluster = {
-            server: string;
+        interface Cluster {
+          name: string;
+          cluster: {
+            "server": string;
             "insecure-skip-tls-verify": boolean;
-            "certificate-authority-data": string;
-            "certificate-authority": string;
-        };
+            "certificate-authority-data"?: string;
+            "certificate-authority"?: string;
+          };
+        }
 
-        const confFile = {
+        interface Context {
+          name: string;
+          context: {
+            cluster: string;
+            user: string;
+          };
+        }
+
+        interface User {
+          name: string;
+          user: {
+            token?: string;
+          };
+        }
+        interface ConfFile {
+          apiVersion: string;
+          kind: string;
+          'current-context': string;
+          contexts: Context[];
+          clusters: Cluster[];
+          users: User[];
+        }
+
+        const confFile: ConfFile = {
           apiVersion: 'v1',
           kind: 'Config',
           'current-context': ctx.input.clusterName,
@@ -116,7 +142,7 @@ export const createKubernetesApply = (config: Config) => {
                 server: targetCluster.getString('url'),
                 'insecure-skip-tls-verify':
                   !!targetCluster.getOptionalBoolean('skipTLSVerify'),
-              } satisfies Partial<Cluster>,
+              },
             },
           ],
           users: [
@@ -127,7 +153,7 @@ export const createKubernetesApply = (config: Config) => {
               },
             },
           ],
-        };
+        }
         if (!confFile.clusters[0].cluster['insecure-skip-tls-verify']) {
           let caDataRaw = targetCluster.getOptionalString('caData');
           if (caDataRaw?.startsWith('-----BEGIN CERTIFICATE-----')) {
@@ -135,15 +161,20 @@ export const createKubernetesApply = (config: Config) => {
               targetCluster.getString('caData'),
               'utf8',
             ).toString('base64');
-          }
+          };
           confFile.clusters[0].cluster['certificate-authority-data'] =
             caDataRaw;
-          
-          if ((targetCluster.getOptionalString('caFile') && !(targetCluster.getOptionalString('caFile').length === 0 || targetCluster.getOptionalString('caFile') === null))) {
+          if (
+            (
+              targetCluster.getOptionalString('caFile') && 
+              !(targetCluster.getOptionalString('caFile')?.length === 0 || targetCluster.getOptionalString('caFile') === null)
+            )
+          ) {
             confFile.clusters[0].cluster['certificate-authority'] =
               targetCluster.getString('caFile');
           }
         }
+
         const confString = dumpYaml(confFile);
         const confFilePath = resolveSafeChildPath(ctx.workspacePath, 'config');
         fs.writeFileSync(confFilePath, confString, {
