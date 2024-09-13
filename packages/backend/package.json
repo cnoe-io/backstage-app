@@ -27,7 +27,6 @@
     "@backstage/integration": "^1.12.0",
     "@backstage/plugin-app-backend": "^0.3.70",
     "@backstage/plugin-auth-backend": "^0.22.8",
-    "@backstage/plugin-auth-backend-module-guest-provider": "^0.1.7",
     "@backstage/plugin-auth-backend-module-oidc-provider": "^0.2.2",
     "@backstage/plugin-auth-node": "^0.4.16",
     "@backstage/plugin-catalog-backend": "^1.23.2",

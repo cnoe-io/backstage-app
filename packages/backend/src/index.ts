@@ -12,7 +12,6 @@ backend.add(import('@backstage/plugin-proxy-backend/alpha'));
 backend.add(import('@backstage/plugin-techdocs-backend/alpha'));
 // auth plugins
 backend.add(import('@backstage/plugin-auth-backend'));
-backend.add(import('@backstage/plugin-auth-backend-module-guest-provider'));
 // scaffolder plugins
 backend.add(import('@backstage/plugin-scaffolder-backend/alpha'));
 backend.add(
