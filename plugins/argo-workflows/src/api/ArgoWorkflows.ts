@@ -33,8 +33,10 @@ export class ArgoWorkflows implements ArgoWorkflowsApi {
     namespace: string,
     labels: string | undefined
   ): Promise<IoArgoprojWorkflowV1alpha1WorkflowList> {
-    const ns = namespace !== undefined ? namespace : "default";
-    const path = `/apis/${API_VERSION}/namespaces/${ns}/${WORKFLOW_PLURAL}`;
+    let path = `/apis/${API_VERSION}/${WORKFLOW_PLURAL}`;
+    if(namespace !== undefined){
+      path = `/apis/${API_VERSION}/namespaces/${namespace}/${WORKFLOW_PLURAL}`;
+    }
     const query = new URLSearchParams({
       [K8s_API_TIMEOUT]: "30",
     });
