@@ -2,4 +2,4 @@ export {
   ArgoWorkflowsOverviewPage,
   ArgoWorkflowsOverviewCard,
   ArgoWorkflowsTemplatesOverviewCard,
-} from "./Overview";
+} from './Overview';
