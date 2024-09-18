@@ -1,0 +1,32 @@
+apiVersion: scaffolder.backstage.io/v1beta3
+kind: Template
+metadata:
+  name: deploy-resources
+  title: Deploy Resources
+  description: Deploy Resource to Kubernetes
+spec:
+  owner: guest
+  type: service
+  # these are the steps which are rendered in the frontend with the form input
+  parameters:
+    - title: file name
+      properties:
+        path:
+          type: string
+          description: file name
+          default: cm.yaml
+  steps:
+    - id: wait-for-few-mins
+      name: Wait to run next step
+      action: debug:wait
+      input:
+        seconds: 10
+    - id: shell-command
+      name: Run Command
+      action: cnoe:command:execute
+      input:
+        command: curl
+        arguments: [
+          'https://fake-json-api.mock.beeceptor.com/users'
+        ]
+    

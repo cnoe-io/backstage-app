@@ -2,6 +2,7 @@ import { createTemplateAction } from '@backstage/plugin-scaffolder-node';
 import { executeShellCommand } from '@backstage/plugin-scaffolder-node';
 
 export const executeCommand = () => {
+
   return createTemplateAction<{
     command: string;
     arguments?: string[];
@@ -36,6 +37,8 @@ export const executeCommand = () => {
       if (!command) {
         throw new Error('The command must be provided.');
       }
+      
+      ctx.logger.info("Running command "+command+" "+commandArgs.join(' '));
 
       // Execute the shell command with optional arguments
       await executeShellCommand({
@@ -43,6 +46,7 @@ export const executeCommand = () => {
         args: commandArgs,
         logStream: ctx.logStream,
       });
+      ctx.logger.info('Command executed successfully!');
     },
   });
 };
