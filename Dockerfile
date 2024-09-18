@@ -89,6 +89,14 @@ RUN curl -L -O https://github.com/cnoe-io/cnoe-cli/releases/download/v0.1.0/cnoe
 COPY ./cnoe-wrapper.sh /usr/bin/cnoe
 RUN chmod +x /usr/bin/cnoe
 
+RUN apt-get update && apt-get install -y python3 python3-pip python3-venv
+
+ENV VIRTUAL_ENV=/opt/venv
+RUN python3 -m venv $VIRTUAL_ENV
+ENV PATH="$VIRTUAL_ENV/bin:$PATH"
+
+RUN pip3 install mkdocs-techdocs-core
+
 # From here on we use the least-privileged `node` user to run the backend.
 USER node
 

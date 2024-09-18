@@ -1,4 +1,4 @@
-import React from "react";
+import React from 'react';
 import {
   Header,
   HeaderLabel,
@@ -7,12 +7,12 @@ import {
   ContentHeader,
   SupportButton,
   InfoCard,
-} from "@backstage/core-components";
-import { Grid } from "@material-ui/core";
-import { OverviewTable } from "../WorkflowOverview/WorkflowOverview";
-import { useEntity } from "@backstage/plugin-catalog-react";
-import { isArgoWorkflowsAvailable } from "../../plugin";
-import { WorkflowTemplateTable } from "../WorkflowTemplateOverview/WorkflowTemplateOverview";
+} from '@backstage/core-components';
+import { Grid } from '@material-ui/core';
+import { OverviewTable } from '../WorkflowOverview/WorkflowOverview';
+import { useEntity } from '@backstage/plugin-catalog-react';
+import { isArgoWorkflowsAvailable } from '../../plugin';
+import { WorkflowTemplateTable } from '../WorkflowTemplateOverview/WorkflowTemplateOverview';
 
 export const ArgoWorkflowsOverviewPage = () => (
   <Page themeId="tool">
@@ -33,11 +33,11 @@ export const ArgoWorkflowsOverviewPage = () => (
   </Page>
 );
 
-export const ArgoWorkflowsOverviewCard = () => {
+export const ArgoWorkflowsOverviewCard = (props: { title?: string }) => {
   const { entity } = useEntity();
   if (isArgoWorkflowsAvailable(entity)) {
     return (
-      <InfoCard {...{ title: "Argo Workflows" }}>
+      <InfoCard {...{ title: props.title ?? 'Argo Workflows' }}>
         <OverviewTable />
       </InfoCard>
     );
@@ -49,7 +49,7 @@ export const ArgoWorkflowsTemplatesOverviewCard = () => {
   const { entity } = useEntity();
   if (isArgoWorkflowsAvailable(entity)) {
     return (
-      <InfoCard {...{ title: "Argo Workflows Templates" }}>
+      <InfoCard {...{ title: 'Argo Workflows Templates' }}>
         <WorkflowTemplateTable />
       </InfoCard>
     );
