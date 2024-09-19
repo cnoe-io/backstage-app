@@ -76,7 +76,7 @@ ENV VIRTUAL_ENV=/opt/venv
 RUN python3 -m venv $VIRTUAL_ENV
 ENV PATH="$VIRTUAL_ENV/bin:$PATH"
 
-RUN pip3 install 'mkdocs-techdocs-core==1.6.1'
+RUN pip3 install 'mkdocs-techdocs-core==1.4.2'
 
 # Add cnoe cli.
 RUN curl -L -O https://github.com/cnoe-io/cnoe-cli/releases/download/v0.1.0/cnoe_Linux_x86_64.tar.gz && \
