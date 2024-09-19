@@ -10,11 +10,8 @@ import {
 } from '@backstage/plugin-api-docs';
 import {
   EntityAboutCard,
-  EntityDependsOnComponentsCard,
-  EntityDependsOnResourcesCard,
   EntityHasComponentsCard,
   EntityHasResourcesCard,
-  EntityHasSubcomponentsCard,
   EntityHasSystemsCard,
   EntityLayout,
   EntityLinksCard,
@@ -28,10 +25,6 @@ import {
   hasRelationWarnings,
   EntityRelationWarning,
 } from '@backstage/plugin-catalog';
-import {
-  isGithubActionsAvailable,
-  EntityGithubActionsContent,
-} from '@backstage-community/plugin-github-actions';
 import {
   EntityUserProfileCard,
   EntityGroupProfileCard,
@@ -58,7 +51,7 @@ import {
 import { TechDocsAddons } from '@backstage/plugin-techdocs-react';
 import { ReportIssue } from '@backstage/plugin-techdocs-module-addons-contrib';
 
-import { EntityKubernetesContent } from '@backstage/plugin-kubernetes';
+import { EntityKubernetesContent, isKubernetesAvailable } from '@backstage/plugin-kubernetes';
 
 import {
   EntityArgoCDOverviewCard,
@@ -66,7 +59,7 @@ import {
 } from '@roadiehq/backstage-plugin-argo-cd';
 
 import {
-  EntityArgoWorkflowsOverviewCard, EntityArgoWorkflowsTemplateOverviewCard,
+  EntityArgoWorkflowsOverviewCard,
   isArgoWorkflowsAvailable,
 } from '@internal/plugin-argo-workflows';
 import {ApacheSparkPage, isApacheSparkAvailable} from "@internal/plugin-apache-spark";
@@ -81,11 +74,9 @@ const techdocsContent = (
 );
 
 const cicdContent = (
-  // This is an example of how you can implement your company's logic in entity page.
-  // You can for example enforce that all components of type 'service' should use GitHubActions
   <EntitySwitch>
-    <EntitySwitch.Case if={isGithubActionsAvailable}>
-      <EntityGithubActionsContent />
+    <EntitySwitch.Case if={e => isArgoWorkflowsAvailable(e)}>
+      <EntityArgoWorkflowsOverviewCard title="Workflows"/>
     </EntitySwitch.Case>
 
     <EntitySwitch.Case>
@@ -149,16 +140,6 @@ const overviewContent = (
       </EntitySwitch.Case>
     </EntitySwitch>
     <EntitySwitch>
-      <EntitySwitch.Case if={e => isArgoWorkflowsAvailable(e)}>
-        <Grid item md={6}>
-          <EntityArgoWorkflowsOverviewCard />
-        </Grid>
-        <Grid item md={6}>
-          <EntityArgoWorkflowsTemplateOverviewCard />
-        </Grid>
-      </EntitySwitch.Case>
-    </EntitySwitch>
-    <EntitySwitch>
       <EntitySwitch.Case if={e => isTerraformAvailable(e)}>
         <Grid item md={6}>
           <TerraformPluginPage />
@@ -168,14 +149,9 @@ const overviewContent = (
     <Grid item md={6} xs={12}>
       <EntityCatalogGraphCard variant="gridItem" height={400} />
     </Grid>
-
     <Grid item md={4} xs={12}>
       <EntityLinksCard />
     </Grid>
-    <Grid item md={8} xs={12}>
-      <EntityHasSubcomponentsCard variant="gridItem" />
-    </Grid>
-
   </Grid>
 );
 
@@ -189,7 +165,7 @@ const serviceEntityPage = (
       {cicdContent}
     </EntityLayout.Route>
 
-    <EntityLayout.Route path="/kubernetes" title="Kubernetes">
+    <EntityLayout.Route path="/kubernetes" title="Kubernetes" if={e => isKubernetesAvailable(e)}>
       <EntityKubernetesContent refreshIntervalMs={30000} />
     </EntityLayout.Route>
 
@@ -208,17 +184,6 @@ const serviceEntityPage = (
       </Grid>
     </EntityLayout.Route>
 
-    <EntityLayout.Route path="/dependencies" title="Dependencies">
-      <Grid container spacing={3} alignItems="stretch">
-        <Grid item md={6}>
-          <EntityDependsOnComponentsCard variant="gridItem" />
-        </Grid>
-        <Grid item md={6}>
-          <EntityDependsOnResourcesCard variant="gridItem" />
-        </Grid>
-      </Grid>
-    </EntityLayout.Route>
-
     <EntityLayout.Route path="/docs" title="Docs">
       {techdocsContent}
     </EntityLayout.Route>
@@ -233,17 +198,6 @@ const websiteEntityPage = (
 
     <EntityLayout.Route path="/ci-cd" title="CI/CD">
       {cicdContent}
-    </EntityLayout.Route>
-
-    <EntityLayout.Route path="/dependencies" title="Dependencies">
-      <Grid container spacing={3} alignItems="stretch">
-        <Grid item md={6}>
-          <EntityDependsOnComponentsCard variant="gridItem" />
-        </Grid>
-        <Grid item md={6}>
-          <EntityDependsOnResourcesCard variant="gridItem" />
-        </Grid>
-      </Grid>
     </EntityLayout.Route>
 
     <EntityLayout.Route path="/docs" title="Docs">
@@ -295,9 +249,6 @@ const apiPage = (
         </Grid>
         <Grid item md={6} xs={12}>
           <EntityCatalogGraphCard variant="gridItem" height={400} />
-        </Grid>
-        <Grid item md={4} xs={12}>
-          <EntityLinksCard />
         </Grid>
         <Grid container item md={12}>
           <Grid item md={6}>
