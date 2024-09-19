@@ -56,7 +56,7 @@ RUN curl -L -O https://github.com/cnoe-io/cnoe-cli/releases/download/v0.1.0/cnoe
     tar -xzf cnoe_Linux_x86_64.tar.gz && \
     mv cnoe /usr/bin/cnoe-cli && \
     chmod +x /usr/bin/cnoe-cli && \
-    rm checksums.txt
+    rm checksums.txt cnoe_Linux_x86_64.tar.gz
 COPY ./cnoe-wrapper.sh /usr/bin/cnoe
 RUN chmod +x /usr/bin/cnoe
 
