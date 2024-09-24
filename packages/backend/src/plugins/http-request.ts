@@ -106,7 +106,7 @@ export const createHttpRequest = () => {
         ? new URLSearchParams(ctx.input.params).toString()
         : '';
       const url =
-        queryParams == '' ? `${ctx.input.api}?${queryParams}` : ctx.input.api;
+        queryParams ? `${ctx.input.api}?${queryParams}` : ctx.input.api;
 
       ctx.logger.info(`Request Url: ${url}`);
 
