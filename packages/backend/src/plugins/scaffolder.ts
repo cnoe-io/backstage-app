@@ -11,7 +11,7 @@ import { getRootLogger } from '@backstage/backend-common';
 import { createKubernetesApply } from './k8s-apply';
 import { createSanitizeResource } from './sanitize';
 import { createVerifyDependency } from './verify';
-import { createHttpRequest } from './http-request'
+import { createHttpRequest } from './http-request';
 
 export const cnoeScaffolderActions = createBackendModule({
   pluginId: 'scaffolder',
