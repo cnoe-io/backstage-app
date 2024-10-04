@@ -29,6 +29,9 @@ backend.add(import('@backstage/plugin-kubernetes-backend/alpha'));
 // roadie plugins
 backend.add(import('@roadiehq/scaffolder-backend-module-utils/new-backend'));
 backend.add(legacyPlugin('argocd', import('./plugins/argocd')));
+backend.add(
+  import('@roadiehq/scaffolder-backend-module-http-request/new-backend'),
+);
 // cnoe plugins
 backend.add(authModuleKeycloakOIDCProvider);
 backend.add(cnoeScaffolderActions);
