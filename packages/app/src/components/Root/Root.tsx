@@ -25,6 +25,7 @@ import {
 } from '@backstage/core-components';
 import MenuIcon from '@material-ui/icons/Menu';
 import SearchIcon from '@material-ui/icons/Search';
+import Chat from '@material-ui/icons/Chat';
 
 const useSidebarLogoStyles = makeStyles({
   root: {
@@ -72,6 +73,7 @@ export const Root = ({ children }: PropsWithChildren<{}>) => (
         <SidebarDivider />
         <SidebarScrollWrapper>
           <SidebarItem icon={MapIcon} to="tech-radar" text="Tech Radar" />
+          <SidebarItem icon={Chat} to="agent-forge" text="CAIPE" />
         </SidebarScrollWrapper>
       </SidebarGroup>
       <SidebarSpace />

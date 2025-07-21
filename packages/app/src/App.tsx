@@ -46,7 +46,17 @@ import {
   UnifiedThemeProvider
 } from "@backstage/theme";
 import { TerraformPluginPage } from '@internal/plugin-terraform';
-import { ChatAssistantPage } from '@backstage-community/plugin-agent-forge';
+import { AgentForgePage } from '@caipe/plugin-agent-forge';
+import { IconButton, makeStyles } from '@material-ui/core';
+
+// Custom CAIPE Logo Icon Component
+const CaipeIcon: React.FC = () => (
+  <img 
+    src="/caipe-logo.svg" 
+    alt="CAIPE" 
+    style={{ width: 96, height: 96 }}
+  />
+);
 
 const app = createApp({
   apis,
@@ -108,8 +118,23 @@ const app = createApp({
   ],
 });
 
-// Authenticated wrapper for ChatAssistantPage
-const AuthenticatedChatAssistant: React.FC = () => {
+// Styles for floating chat assistant
+const useFloatingChatStyles = makeStyles(theme => ({
+  iconButton: {
+    position: 'fixed',
+    bottom: theme.spacing(2),
+    right: theme.spacing(2),
+    zIndex: 1200,
+    backgroundColor: 'transparent',
+    '&:hover': {
+      backgroundColor: 'rgba(0, 0, 0, 0.04)',
+    },
+  },
+}));
+
+// Floating Chat Assistant Component
+const FloatingChatAssistant: React.FC = () => {
+  const classes = useFloatingChatStyles();
   const identityApi = useApi(identityApiRef);
   const [isAuthenticated, setIsAuthenticated] = React.useState(false);
   const [isLoading, setIsLoading] = React.useState(true);
@@ -129,25 +154,19 @@ const AuthenticatedChatAssistant: React.FC = () => {
     checkAuth();
   }, [identityApi]);
 
-  if (isLoading) {
-    return null; // Don't render anything while checking authentication
-  }
-
-  if (!isAuthenticated) {
-    return null; // Don't render ChatAssistantPage if not authenticated
+  // Hide if loading, not authenticated, or on agent-forge page
+  if (isLoading || !isAuthenticated || window.location.pathname === '/agent-forge') {
+    return null;
   }
 
   return (
-    <div
-      style={{
-        position: 'fixed',
-        bottom: 0,
-        right: 0,
-        zIndex: 9999,
-      }}
+    <IconButton
+      aria-label="Open CAIPE Agent Forge"
+      className={classes.iconButton}
+      onClick={() => window.location.href = '/agent-forge'}
     >
-      <ChatAssistantPage />
-    </div>
+      <CaipeIcon />
+    </IconButton>
   );
 };
 
@@ -193,6 +212,7 @@ const routes = (
     <Route path="/argo-workflows" element={<ArgoWorkflowsPage />} />
     <Route path="/apache-spark" element={<ApacheSparkPage />} />
     <Route path="/terraform" element={<TerraformPluginPage />} />
+    <Route path="/agent-forge" element={<AgentForgePage />} />
   </FlatRoutes>
 );
 
@@ -203,9 +223,6 @@ export default app.createRoot(
     <AppRouter>
       <Root>{routes}</Root>
     </AppRouter>
-    <AuthenticatedChatAssistant />
+    <FloatingChatAssistant />
   </>,
 );
-
-
-
