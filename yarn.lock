@@ -5736,10 +5736,10 @@
   resolved "https://registry.npmmirror.com/@braintree/sanitize-url/-/sanitize-url-7.0.0.tgz#8899d8e68a1b3f6933d4ad57a263fd3cf1d34d8a"
   integrity sha512-GMu2OJiTd1HSe74bbJYQnVvELANpYiGFZELyyTM1CR0sdv5ReQAcJ/c/8pIrPab3lO11+D+EpuGLUxqz+y832g==
 
-"@caipe/plugin-agent-forge@0.3.5":
-  version "0.3.5"
-  resolved "https://registry.yarnpkg.com/@caipe/plugin-agent-forge/-/plugin-agent-forge-0.3.5.tgz#36ccd538c146d1f20d1be2025e35c06c242aa02e"
-  integrity sha512-aGFMY1s/K6inIXn3PmDqqTPMK2OVPC2jsFtvZ510KsroR1swuewEdJA7m/ENYT7hlXenhh0tKGWfc2mYt8GJyA==
+"@caipe/plugin-agent-forge@0.3.6":
+  version "0.3.6"
+  resolved "https://registry.yarnpkg.com/@caipe/plugin-agent-forge/-/plugin-agent-forge-0.3.6.tgz#551c5906c107ca0f2c6cad74a6efe92bbcfdc3f6"
+  integrity sha512-OySg1dCj9yvWSfzcL3CfJVoo5o2vPKu5iqqecHeu3FXJpCveMqo5rePgn22wYAKD+1Wf6cXC3fsm96VTUiiQCA==
   dependencies:
     "@agentic-profile/a2a-client" "^0.6.2"
     "@backstage/core-components" "^0.17.5"
@@ -5753,10 +5753,10 @@
     react-use "^17.2.4"
     uuid "^11.1.0"
 
-"@caipe/plugin-agent-forge@0.3.6":
-  version "0.3.6"
-  resolved "https://registry.yarnpkg.com/@caipe/plugin-agent-forge/-/plugin-agent-forge-0.3.6.tgz#551c5906c107ca0f2c6cad74a6efe92bbcfdc3f6"
-  integrity sha512-OySg1dCj9yvWSfzcL3CfJVoo5o2vPKu5iqqecHeu3FXJpCveMqo5rePgn22wYAKD+1Wf6cXC3fsm96VTUiiQCA==
+"@caipe/plugin-agent-forge@0.3.7":
+  version "0.3.7"
+  resolved "https://registry.yarnpkg.com/@caipe/plugin-agent-forge/-/plugin-agent-forge-0.3.7.tgz#e4bd107c2ed7fcea2311b44c2ab6a4c733f1e44a"
+  integrity sha512-u7GWp30o5hPS94pUgfvKjz4rBRsgSBMLb5RadUv83/EHRGYyN97xnQXGmb4cSSwHEHAUetWejOAJranHdL6pdQ==
   dependencies:
     "@agentic-profile/a2a-client" "^0.6.2"
     "@backstage/core-components" "^0.17.5"
@@ -12717,7 +12717,7 @@ anymatch@^3.0.3, anymatch@~3.1.2:
     "@backstage/plugin-techdocs-react" "^1.2.5"
     "@backstage/plugin-user-settings" "^0.8.8"
     "@backstage/theme" "^0.5.6"
-    "@caipe/plugin-agent-forge" "0.3.5"
+    "@caipe/plugin-agent-forge" "0.3.6"
     "@internal/plugin-apache-spark" "^0.1.0"
     "@internal/plugin-argo-workflows" "^0.1.0"
     "@internal/plugin-cnoe-ui" "^0.1.0"
