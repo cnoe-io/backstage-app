@@ -39,13 +39,28 @@ import {
   cnoeLightTheme,
   cnoeDarkTheme,
 } from '@internal/plugin-cnoe-ui';
-import {configApiRef, useApi} from "@backstage/core-plugin-api";
+import {configApiRef, useApi, identityApiRef} from "@backstage/core-plugin-api";
 import { ArgoWorkflowsPage } from '@internal/plugin-argo-workflows';
 import { ApacheSparkPage } from '@internal/plugin-apache-spark';
 import {
   UnifiedThemeProvider
 } from "@backstage/theme";
 import { TerraformPluginPage } from '@internal/plugin-terraform';
+import { ChatAssistantPage } from '@caipe/plugin-agent-forge';
+import { makeStyles } from '@material-ui/core/styles';
+
+const useGlobalStyles = makeStyles({
+  '@global': {
+    '#agent-forge-override p': {
+      color: 'black !important',
+    },
+  },
+});
+
+const GlobalStyles = () => {
+  useGlobalStyles();
+  return null;
+};
 
 const app = createApp({
   apis,
@@ -107,6 +122,50 @@ const app = createApp({
   ],
 });
 
+// Authenticated wrapper for ChatAssistantPage
+const AuthenticatedChatAssistant: React.FC = () => {
+  const identityApi = useApi(identityApiRef);
+  const [isAuthenticated, setIsAuthenticated] = React.useState(false);
+  const [isLoading, setIsLoading] = React.useState(true);
+
+  React.useEffect(() => {
+    const checkAuth = async () => {
+      try {
+        const userIdentity = await identityApi.getBackstageIdentity();
+        setIsAuthenticated(!!userIdentity.userEntityRef);
+      } catch (error) {
+        setIsAuthenticated(false);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    checkAuth();
+  }, [identityApi]);
+
+  if (isLoading) {
+    return null; // Don't render anything while checking authentication
+  }
+
+  if (!isAuthenticated) {
+    return null; // Don't render ChatAssistantPage if not authenticated
+  }
+
+  return (
+    <div
+      id="agent-forge-override"
+      style={{
+        position: 'fixed',
+        bottom: 0,
+        right: 0,
+        zIndex: 9999,
+      }}
+    >
+      <ChatAssistantPage />
+    </div>
+  );
+};
+
 const routes = (
   <FlatRoutes>
     <Route path="/" element={<Navigate to="home" />} />
@@ -154,11 +213,13 @@ const routes = (
 
 export default app.createRoot(
   <>
+    <GlobalStyles />
     <AlertDisplay />
     <OAuthRequestDialog />
     <AppRouter>
       <Root>{routes}</Root>
     </AppRouter>
+    <AuthenticatedChatAssistant />
   </>,
 );
 
