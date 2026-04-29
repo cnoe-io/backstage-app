@@ -1,0 +1,63 @@
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: kro-system
+---
+# NOTE: Kro controller is installed via Helm (see README.md):
+#   helm install kro oci://registry.k8s.io/kro/charts/kro --namespace kro-system --create-namespace
+#
+# The CRD and sample ResourceGraphDefinition below are applied after Helm install.
+---
+apiVersion: kro.run/v1alpha1
+kind: ResourceGraphDefinition
+metadata:
+  name: webapp
+  namespace: default
+spec:
+  schema:
+    apiVersion: v1alpha1
+    kind: WebApp
+    spec:
+      name:
+        type: string
+      image:
+        type: string
+        default: nginx:latest
+      replicas:
+        type: integer
+        default: 1
+  resources:
+    - id: deployment
+      template:
+        apiVersion: apps/v1
+        kind: Deployment
+        metadata:
+          name: ${schema.spec.name}
+        spec:
+          replicas: ${schema.spec.replicas}
+          selector:
+            matchLabels:
+              app: ${schema.spec.name}
+          template:
+            metadata:
+              labels:
+                app: ${schema.spec.name}
+            spec:
+              containers:
+                - name: main
+                  image: ${schema.spec.image}
+                  ports:
+                    - containerPort: 80
+    - id: service
+      template:
+        apiVersion: v1
+        kind: Service
+        metadata:
+          name: ${schema.spec.name}
+        spec:
+          selector:
+            app: ${schema.spec.name}
+          ports:
+            - port: 80
+              targetPort: 80

@@ -8,7 +8,7 @@ import {
   SupportButton,
   InfoCard,
 } from '@backstage/core-components';
-import { Grid } from '@material-ui/core';
+// CSS grid replaces MUI Grid (MUI removed per BUI migration)
 import { OverviewTable } from '../WorkflowOverview/WorkflowOverview';
 import { useEntity } from '@backstage/plugin-catalog-react';
 import { isArgoWorkflowsAvailable } from '../../plugin';
@@ -23,12 +23,15 @@ export const ArgoWorkflowsOverviewPage = () => (
       <ContentHeader title="Overview">
         <SupportButton>Overview of your Argo Workflows</SupportButton>
       </ContentHeader>
-      <Grid item>
-        <OverviewTable />
-      </Grid>
-      <Grid item>
-        <WorkflowTemplateTable />
-      </Grid>
+      {/* CSS grid replaces MUI Grid (MUI removed per BUI migration) */}
+      <div style={{ display: 'grid', gap: '16px' }}>
+        <div>
+          <OverviewTable />
+        </div>
+        <div>
+          <WorkflowTemplateTable />
+        </div>
+      </div>
     </Content>
   </Page>
 );

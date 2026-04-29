@@ -1,0 +1,72 @@
+{
+  "items": [
+    {
+      "metadata": {
+        "name": "platform-api-service",
+        "namespace": "argocd",
+        "creationTimestamp": "2026-04-10T08:00:00Z"
+      },
+      "spec": {
+        "project": "default",
+        "source": {
+          "repoURL": "https://github.com/cnoe-io/platform-api",
+          "path": "k8s",
+          "targetRevision": "main"
+        },
+        "destination": {
+          "server": "https://kubernetes.default.svc",
+          "namespace": "default"
+        },
+        "syncPolicy": {
+          "automated": {
+            "prune": true,
+            "selfHeal": true
+          }
+        }
+      },
+      "status": {
+        "sync": {
+          "status": "Synced",
+          "revision": "a1b2c3d4e5f6"
+        },
+        "health": {
+          "status": "Healthy"
+        },
+        "operationState": {
+          "phase": "Succeeded",
+          "message": "successfully synced (all tasks run)",
+          "syncResult": {
+            "revision": "a1b2c3d4e5f6"
+          },
+          "startedAt": "2026-04-15T10:00:00Z",
+          "finishedAt": "2026-04-15T10:01:30Z"
+        },
+        "summary": {
+          "images": ["cnoe/platform-api:1.2.0"]
+        },
+        "history": [
+          {
+            "revision": "a1b2c3d4e5f6",
+            "deployedAt": "2026-04-15T10:01:30Z",
+            "id": 5,
+            "source": {
+              "repoURL": "https://github.com/cnoe-io/platform-api",
+              "path": "k8s",
+              "targetRevision": "main"
+            }
+          },
+          {
+            "revision": "9f8e7d6c5b4a",
+            "deployedAt": "2026-04-14T14:30:00Z",
+            "id": 4,
+            "source": {
+              "repoURL": "https://github.com/cnoe-io/platform-api",
+              "path": "k8s",
+              "targetRevision": "main"
+            }
+          }
+        ]
+      }
+    }
+  ]
+}

@@ -9,7 +9,7 @@ import {
   SelectedItems,
   SelectItem,
 } from '@backstage/core-components';
-import Alert from '@material-ui/lab/Alert';
+import { ResponseErrorPanel } from '@backstage/core-components';
 import React, { useEffect, useState } from 'react';
 import { useEntity } from '@backstage/plugin-catalog-react';
 import { getAnnotationValues } from '../utils';
@@ -30,7 +30,7 @@ export const ApacheSparkDriverLogs = (props: { sparkApp: ApacheSpark }) => {
   if (loading) {
     return <Progress />;
   } else if (error) {
-    return <Alert severity="error">{`${error}`}</Alert>;
+    return <ResponseErrorPanel error={error} />;
   }
   return <LogViewer text={value!} />;
 };
@@ -69,9 +69,9 @@ export const ApacheSparkExecutorLogs = (props: { sparkApp: ApacheSpark }) => {
   const [selected, setSelected] = useState('');
   if (props.sparkApp.status.applicationState.state !== 'RUNNING') {
     return (
-      <Alert severity="info">
+      <div style={{ padding: '12px 16px', background: 'rgba(77,166,255,0.1)', border: '1px solid rgba(77,166,255,0.3)', borderRadius: '8px', color: 'inherit', fontSize: '13px' }}>
         Executor logs are only available for Spark Applications in RUNNING state
-      </Alert>
+      </div>
     );
   }
   const executors: SelectItem[] = [{ label: '', value: '' }];

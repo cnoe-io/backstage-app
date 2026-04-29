@@ -1,7 +1,7 @@
 import { Content, Page } from '@backstage/core-components';
 import { HomePageSearchBar } from '@backstage/plugin-search';
 import { SearchContextProvider } from '@backstage/plugin-search-react';
-import { Grid, makeStyles } from '@material-ui/core';
+import { useApi, configApiRef } from '@backstage/core-plugin-api';
 import React from 'react';
 
 import {
@@ -15,67 +15,150 @@ import {
   LogoBig,
 } from './logos';
 
-const useStyles = makeStyles(theme => ({
-  searchBar: {
-    display: 'flex',
-    maxWidth: '60vw',
-    backgroundColor: theme.palette.background.paper,
-    boxShadow: theme.shadows[1],
-    padding: '8px 0',
-    borderRadius: '50px',
-    margin: 'auto',
-  },
-}));
+const getBasePath = () => {
+  if (typeof window !== 'undefined') {
+    const baseTag = document.querySelector('base');
+    if (baseTag?.href) {
+      try {
+        const base = new URL(baseTag.href);
+        return base.pathname.replace(/\/$/, '');
+      } catch {
+        // fallback
+      }
+    }
+  }
+  return '';
+};
 
-const useLogoStyles = makeStyles(theme => ({
-  container: {
-    margin: theme.spacing(5, 0),
-  },
-  svg: {
-    width: 'auto',
-    height: 100,
-  },
-  path: {
-    fill: '#00568c',
-  },
-}));
+const basePath = getBasePath();
+
+const getDomainUrl = () => {
+  if (typeof window !== 'undefined') {
+    return `${window.location.protocol}//${window.location.host}`;
+  }
+  return 'http://localhost:3000';
+};
+
+const domainUrl = getDomainUrl();
+
+// Inline styles replace former makeStyles usage (MUI removed per BUI migration)
+const searchBarStyle: React.CSSProperties = {
+  display: 'flex',
+  maxWidth: '60vw',
+  backgroundColor: 'var(--backstage-color-background-paper, #fff)',
+  boxShadow: '0 1px 3px rgba(0,0,0,0.2)',
+  padding: '8px 0',
+  borderRadius: '50px',
+  margin: 'auto',
+};
+
+const logoContainerStyle: React.CSSProperties = {
+  margin: '40px 0',
+};
 
 export const CNOEHomepage = () => {
-  const classes = useStyles();
-  const { container } = useLogoStyles();
+  const config = useApi(configApiRef);
+
+  const getGitLabUrl = () => {
+    try {
+      const gitlabIntegrations = config.getOptionalConfigArray(
+        'integrations.gitlab',
+      );
+      if (gitlabIntegrations && gitlabIntegrations.length > 0) {
+        const baseUrl = gitlabIntegrations[0].getOptionalString('baseUrl');
+        if (baseUrl) return baseUrl;
+      }
+    } catch (e) {
+      console.log('Could not read GitLab config:', e);
+    }
+    return 'https://gitlab.com';
+  };
+
+  const gitUrl = getGitLabUrl();
 
   return (
     <SearchContextProvider>
       <Page themeId="home">
         <Content>
-          <Grid container justifyContent="center" spacing={6}>
-            <HomePageCompanyLogo className={container} logo={<LogoBig />} />
-            <Grid container item xs={12} alignItems="center" direction="row">
-              <HomePageSearchBar classes={{ root: classes.searchBar }} placeholder="Search" />
-            </Grid>
-            <Grid container item xs={12}>
-              <Grid item xs={12} md={6}>
+          {/* CSS grid replaces MUI Grid (MUI removed per BUI migration) */}
+          <div style={{ display: 'grid', justifyItems: 'center', gap: '48px' }}>
+            <HomePageCompanyLogo style={logoContainerStyle} logo={<LogoBig />} />
+            <div style={{ display: 'grid', width: '100%', alignItems: 'center' }}>
+              <HomePageSearchBar style={searchBarStyle} placeholder="Search" />
+            </div>
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', width: '100%', gap: '16px' }}>
+              <div>
                 <HomePageStarredEntities />
-              </Grid>
-              <Grid item xs={12} md={6}>
+              </div>
+              <div>
                 <HomePageToolkit
                   title="Quick Links"
                   tools={[
                     {
                       url: '/catalog',
                       label: 'Catalog',
-                      icon: <TemplateBackstageLogoIcon/>,
+                      icon: <TemplateBackstageLogoIcon />,
                     },
                     {
-                      url: '/docs',
-                      label: 'Tech Docs',
-                      icon: <TemplateBackstageLogoIcon />,
+                      url: gitUrl,
+                      label: 'GitLab',
+                      icon: (
+                        <img
+                          src={`${basePath}/img/gitlab.png`}
+                          alt="GitLab"
+                          style={{ width: 24, height: 24 }}
+                        />
+                      ),
+                    },
+                    {
+                      url: `${domainUrl}/argocd`,
+                      label: 'ArgoCD',
+                      icon: (
+                        <img
+                          src={`${basePath}/img/argocd.png`}
+                          alt="ArgoCD"
+                          style={{ width: 24, height: 24 }}
+                        />
+                      ),
+                    },
+                    {
+                      url: `${domainUrl}/argo-workflows`,
+                      label: 'Argo Workflows',
+                      icon: (
+                        <img
+                          src={`${basePath}/img/argo-workflows.png`}
+                          alt="Argo Workflows"
+                          style={{ width: 24, height: 24 }}
+                        />
+                      ),
+                    },
+                    {
+                      url: domainUrl,
+                      label: 'Kargo',
+                      icon: (
+                        <img
+                          src={`${basePath}/img/kargo.png`}
+                          alt="Kargo"
+                          style={{ width: 24, height: 24 }}
+                        />
+                      ),
+                    },
+                    {
+                      url: `${domainUrl}/keycloak`,
+                      label: 'Keycloak',
+                      icon: (
+                        <img
+                          src={`${basePath}/img/keycloak.png`}
+                          alt="Keycloak"
+                          style={{ width: 24, height: 24 }}
+                        />
+                      ),
                     },
                   ]}
                 />
-              </Grid>
-            </Grid>
-          </Grid>
+              </div>
+            </div>
+          </div>
         </Content>
       </Page>
     </SearchContextProvider>

@@ -12,7 +12,7 @@ import {
   TableColumn,
 } from "@backstage/core-components";
 import React from "react";
-import Alert from "@material-ui/lab/Alert";
+import { ResponseErrorPanel } from "@backstage/core-components";
 import { useEntity } from "@backstage/plugin-catalog-react";
 import { IoArgoprojWorkflowV1alpha1WorkflowList } from "../../api/generated/api";
 import { getAnnotationValues, trimBaseUrl } from "../utils";
@@ -79,7 +79,7 @@ export const OverviewTable = () => {
   if (loading) {
     return <Progress />;
   } else if (error) {
-    return <Alert severity="error">{`${error}`}</Alert>;
+    return <ResponseErrorPanel error={error} />;
   }
 
   const data = value?.items?.map((val) => {

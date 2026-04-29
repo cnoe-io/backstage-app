@@ -1,0 +1,27 @@
+{
+  "apiVersion": "sparkoperator.k8s.io/v1beta2",
+  "kind": "SparkApplicationList",
+  "items": [
+    {
+      "apiVersion": "sparkoperator.k8s.io/v1beta2",
+      "kind": "SparkApplication",
+      "metadata": { "name": "spark-etl-job", "namespace": "default", "creationTimestamp": "2026-04-15T10:00:00Z" },
+      "spec": { "type": "Python", "mode": "cluster", "image": "spark:3.5.0", "sparkVersion": "3.5.0", "mainApplicationFile": "local:///opt/spark/examples/src/main/python/pi.py", "driver": { "cores": 1, "memory": "512m", "podName": "spark-etl-job-driver" }, "executor": { "cores": 1, "instances": 2, "memory": "512m" } },
+      "status": { "applicationState": { "state": "RUNNING" }, "driverInfo": { "podName": "spark-etl-job-driver", "webUIPort": 4040 }, "executorState": { "spark-etl-job-exec-1": "RUNNING", "spark-etl-job-exec-2": "RUNNING" } }
+    },
+    {
+      "apiVersion": "sparkoperator.k8s.io/v1beta2",
+      "kind": "SparkApplication",
+      "metadata": { "name": "spark-analytics", "namespace": "default", "creationTimestamp": "2026-04-15T08:00:00Z" },
+      "spec": { "type": "Scala", "mode": "cluster", "image": "spark:3.5.0", "sparkVersion": "3.5.0", "mainClass": "org.example.Analytics", "driver": { "cores": 2, "memory": "1g", "podName": "spark-analytics-driver" }, "executor": { "cores": 2, "instances": 4, "memory": "2g" } },
+      "status": { "applicationState": { "state": "COMPLETED" }, "driverInfo": { "podName": "spark-analytics-driver" }, "terminationTime": "2026-04-15T09:30:00Z" }
+    },
+    {
+      "apiVersion": "sparkoperator.k8s.io/v1beta2",
+      "kind": "SparkApplication",
+      "metadata": { "name": "spark-ml-training", "namespace": "default", "creationTimestamp": "2026-04-15T07:00:00Z" },
+      "spec": { "type": "Python", "mode": "cluster", "image": "spark:3.5.0", "sparkVersion": "3.5.0", "mainApplicationFile": "local:///opt/spark/ml/train.py", "driver": { "cores": 2, "memory": "2g", "podName": "spark-ml-training-driver" }, "executor": { "cores": 4, "instances": 8, "memory": "4g" } },
+      "status": { "applicationState": { "state": "FAILED", "errorMessage": "OutOfMemoryError: Java heap space" }, "driverInfo": { "podName": "spark-ml-training-driver" }, "terminationTime": "2026-04-15T07:45:00Z" }
+    }
+  ]
+}

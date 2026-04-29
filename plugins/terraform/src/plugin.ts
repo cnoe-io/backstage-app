@@ -48,3 +48,14 @@ export const TerraformPluginPage = terraformPlugin.provide(
     mountPoint: rootRouteRef,
   }),
 );
+
+export const EntityTerraformContent = terraformPlugin.provide(
+  createRoutableExtension({
+    name: 'EntityTerraformContent',
+    component: () =>
+      import('./components/MainPageFetchComponent').then(
+        m => m.MainPageFetchComponent,
+      ),
+    mountPoint: rootRouteRef,
+  }),
+);

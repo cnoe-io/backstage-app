@@ -1,9 +1,34 @@
 app:
   title: CNOE
   baseUrl: http://localhost:3000
+  packages: all
+  listen:
+    port: 3000
+    host: 0.0.0.0
 
 organization:
   name: CNOE
+
+homepage:
+  quickLinks:
+    - url: /catalog
+      label: Catalog
+      icon: catalog
+    - url: https://gitlab.com
+      label: GitLab
+      iconUrl: /img/gitlab.png
+    - url: /argocd
+      label: ArgoCD
+      iconUrl: /img/argocd.png
+    - url: /argo-workflows
+      label: Argo Workflows
+      iconUrl: /img/argo-workflows.png
+    - url: /
+      label: Kargo
+      iconUrl: /img/kargo.png
+    - url: /keycloak
+      label: Keycloak
+      iconUrl: /img/keycloak.png
 
 backend:
   # Used for enabling authentication, secret is shared by all backend plugins
@@ -15,14 +40,16 @@ backend:
   baseUrl: http://localhost:7007
   listen:
     port: 7007
-    # Uncomment the following host directive to bind to specific interfaces
-    # host: 127.0.0.1
+    host: 0.0.0.0
   csp:
     connect-src: ["'self'", 'http:', 'https:']
     # Content-Security-Policy directives follow the Helmet format: https://helmetjs.github.io/#reference
     # Default Helmet Content-Security-Policy values can be removed by setting the key to false
   cors:
-    origin: http://localhost:3000
+    origin:
+      - http://localhost:3000
+      - http://127.0.0.1:3000
+      - http://localhost:7007
     methods: [GET, HEAD, PATCH, POST, PUT, DELETE]
     credentials: true
   # This is for local development only, it is not recommended to use this in production
@@ -31,6 +58,7 @@ backend:
     client: better-sqlite3
     connection: ':memory:'
   # workingDirectory: /tmp # Use this to configure a working directory for the scaffolder, defaults to the OS temp-dir
+
 integrations:
   gitea:
     - baseUrl: https://cnoe.localtest.me:8443/gitea
@@ -55,11 +83,12 @@ proxy:
 # and an external cloud storage when deploying TechDocs for production use-case.
 # https://backstage.io/docs/features/techdocs/how-to-guides#how-to-migrate-from-techdocs-basic-to-recommended-deployment-approach
 techdocs:
-  builder: 'local' # Alternatives - 'external'
+  builder: 'local'
   generator:
-    runIn: 'docker' # Alternatives - 'local'
+    runIn: 'local'
   publisher:
-    type: 'local' # Alternatives - 'googleGcs' or 'awsS3'. Read documentation for using alternatives.
+    type: 'local'
+
 auth:
   # see https://backstage.io/docs/auth/ to learn about auth providers
   environment: local # set this to development to enable SSO
@@ -79,49 +108,80 @@ scaffolder:
   defaultAuthor:
     name: backstage-scaffolder
     email: noreply
-  defaultCommitMessage: "backstage scaffolder"
+  defaultCommitMessage: 'backstage scaffolder'
+
 catalog:
   import:
     entityFilename: catalog-info.yaml
     pullRequestBranchName: backstage-integration
   rules:
-    - allow: [ Component, System, API, Resource, Location, Template ]
+    - allow: [Component, System, API, Resource, Location, Template, Group, User]
+    # Allow Kro ResourceGroup entities (they appear as Components with type 'kro-resource-group')
+    - allow: [Component]
+      spec:
+        type: kro-resource-group
   locations:
+    # Local example data
+    - type: file
+      target: ../../examples/entities.yaml
+      rules:
+        - allow: [Component, System, API, Resource, Location]
+    - type: file
+      target: ../../examples/org.yaml
+      rules:
+        - allow: [User, Group]
+    - type: file
+      target: ../../examples/template/template.yaml
+      rules:
+        - allow: [Template]
+    - type: file
+      target: ../../examples/k8s-apply/template.yaml
+      rules:
+        - allow: [Template]
+    - type: file
+      target: ../../examples/k8s-apply/template-manifest-object.yaml
+      rules:
+        - allow: [Template]
+    - type: file
+      target: ../../examples/k8s-apply/template-manifest-string.yaml
+      rules:
+        - allow: [Template]
+    - type: file
+      target: ./examples/local-stack/mock-entities/catalog-info.yaml
+      rules:
+        - allow: [Component, System, API, Resource, Location, Template, Group, User]
     - type: url
       target: https://cnoe.localtest.me:8443/gitea/giteaAdmin/idpbuilder-localdev-backstage-templates-entities/src/branch/main/catalog-info.yaml
-#    # Local example template
-#    - type: file
-#      target: ../../examples/template/template.yaml
-#      rules:
-#        - allow: [Template]
-#
-#    # Local example organizational data
-#    - type: file
-#      target: ../../examples/org.yaml
-#      rules:
-#        - allow: [User, Group]
 
-    ## Uncomment these lines to add more example data
-    # - type: url
-    #   target: https://github.com/backstage/backstage/blob/master/packages/catalog-model/examples/all.yaml
-
-    ## Uncomment these lines to add an example org
-    # - type: url
-    #   target: https://github.com/backstage/backstage/blob/master/packages/catalog-model/examples/acme-corp.yaml
-    #   rules:
-    #     - allow: [User, Group]
 kubernetes:
   serviceLocatorMethod:
     type: 'multiTenant'
   clusterLocatorMethods:
     - type: 'config'
       clusters:
-        - url: https://127.0.0.1:33277 # you may need to change this
+        - url: https://127.0.0.1:33277
           name: local
           authProvider: 'serviceAccount'
           skipTLSVerify: true
-          # replace with your own service account token value. e.g. kubectl -n backstage exec -it deploy/backstage  -- cat /var/run/secrets/kubernetes.io/serviceaccount/token
           serviceAccountToken: eyJhbG......
+          # Additional configuration for Kro resources
+          customResources:
+            - group: 'kro.run'
+              apiVersion: 'v1alpha1'
+              plural: 'resourcegraphdefinitions'
+            - group: 'kro.run'
+              apiVersion: 'v1alpha1'
+              plural: 'cicdpipelines'
+            - group: 'kro.run'
+              apiVersion: 'v1alpha1'
+              plural: 'eksclusters'
+            - group: 'kro.run'
+              apiVersion: 'v1alpha1'
+              plural: 'eksclusterwithvpcs'
+            - group: 'kro.run'
+              apiVersion: 'v1alpha1'
+              plural: 'vpcs'
+
 argocd:
   appLocatorMethods:
     - type: 'config'
@@ -129,7 +189,146 @@ argocd:
         - name: local
           url: https://cnoe.localtest.me:8443/argocd
           username: admin
-          # replace with your argocd password e.g. kubectl -n argocd get secret argocd-initial-admin-secret -o jsonpath="{.data.password}" | base64 -d
           password: ${ARGOCD_ADMIN_PASSWORD}
+
 argoWorkflows:
   baseUrl: https://cnoe.localtest.me:8443/argo-workflows
+
+kubernetesIngestor:
+  refreshInterval: 300 # 5 minutes in seconds
+  # Entity processing configuration for ResourceGroups
+  entityProcessing:
+    # Enable automatic catalog ingestion
+    enabled: true
+    # Transform Kro resources into catalog entities
+    transformKroResources: true
+    # Namespace filtering (empty means all namespaces)
+    namespaces: []
+    # Label selectors for resource filtering
+    labelSelectors: []
+  resources:
+    # Kro ResourceGraphDefinitions (templates for ResourceGroups)
+    - apiVersion: 'kro.run/v1alpha1'
+      kind: 'ResourceGraphDefinition'
+      # Enable catalog ingestion for ResourceGraphDefinitions
+      catalogIngestion:
+        enabled: true
+        entityType: 'Component'
+        entitySubtype: 'kro-resource-group'
+    # Kro instances (these will be discovered dynamically based on ResourceGraphDefinitions)
+    - apiVersion: 'kro.run/v1alpha1'
+      kind: 'CICDPipeline'
+      catalogIngestion:
+        enabled: true
+        entityType: 'Component'
+        entitySubtype: 'kro-resource-group'
+    - apiVersion: 'kro.run/v1alpha1'
+      kind: 'EksCluster'
+      catalogIngestion:
+        enabled: true
+        entityType: 'Component'
+        entitySubtype: 'kro-resource-group'
+    - apiVersion: 'kro.run/v1alpha1'
+      kind: 'EksclusterWithVpc'
+      catalogIngestion:
+        enabled: true
+        entityType: 'Component'
+        entitySubtype: 'kro-resource-group'
+    - apiVersion: 'kro.run/v1alpha1'
+      kind: 'Vpc'
+      catalogIngestion:
+        enabled: true
+        entityType: 'Component'
+        entitySubtype: 'kro-resource-group'
+    # Standard Kubernetes resources (for relationship mapping)
+    - apiVersion: 'apps/v1'
+      kind: 'Deployment'
+      catalogIngestion:
+        enabled: false # Don't ingest all deployments, only those managed by ResourceGroups
+    - apiVersion: 'v1'
+      kind: 'Service'
+      catalogIngestion:
+        enabled: false
+    - apiVersion: 'v1'
+      kind: 'ConfigMap'
+      catalogIngestion:
+        enabled: false
+    - apiVersion: 'v1'
+      kind: 'Secret'
+      catalogIngestion:
+        enabled: false
+  clusters:
+    - name: local
+      url: https://127.0.0.1:33277
+      authProvider: 'serviceAccount'
+      serviceAccountToken: eyJhbG......
+      skipTLSVerify: true
+
+# Kro plugin configuration for ResourceGroup management
+kro:
+  enablePermissions: true
+  enableAuditLogging: true
+
+  # Security configuration
+  rbacValidation:
+    enabled: true
+    strictMode: false
+    cacheTimeout: 300 # 5 minutes
+
+  auditLogging:
+    enabled: true
+    logLevel: 'info'
+    includeSuccessEvents: true
+
+  errorHandling:
+    enableDetailedErrors: true
+    includeStackTrace: false
+
+  clusters:
+    - name: local
+      url: https://127.0.0.1:33277
+      authProvider: 'serviceAccount'
+      serviceAccountToken: eyJhbG......
+      skipTLSVerify: true
+      rbac:
+        requiredPermissions:
+          - apiGroups: ['kro.run']
+            resources: ['resourcegraphdefinitions']
+            verbs:
+              ['get', 'list', 'watch', 'create', 'update', 'patch', 'delete']
+          - apiGroups: ['kro.run']
+            resources:
+              ['cicdpipelines', 'eksclusters', 'eksclusterwithvpcs', 'vpcs']
+            verbs:
+              ['get', 'list', 'watch', 'create', 'update', 'patch', 'delete']
+          - apiGroups: ['']
+            resources: ['events']
+            verbs: ['get', 'list', 'watch']
+        readOnlyPermissions:
+          - apiGroups: ['kro.run']
+            resources:
+              [
+                'resourcegraphdefinitions',
+                'cicdpipelines',
+                'eksclusters',
+                'eksclusterwithvpcs',
+                'vpcs',
+              ]
+            verbs: ['get', 'list', 'watch']
+
+  # ResourceGroup entity processing configuration
+  entityProcessing:
+    enabled: true
+    refreshInterval: 300
+    namespaces: []
+    labelSelectors: []
+
+  # Integration with existing Kubernetes plugin
+  integration:
+    showInKubernetesViews: true
+    enableRelationshipMapping: true
+
+# see https://backstage.io/docs/permissions/getting-started for more on the permission framework
+permission:
+  enabled: true
+  enablePermissions: true

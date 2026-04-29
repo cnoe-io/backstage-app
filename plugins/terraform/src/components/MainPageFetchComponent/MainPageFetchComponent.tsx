@@ -12,8 +12,25 @@ import {
 } from '@backstage/core-components';
 import { useApi } from '@backstage/core-plugin-api';
 import { useEntity } from '@backstage/plugin-catalog-react';
-import { Grid } from '@material-ui/core';
-import Drawer from '@material-ui/core/Drawer';
+// Slide-over panel styles (replaces MUI Drawer)
+const drawerOverlayStyle: React.CSSProperties = {
+  position: 'fixed',
+  inset: 0,
+  background: 'rgba(0,0,0,0.3)',
+  zIndex: 1200,
+};
+const drawerPanelStyle: React.CSSProperties = {
+  position: 'fixed',
+  top: 0,
+  right: 0,
+  bottom: 0,
+  width: '60%',
+  padding: '20px',
+  background: 'var(--backstage-color-background-paper, #fff)',
+  boxShadow: '-4px 0 24px rgba(0,0,0,0.15)',
+  zIndex: 1201,
+  overflowY: 'auto',
+};
 
 import { ResponseError } from '@backstage/errors';
 import {
@@ -81,14 +98,15 @@ export const ResourceTable = ({ resources,setResourceDetail }:{resources:any, se
 export const TerraformTables = ({ resources,outputs,setResourceDetail }: {resources: any[], outputs: any[], setResourceDetail:Dispatch<SetStateAction<any>>}) => {
   return (
     <>
-      <Grid container spacing={3} direction="column">
-        <Grid item>
+      {/* CSS grid replaces MUI Grid (MUI removed per BUI migration) */}
+      <div style={{ display: 'grid', gap: '24px' }}>
+        <div>
           <OutputTable outputs={outputs}/>
-        </Grid>
-        <Grid item>
+        </div>
+        <div>
           <ResourceTable resources={resources} setResourceDetail={setResourceDetail}/>
-        </Grid>
-      </Grid>
+        </div>
+      </div>
     </>
   );
 };
@@ -330,12 +348,13 @@ export const MainPageFetchComponent = () => {
 
   return <>
     <TerraformTables resources={resources} outputs={outputs} setResourceDetail={setResourceDetail}/>
-    <Drawer
-      anchor="right"
-      open={resourceDetail.name}
-      onClose={() => setResourceDetail({})}
-    >
-      <ResourceDetailComponent resourceDetail={resourceDetail} allResources={allResources} setResourceDetail={setResourceDetail}/>
-    </Drawer>
+    {resourceDetail.name && (
+      <>
+        <div style={drawerOverlayStyle} onClick={() => setResourceDetail({})} />
+        <div style={drawerPanelStyle}>
+          <ResourceDetailComponent resourceDetail={resourceDetail} allResources={allResources} setResourceDetail={setResourceDetail}/>
+        </div>
+      </>
+    )}
   </>;
 };

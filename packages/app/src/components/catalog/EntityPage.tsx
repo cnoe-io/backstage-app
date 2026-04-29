@@ -1,17 +1,26 @@
 import React from 'react';
-import { Button, Grid } from '@material-ui/core';
-import {
-  EntityApiDefinitionCard,
-  EntityConsumedApisCard,
-  EntityConsumingComponentsCard,
-  EntityHasApisCard,
-  EntityProvidedApisCard,
-  EntityProvidingComponentsCard,
-} from '@backstage/plugin-api-docs';
+import Dashboard from '@mui/icons-material/Dashboard';
+import RocketLaunch from '@mui/icons-material/RocketLaunch';
+import Cloud from '@mui/icons-material/Cloud';
+import AccountTree from '@mui/icons-material/AccountTree';
+import Api from '@mui/icons-material/Api';
+import Hub from '@mui/icons-material/Hub';
+import Description from '@mui/icons-material/Description';
+import Bolt from '@mui/icons-material/Bolt';
+import Storage from '@mui/icons-material/Storage';
+import Category from '@mui/icons-material/Category';
+import Schedule from '@mui/icons-material/Schedule';
+import Person from '@mui/icons-material/Person';
+import Schema from '@mui/icons-material/Schema';
+import GridView from '@mui/icons-material/GridView';
+import { useEntity } from '@backstage/plugin-catalog-react';
 import {
   EntityAboutCard,
+  EntityDependsOnComponentsCard,
+  EntityDependsOnResourcesCard,
   EntityHasComponentsCard,
   EntityHasResourcesCard,
+  EntityHasSubcomponentsCard,
   EntityHasSystemsCard,
   EntityLayout,
   EntityLinksCard,
@@ -34,6 +43,14 @@ import {
 import { EntityTechdocsContent } from '@backstage/plugin-techdocs';
 import { EmptyState } from '@backstage/core-components';
 import {
+  EntityApiDefinitionCard,
+  EntityConsumedApisCard,
+  EntityConsumingComponentsCard,
+  EntityHasApisCard,
+  EntityProvidedApisCard,
+  EntityProvidingComponentsCard,
+} from '@backstage/plugin-api-docs';
+import {
   Direction,
   EntityCatalogGraphCard,
 } from '@backstage/plugin-catalog-graph';
@@ -47,23 +64,96 @@ import {
   RELATION_PART_OF,
   RELATION_PROVIDES_API,
 } from '@backstage/catalog-model';
-
 import { TechDocsAddons } from '@backstage/plugin-techdocs-react';
 import { ReportIssue } from '@backstage/plugin-techdocs-module-addons-contrib';
 
 import { EntityKubernetesContent, isKubernetesAvailable } from '@backstage/plugin-kubernetes';
-
 import {
-  EntityArgoCDOverviewCard,
-  isArgocdAvailable
-} from '@roadiehq/backstage-plugin-argo-cd';
+  IfKroResourceGraphAvailable,
+  IfKroOverviewAvailable,
+  KroOverviewCard,
+  KroResourceGraph,
+  isKroAvailable,
+} from '@terasky/backstage-plugin-kro-resources-frontend';
 
 import {
   EntityArgoWorkflowsOverviewCard,
+  EntityArgoWorkflowsTemplateOverviewCard,
   isArgoWorkflowsAvailable,
 } from '@internal/plugin-argo-workflows';
-import {ApacheSparkPage, isApacheSparkAvailable} from "@internal/plugin-apache-spark";
-import { isTerraformAvailable, TerraformPluginPage } from '@internal/plugin-terraform';
+import {
+  EntityApacheSparkContent,
+  isApacheSparkAvailable,
+} from '@internal/plugin-apache-spark';
+import {
+  EntityTerraformContent,
+  isTerraformAvailable,
+} from '@internal/plugin-terraform';
+import {
+  EntityArgoCDOverviewCard,
+  isArgocdAvailable,
+} from '@roadiehq/backstage-plugin-argo-cd';
+
+// CSS grid layout helpers (replaces MUI Grid)
+const grid12: React.CSSProperties = {
+  display: 'grid',
+  gridTemplateColumns: 'repeat(12, 1fr)',
+  gap: '24px',
+  alignItems: 'stretch',
+};
+const span = (n: number): React.CSSProperties => ({ gridColumn: `span ${n}` });
+
+// Tab label helper — renders icon + text inline
+// EntityLayout.Route types title as string but renders ReactNode at runtime
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const tabLabel = (icon: React.ReactElement, text: string): any => (
+  <span style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+    {React.cloneElement(icon, { style: { fontSize: 18 } })}
+    {text}
+  </span>
+);
+
+// Chip style helpers for EntityMetadataBar
+const chipBase: React.CSSProperties = {
+  display: 'inline-flex',
+  alignItems: 'center',
+  gap: '4px',
+  borderRadius: '16px',
+  fontSize: '12px',
+  padding: '4px 12px',
+  fontWeight: 500,
+};
+
+const EntityMetadataBar = () => {
+  const { entity } = useEntity();
+  const lifecycle = (entity.spec?.lifecycle as string) || 'unknown';
+  const type = (entity.spec?.type as string) || 'unknown';
+  const owner = (entity.spec?.owner as string) || 'unknown';
+
+  const lifecycleColor =
+    lifecycle === 'production'
+      ? { background: '#e8f5e9', color: '#2e7d32' }
+      : lifecycle === 'experimental'
+        ? { background: '#fff8e1', color: '#f57f17' }
+        : { background: '#e3f2fd', color: '#1565c0' };
+
+  return (
+    <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap', padding: '12px 0', gridColumn: 'span 12' }}>
+      <span style={{ ...chipBase, background: '#e3f2fd', color: '#1565c0' }}>
+        <Category style={{ fontSize: 14 }} />
+        {type}
+      </span>
+      <span style={{ ...chipBase, ...lifecycleColor }}>
+        <Schedule style={{ fontSize: 14 }} />
+        {lifecycle}
+      </span>
+      <span style={{ ...chipBase, background: '#f3e5f5', color: '#7b1fa2' }}>
+        <Person style={{ fontSize: 14 }} />
+        {owner}
+      </span>
+    </div>
+  );
+};
 
 const techdocsContent = (
   <EntityTechdocsContent>
@@ -75,23 +165,25 @@ const techdocsContent = (
 
 const cicdContent = (
   <EntitySwitch>
-    <EntitySwitch.Case if={e => isArgoWorkflowsAvailable(e)}>
-      <EntityArgoWorkflowsOverviewCard title="Workflows"/>
+    <EntitySwitch.Case if={isArgoWorkflowsAvailable}>
+      <div style={grid12}>
+        <div style={span(12)}>
+          <EntityArgoWorkflowsOverviewCard />
+        </div>
+        <div style={span(12)}>
+          <EntityArgoWorkflowsTemplateOverviewCard />
+        </div>
+      </div>
     </EntitySwitch.Case>
-
     <EntitySwitch.Case>
       <EmptyState
         title="No CI/CD available for this entity"
         missing="info"
         description="You need to add an annotation to your component if you want to enable CI/CD for it. You can read more about annotations in Backstage by clicking the button below."
         action={
-          <Button
-            variant="contained"
-            color="primary"
-            href="https://backstage.io/docs/features/software-catalog/well-known-annotations"
-          >
+          <a href="https://backstage.io/docs/features/software-catalog/well-known-annotations">
             Read more
-          </Button>
+          </a>
         }
       />
     </EntitySwitch.Case>
@@ -102,124 +194,222 @@ const entityWarningContent = (
   <>
     <EntitySwitch>
       <EntitySwitch.Case if={isOrphan}>
-        <Grid item xs={12}>
+        <div style={span(12)}>
           <EntityOrphanWarning />
-        </Grid>
+        </div>
       </EntitySwitch.Case>
     </EntitySwitch>
-
     <EntitySwitch>
       <EntitySwitch.Case if={hasRelationWarnings}>
-        <Grid item xs={12}>
+        <div style={span(12)}>
           <EntityRelationWarning />
-        </Grid>
+        </div>
       </EntitySwitch.Case>
     </EntitySwitch>
-
     <EntitySwitch>
       <EntitySwitch.Case if={hasCatalogProcessingErrors}>
-        <Grid item xs={12}>
+        <div style={span(12)}>
           <EntityProcessingErrorsPanel />
-        </Grid>
+        </div>
       </EntitySwitch.Case>
     </EntitySwitch>
   </>
 );
 
 const overviewContent = (
-  <Grid container spacing={3} alignItems="stretch">
+  <div style={grid12}>
+    <EntityMetadataBar />
     {entityWarningContent}
-    <Grid item md={6}>
-      <EntityAboutCard variant="gridItem" />
-    </Grid>
+    <div style={span(6)}>
+      <EntityAboutCard />
+    </div>
+    <div style={span(6)}>
+      <EntityCatalogGraphCard height={400} />
+    </div>
     <EntitySwitch>
-      <EntitySwitch.Case if={e => Boolean(isArgocdAvailable(e))}>
-        <Grid item md={6}>
+      <EntitySwitch.Case if={isArgocdAvailable}>
+        <div style={span(12)}>
           <EntityArgoCDOverviewCard />
-        </Grid>
+        </div>
       </EntitySwitch.Case>
     </EntitySwitch>
-    <EntitySwitch>
-      <EntitySwitch.Case if={e => isTerraformAvailable(e)}>
-        <Grid item md={6}>
-          <TerraformPluginPage />
-        </Grid>
-      </EntitySwitch.Case>
-    </EntitySwitch>
-    <Grid item md={6} xs={12}>
-      <EntityCatalogGraphCard variant="gridItem" height={400} />
-    </Grid>
-    <Grid item md={4} xs={12}>
+    <div style={span(4)}>
       <EntityLinksCard />
-    </Grid>
-  </Grid>
+    </div>
+    <div style={span(8)}>
+      <EntityHasSubcomponentsCard />
+    </div>
+  </div>
+);
+
+const kubernetesContent = (
+  <EntityKubernetesContent />
+);
+
+const kroDetailsContent = (
+  <div style={grid12}>
+    <div style={span(12)}>
+      <IfKroOverviewAvailable>
+        <KroOverviewCard />
+      </IfKroOverviewAvailable>
+    </div>
+    <div style={span(12)}>
+      <IfKroResourceGraphAvailable>
+        <KroResourceGraph />
+      </IfKroResourceGraphAvailable>
+    </div>
+  </div>
+);
+
+const dependenciesContent = (
+  <div style={grid12}>
+    <div style={span(6)}>
+      <EntityDependsOnComponentsCard />
+    </div>
+    <div style={span(6)}>
+      <EntityDependsOnResourcesCard />
+    </div>
+  </div>
 );
 
 const serviceEntityPage = (
   <EntityLayout>
-    <EntityLayout.Route path="/" title="Overview">
+    <EntityLayout.Route path="/" title={tabLabel(<Dashboard />, 'Overview')}>
       {overviewContent}
     </EntityLayout.Route>
-
-    <EntityLayout.Route path="/ci-cd" title="CI/CD">
+    <EntityLayout.Route path="/ci-cd" title={tabLabel(<RocketLaunch />, 'CI/CD')}>
       {cicdContent}
     </EntityLayout.Route>
-
-    <EntityLayout.Route path="/kubernetes" title="Kubernetes" if={e => isKubernetesAvailable(e)}>
-      <EntityKubernetesContent refreshIntervalMs={30000} />
+    <EntityLayout.Route
+      path="/kubernetes"
+      title={tabLabel(<Cloud />, 'Kubernetes')}
+      if={isKubernetesAvailable}
+    >
+      {kubernetesContent}
     </EntityLayout.Route>
-
-    <EntityLayout.Route path="/apache-spark" title="Spark" if={isApacheSparkAvailable}>
-      <ApacheSparkPage />
+    <EntityLayout.Route path="/kro" title={tabLabel(<AccountTree />, 'Kro Details')} if={isKroAvailable}>
+      {kroDetailsContent}
     </EntityLayout.Route>
-
-    <EntityLayout.Route path="/api" title="API">
-      <Grid container spacing={3} alignItems="stretch">
-        <Grid item md={6}>
+    <EntityLayout.Route path="/api" title={tabLabel(<Api />, 'API')}>
+      <div style={grid12}>
+        <div style={span(6)}>
           <EntityProvidedApisCard />
-        </Grid>
-        <Grid item md={6}>
+        </div>
+        <div style={span(6)}>
           <EntityConsumedApisCard />
-        </Grid>
-      </Grid>
+        </div>
+      </div>
     </EntityLayout.Route>
-
-    <EntityLayout.Route path="/docs" title="Docs">
+    <EntityLayout.Route path="/dependencies" title={tabLabel(<Hub />, 'Dependencies')}>
+      {dependenciesContent}
+    </EntityLayout.Route>
+    <EntityLayout.Route path="/docs" title={tabLabel(<Description />, 'Docs')}>
       {techdocsContent}
+    </EntityLayout.Route>
+    <EntityLayout.Route
+      path="/apache-spark"
+      title={tabLabel(<Bolt />, 'Apache Spark')}
+      if={isApacheSparkAvailable}
+    >
+      <EntityApacheSparkContent />
+    </EntityLayout.Route>
+    <EntityLayout.Route
+      path="/terraform"
+      title={tabLabel(<Storage />, 'Terraform')}
+      if={isTerraformAvailable}
+    >
+      <EntityTerraformContent />
     </EntityLayout.Route>
   </EntityLayout>
 );
 
 const websiteEntityPage = (
   <EntityLayout>
-    <EntityLayout.Route path="/" title="Overview">
+    <EntityLayout.Route path="/" title={tabLabel(<Dashboard />, 'Overview')}>
       {overviewContent}
     </EntityLayout.Route>
-
-    <EntityLayout.Route path="/ci-cd" title="CI/CD">
+    <EntityLayout.Route path="/ci-cd" title={tabLabel(<RocketLaunch />, 'CI/CD')}>
       {cicdContent}
     </EntityLayout.Route>
+    <EntityLayout.Route
+      path="/kubernetes"
+      title={tabLabel(<Cloud />, 'Kubernetes')}
+      if={isKubernetesAvailable}
+    >
+      {kubernetesContent}
+    </EntityLayout.Route>
+    <EntityLayout.Route path="/kro" title={tabLabel(<AccountTree />, 'Kro Details')} if={isKroAvailable}>
+      {kroDetailsContent}
+    </EntityLayout.Route>
+    <EntityLayout.Route path="/dependencies" title={tabLabel(<Hub />, 'Dependencies')}>
+      {dependenciesContent}
+    </EntityLayout.Route>
+    <EntityLayout.Route path="/docs" title={tabLabel(<Description />, 'Docs')}>
+      {techdocsContent}
+    </EntityLayout.Route>
+    <EntityLayout.Route
+      path="/apache-spark"
+      title={tabLabel(<Bolt />, 'Apache Spark')}
+      if={isApacheSparkAvailable}
+    >
+      <EntityApacheSparkContent />
+    </EntityLayout.Route>
+    <EntityLayout.Route
+      path="/terraform"
+      title={tabLabel(<Storage />, 'Terraform')}
+      if={isTerraformAvailable}
+    >
+      <EntityTerraformContent />
+    </EntityLayout.Route>
+  </EntityLayout>
+);
 
-    <EntityLayout.Route path="/docs" title="Docs">
+const resourceGroupPage = (
+  <EntityLayout>
+    <EntityLayout.Route path="/" title={tabLabel(<Dashboard />, 'Overview')}>
+      <div style={grid12}>
+        {entityWarningContent}
+        <div style={span(6)}>
+          <EntityAboutCard />
+        </div>
+        <div style={span(6)}>
+          <EntityCatalogGraphCard height={400} />
+        </div>
+        <div style={span(4)}>
+          <EntityLinksCard />
+        </div>
+        <div style={span(8)}>
+          <IfKroOverviewAvailable>
+            <KroOverviewCard />
+          </IfKroOverviewAvailable>
+        </div>
+      </div>
+    </EntityLayout.Route>
+    <EntityLayout.Route path="/kro" title={tabLabel(<AccountTree />, 'Kro Details')} if={isKroAvailable}>
+      {kroDetailsContent}
+    </EntityLayout.Route>
+    <EntityLayout.Route
+      path="/kubernetes"
+      title={tabLabel(<Cloud />, 'Kubernetes')}
+      if={isKubernetesAvailable}
+    >
+      <EntityKubernetesContent />
+    </EntityLayout.Route>
+    <EntityLayout.Route path="/dependencies" title={tabLabel(<Hub />, 'Dependencies')}>
+      {dependenciesContent}
+    </EntityLayout.Route>
+    <EntityLayout.Route path="/docs" title={tabLabel(<Description />, 'Docs')}>
       {techdocsContent}
     </EntityLayout.Route>
   </EntityLayout>
 );
 
-/**
- * NOTE: This page is designed to work on small screens such as mobile devices.
- * This is based on Material UI Grid. If breakpoints are used, each grid item must set the `xs` prop to a column size or to `true`,
- * since this does not default. If no breakpoints are used, the items will equitably share the available space.
- * https://material-ui.com/components/grid/#basic-grid.
- */
-
 const defaultEntityPage = (
   <EntityLayout>
-    <EntityLayout.Route path="/" title="Overview">
+    <EntityLayout.Route path="/" title={tabLabel(<Dashboard />, 'Overview')}>
       {overviewContent}
     </EntityLayout.Route>
-
-    <EntityLayout.Route path="/docs" title="Docs">
+    <EntityLayout.Route path="/docs" title={tabLabel(<Description />, 'Docs')}>
       {techdocsContent}
     </EntityLayout.Route>
   </EntityLayout>
@@ -230,113 +420,110 @@ const componentPage = (
     <EntitySwitch.Case if={isComponentType('service')}>
       {serviceEntityPage}
     </EntitySwitch.Case>
-
     <EntitySwitch.Case if={isComponentType('website')}>
       {websiteEntityPage}
     </EntitySwitch.Case>
-
     <EntitySwitch.Case>{defaultEntityPage}</EntitySwitch.Case>
   </EntitySwitch>
 );
 
 const apiPage = (
   <EntityLayout>
-    <EntityLayout.Route path="/" title="Overview">
-      <Grid container spacing={3}>
+    <EntityLayout.Route path="/" title={tabLabel(<Dashboard />, 'Overview')}>
+      <div style={grid12}>
         {entityWarningContent}
-        <Grid item md={6}>
+        <div style={span(6)}>
           <EntityAboutCard />
-        </Grid>
-        <Grid item md={6} xs={12}>
-          <EntityCatalogGraphCard variant="gridItem" height={400} />
-        </Grid>
-        <Grid container item md={12}>
-          <Grid item md={6}>
-            <EntityProvidingComponentsCard />
-          </Grid>
-          <Grid item md={6}>
-            <EntityConsumingComponentsCard />
-          </Grid>
-        </Grid>
-      </Grid>
+        </div>
+        <div style={span(6)}>
+          <EntityCatalogGraphCard height={400} />
+        </div>
+        <div style={span(4)}>
+          <EntityLinksCard />
+        </div>
+        <div style={span(6)}>
+          <EntityProvidingComponentsCard />
+        </div>
+        <div style={span(6)}>
+          <EntityConsumingComponentsCard />
+        </div>
+      </div>
     </EntityLayout.Route>
-
-    <EntityLayout.Route path="/definition" title="Definition">
-      <Grid container spacing={3}>
-        <Grid item xs={12}>
+    <EntityLayout.Route path="/definition" title={tabLabel(<Schema />, 'Definition')}>
+      <div style={grid12}>
+        <div style={span(12)}>
           <EntityApiDefinitionCard />
-        </Grid>
-      </Grid>
+        </div>
+      </div>
     </EntityLayout.Route>
   </EntityLayout>
 );
 
 const userPage = (
   <EntityLayout>
-    <EntityLayout.Route path="/" title="Overview">
-      <Grid container spacing={3}>
+    <EntityLayout.Route path="/" title={tabLabel(<Dashboard />, 'Overview')}>
+      <div style={grid12}>
         {entityWarningContent}
-        <Grid item xs={12} md={6}>
-          <EntityUserProfileCard variant="gridItem" />
-        </Grid>
-        <Grid item xs={12} md={6}>
-          <EntityOwnershipCard variant="gridItem" />
-        </Grid>
-      </Grid>
+        <div style={span(6)}>
+          <EntityUserProfileCard />
+        </div>
+        <div style={span(6)}>
+          <EntityOwnershipCard />
+        </div>
+      </div>
     </EntityLayout.Route>
   </EntityLayout>
 );
 
 const groupPage = (
   <EntityLayout>
-    <EntityLayout.Route path="/" title="Overview">
-      <Grid container spacing={3}>
+    <EntityLayout.Route path="/" title={tabLabel(<Dashboard />, 'Overview')}>
+      <div style={grid12}>
         {entityWarningContent}
-        <Grid item xs={12} md={6}>
-          <EntityGroupProfileCard variant="gridItem" />
-        </Grid>
-        <Grid item xs={12} md={6}>
-          <EntityOwnershipCard variant="gridItem" />
-        </Grid>
-        <Grid item xs={12} md={6}>
+        <div style={span(6)}>
+          <EntityGroupProfileCard />
+        </div>
+        <div style={span(6)}>
+          <EntityOwnershipCard />
+        </div>
+        <div style={span(6)}>
           <EntityMembersListCard />
-        </Grid>
-        <Grid item xs={12} md={6}>
+        </div>
+        <div style={span(6)}>
           <EntityLinksCard />
-        </Grid>
-      </Grid>
+        </div>
+      </div>
     </EntityLayout.Route>
   </EntityLayout>
 );
 
 const systemPage = (
   <EntityLayout>
-    <EntityLayout.Route path="/" title="Overview">
-      <Grid container spacing={3} alignItems="stretch">
+    <EntityLayout.Route path="/" title={tabLabel(<Dashboard />, 'Overview')}>
+      <div style={grid12}>
         {entityWarningContent}
-        <Grid item md={6}>
-          <EntityAboutCard variant="gridItem" />
-        </Grid>
-        <Grid item md={6} xs={12}>
-          <EntityCatalogGraphCard variant="gridItem" height={400} />
-        </Grid>
-        <Grid item md={4} xs={12}>
+        <div style={span(6)}>
+          <EntityAboutCard />
+        </div>
+        <div style={span(6)}>
+          <EntityCatalogGraphCard height={400} />
+        </div>
+        <div style={span(4)}>
           <EntityLinksCard />
-        </Grid>
-        <Grid item md={8}>
-          <EntityHasComponentsCard variant="gridItem" />
-        </Grid>
-        <Grid item md={6}>
-          <EntityHasApisCard variant="gridItem" />
-        </Grid>
-        <Grid item md={6}>
-          <EntityHasResourcesCard variant="gridItem" />
-        </Grid>
-      </Grid>
+        </div>
+        <div style={span(8)}>
+          <EntityHasComponentsCard />
+        </div>
+        <div style={span(6)}>
+          <EntityHasApisCard />
+        </div>
+        <div style={span(6)}>
+          <EntityHasResourcesCard />
+        </div>
+      </div>
     </EntityLayout.Route>
-    <EntityLayout.Route path="/diagram" title="Diagram">
+    <EntityLayout.Route path="/diagram" title={tabLabel(<GridView />, 'Diagram')}>
       <EntityCatalogGraphCard
-        variant="gridItem"
         direction={Direction.TOP_BOTTOM}
         title="System Diagram"
         height={700}
@@ -358,19 +545,19 @@ const systemPage = (
 
 const domainPage = (
   <EntityLayout>
-    <EntityLayout.Route path="/" title="Overview">
-      <Grid container spacing={3} alignItems="stretch">
+    <EntityLayout.Route path="/" title={tabLabel(<Dashboard />, 'Overview')}>
+      <div style={grid12}>
         {entityWarningContent}
-        <Grid item md={6}>
-          <EntityAboutCard variant="gridItem" />
-        </Grid>
-        <Grid item md={6} xs={12}>
-          <EntityCatalogGraphCard variant="gridItem" height={400} />
-        </Grid>
-        <Grid item md={6}>
-          <EntityHasSystemsCard variant="gridItem" />
-        </Grid>
-      </Grid>
+        <div style={span(6)}>
+          <EntityAboutCard />
+        </div>
+        <div style={span(6)}>
+          <EntityCatalogGraphCard height={400} />
+        </div>
+        <div style={span(6)}>
+          <EntityHasSystemsCard />
+        </div>
+      </div>
     </EntityLayout.Route>
   </EntityLayout>
 );
@@ -383,7 +570,10 @@ export const entityPage = (
     <EntitySwitch.Case if={isKind('user')} children={userPage} />
     <EntitySwitch.Case if={isKind('system')} children={systemPage} />
     <EntitySwitch.Case if={isKind('domain')} children={domainPage} />
-
+    <EntitySwitch.Case
+      if={isKind('resourcegroup')}
+      children={resourceGroupPage}
+    />
     <EntitySwitch.Case>{defaultEntityPage}</EntitySwitch.Case>
   </EntitySwitch>
 );

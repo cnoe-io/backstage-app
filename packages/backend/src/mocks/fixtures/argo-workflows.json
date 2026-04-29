@@ -1,0 +1,22 @@
+{
+  "apiVersion": "argoproj.io/v1alpha1",
+  "kind": "WorkflowList",
+  "metadata": {},
+  "items": [
+    {
+      "metadata": { "name": "ci-build-pipeline-abc12", "namespace": "default" },
+      "spec": { "entrypoint": "build-and-test" },
+      "status": { "phase": "Running", "progress": "2/5", "startedAt": "2026-04-15T10:00:00Z" }
+    },
+    {
+      "metadata": { "name": "deploy-staging-def34", "namespace": "default" },
+      "spec": { "entrypoint": "deploy" },
+      "status": { "phase": "Succeeded", "progress": "3/3", "startedAt": "2026-04-15T08:00:00Z", "finishedAt": "2026-04-15T08:15:00Z" }
+    },
+    {
+      "metadata": { "name": "data-pipeline-ghi56", "namespace": "default" },
+      "spec": { "entrypoint": "etl-pipeline" },
+      "status": { "phase": "Failed", "progress": "1/4", "startedAt": "2026-04-15T06:00:00Z", "finishedAt": "2026-04-15T06:30:00Z" }
+    }
+  ]
+}

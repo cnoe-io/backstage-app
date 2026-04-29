@@ -1,0 +1,7 @@
+2026-04-15 10:00:01 INFO SparkContext: Running Spark version 3.5.0
+2026-04-15 10:00:02 INFO SparkContext: Submitted application: spark-etl-job
+2026-04-15 10:00:03 INFO SecurityManager: Changing view acls to: spark
+2026-04-15 10:00:05 INFO Utils: Successfully started service 'sparkDriver' on port 7078
+2026-04-15 10:00:10 INFO SparkContext: Added JAR local:///opt/spark/examples/jars/spark-examples.jar
+2026-04-15 10:00:15 INFO DAGScheduler: Job 0 finished: reduce at SparkPi.scala:38, took 5.123 s
+2026-04-15 10:00:16 INFO SparkContext: Starting job: Pi is roughly 3.14159

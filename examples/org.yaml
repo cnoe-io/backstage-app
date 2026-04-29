@@ -1,17 +1,46 @@
 ---
-# https://backstage.io/docs/features/software-catalog/descriptor-format#kind-user
 apiVersion: backstage.io/v1alpha1
 kind: User
 metadata:
   name: guest
 spec:
-  memberOf: [guests]
+  memberOf: [platform-team]
+
 ---
-# https://backstage.io/docs/features/software-catalog/descriptor-format#kind-group
+apiVersion: backstage.io/v1alpha1
+kind: User
+metadata:
+  name: admin
+  description: Platform administrator
+spec:
+  memberOf: [platform-team, infra-team]
+
+---
+apiVersion: backstage.io/v1alpha1
+kind: Group
+metadata:
+  name: platform-team
+  description: Platform engineering team
+spec:
+  type: team
+  children: []
+
+---
+apiVersion: backstage.io/v1alpha1
+kind: Group
+metadata:
+  name: infra-team
+  description: Infrastructure team
+spec:
+  type: team
+  children: []
+
+---
 apiVersion: backstage.io/v1alpha1
 kind: Group
 metadata:
   name: guests
+  description: Guest users
 spec:
   type: team
   children: []

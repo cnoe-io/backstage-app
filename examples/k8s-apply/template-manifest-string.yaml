@@ -7,7 +7,6 @@ metadata:
 spec:
   owner: guest
   type: service
-  # these are the steps which are rendered in the frontend with the form input
   parameters: []
   steps:
     - id: template
@@ -26,11 +25,8 @@ spec:
           metadata:
             name: game-demo
           data:
-            # property-like keys; each key maps to a simple value
             player_initial_lives: "3"
             ui_properties_file_name: "user-interface.properties"
-
-            # file-like keys
             game.properties: |
               enemy.types=aliens,monsters
               player.maximum-lives=5

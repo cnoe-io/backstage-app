@@ -40,3 +40,14 @@ export const ApacheSparkPage = apacheSparkPlugin.provide(
     mountPoint: rootRouteRef,
   }),
 );
+
+export const EntityApacheSparkContent = apacheSparkPlugin.provide(
+  createRoutableExtension({
+    name: 'EntityApacheSparkContent',
+    component: () =>
+      import('./components/ApacheSparkOverviewTable/ApacheSparkOverviewTable').then(
+        m => m.ApacheSparkOverviewTable,
+      ),
+    mountPoint: rootRouteRef,
+  }),
+);

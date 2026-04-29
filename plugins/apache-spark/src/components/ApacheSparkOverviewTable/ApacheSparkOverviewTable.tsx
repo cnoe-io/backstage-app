@@ -1,5 +1,6 @@
 import {
   Progress,
+  ResponseErrorPanel,
   StatusError,
   StatusOK,
   StatusPending,
@@ -12,11 +13,29 @@ import { apacheSparkApiRef } from '../../api';
 import React, { useEffect, useState } from 'react';
 import useAsync from 'react-use/lib/useAsync';
 import { ApacheSpark, ApacheSparkList } from '../../api/model';
-import Alert from '@material-ui/lab/Alert';
-import { createStyles, Drawer, makeStyles, Theme } from '@material-ui/core';
 import { DrawerContent } from '../DetailedDrawer/DetailedDrawer';
 import { getAnnotationValues } from '../utils';
 import { useEntity } from '@backstage/plugin-catalog-react';
+
+// Slide-over panel styles (replaces MUI Drawer)
+const overlayStyle: React.CSSProperties = {
+  position: 'fixed',
+  inset: 0,
+  background: 'rgba(0,0,0,0.3)',
+  zIndex: 1200,
+};
+const panelStyle: React.CSSProperties = {
+  position: 'fixed',
+  top: 0,
+  right: 0,
+  bottom: 0,
+  width: '60%',
+  padding: '20px',
+  background: 'var(--backstage-color-background-paper, #fff)',
+  boxShadow: '-4px 0 24px rgba(0,0,0,0.15)',
+  zIndex: 1201,
+  overflowY: 'auto',
+};
 
 type TableData = {
   id: string;
@@ -47,21 +66,11 @@ const columns: TableColumn<TableData>[] = [
   { title: 'EndTime', field: 'finishedAt', type: 'datetime' },
 ];
 
-const useDrawerStyles = makeStyles((theme: Theme) =>
-  createStyles({
-    paper: {
-      width: '60%',
-      padding: theme.spacing(2.5),
-    },
-  }),
-);
-
 export const ApacheSparkOverviewTable = () => {
   const apiClient = useApi(apacheSparkApiRef);
   const [columnData, setColumnData] = useState([] as TableData[]);
   const [isOpen, toggleDrawer] = useState(false);
   const [drawerData, setDrawerData] = useState({} as ApacheSpark);
-  const classes = useDrawerStyles();
   const { entity } = useEntity();
   const { ns, clusterName, labelSelector } = getAnnotationValues(entity);
 
@@ -109,7 +118,7 @@ export const ApacheSparkOverviewTable = () => {
   if (loading) {
     return <Progress />;
   } else if (error) {
-    return <Alert severity="error">{`${error}`}</Alert>;
+    return <ResponseErrorPanel error={error} />;
   }
 
   return (
@@ -130,16 +139,14 @@ export const ApacheSparkOverviewTable = () => {
         columns={columns}
         data={columnData}
       />
-      <Drawer
-        classes={{
-          paper: classes.paper,
-        }}
-        anchor="right"
-        open={isOpen}
-        onClose={() => toggleDrawer(false)}
-      >
-        <DrawerContent toggleDrawer={toggleDrawer} apacheSpark={drawerData} />
-      </Drawer>
+      {isOpen && (
+        <>
+          <div style={overlayStyle} onClick={() => toggleDrawer(false)} />
+          <div style={panelStyle}>
+            <DrawerContent toggleDrawer={toggleDrawer} apacheSpark={drawerData} />
+          </div>
+        </>
+      )}
     </>
   );
 };

@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Option B: CNOE Vibrant</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { font-family: 'Inter', sans-serif; display: flex; gap: 40px; padding: 20px; background: #e0e0e0; }
+.preview { width: 580px; border-radius: 12px; overflow: hidden; box-shadow: 0 8px 32px rgba(0,0,0,0.15); }
+h2 { text-align: center; margin-bottom: 8px; font-size: 14px; color: #333; }
+.light { background: #F5F7FA; }
+.light .sidebar { width: 56px; background: #00568C; float: left; height: 400px; padding: 12px 0; display: flex; flex-direction: column; align-items: center; gap: 8px; }
+.light .sidebar .logo { width: 32px; height: 32px; background: rgba(255,255,255,0.2); border-radius: 8px; margin-bottom: 12px; display: flex; align-items: center; justify-content: center; color: white; font-weight: 700; font-size: 11px; }
+.light .sidebar .item { width: 36px; height: 36px; border-radius: 8px; display: flex; align-items: center; justify-content: center; position: relative; }
+.light .sidebar .item.active { background: rgba(255,255,255,0.15); }
+.light .sidebar .item.active::before { content: ''; position: absolute; left: 0; top: 8px; bottom: 8px; width: 3px; background: #FF9800; border-radius: 0 3px 3px 0; }
+.light .sidebar .item .dot { width: 8px; height: 8px; border-radius: 50%; background: rgba(255,255,255,0.5); }
+.light .sidebar .item.active .dot { background: #FFFFFF; }
+.light .main { margin-left: 56px; }
+.light .header { background: linear-gradient(135deg, #00568C, #1A8DFF); padding: 24px 28px; color: white; }
+.light .header h1 { font-size: 20px; font-weight: 600; }
+.light .header p { font-size: 12px; opacity: 0.85; margin-top: 4px; }
+.light .content { padding: 20px; }
+.light .search { background: #FFFFFF; border: 1px solid #E0E0E0; border-radius: 50px; padding: 10px 20px; font-size: 14px; width: 100%; margin-bottom: 16px; outline: none; }
+.light .cards { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 16px; }
+.light .card { background: #FFFFFF; border: 1px solid #EEEEEE; border-radius: 12px; padding: 16px; }
+.light .card h3 { font-size: 13px; font-weight: 600; color: #212121; margin-bottom: 6px; }
+.light .card p { font-size: 11px; color: #757575; }
+.light .card .tag { display: inline-block; background: #E6F2FF; color: #00568C; font-size: 10px; padding: 2px 8px; border-radius: 4px; margin-top: 8px; font-weight: 500; }
+.light .card .tag.orange { background: #FFF3E0; color: #F57C00; }
+.light .quick-links { display: flex; gap: 8px; }
+.light .quick-link { background: #FFFFFF; border: 1px solid #EEEEEE; border-radius: 8px; padding: 8px 14px; font-size: 11px; color: #00568C; font-weight: 500; }
+.light .btn { background: #00568C; color: white; border: none; border-radius: 8px; padding: 8px 16px; font-size: 12px; font-weight: 600; }
+.light .btn.accent { background: #FF9800; }
+.dark { background: #0D1117; }
+.dark .sidebar { width: 56px; background: #0D1117; border-right: 1px solid #30363D; float: left; height: 400px; padding: 12px 0; display: flex; flex-direction: column; align-items: center; gap: 8px; }
+.dark .sidebar .logo { width: 32px; height: 32px; background: rgba(77,166,255,0.2); border-radius: 8px; margin-bottom: 12px; display: flex; align-items: center; justify-content: center; color: #4DA6FF; font-weight: 700; font-size: 11px; }
+.dark .sidebar .item { width: 36px; height: 36px; border-radius: 8px; display: flex; align-items: center; justify-content: center; position: relative; }
+.dark .sidebar .item.active { background: rgba(77,166,255,0.1); }
+.dark .sidebar .item.active::before { content: ''; position: absolute; left: 0; top: 8px; bottom: 8px; width: 3px; background: #FFB74D; border-radius: 0 3px 3px 0; }
+.dark .sidebar .item .dot { width: 8px; height: 8px; border-radius: 50%; background: #6B778C; }
+.dark .sidebar .item.active .dot { background: #4DA6FF; }
+.dark .main { margin-left: 56px; }
+.dark .header { background: linear-gradient(135deg, #0D1117, #003D68); padding: 24px 28px; color: #E6E6E6; }
+.dark .header h1 { font-size: 20px; font-weight: 600; }
+.dark .header p { font-size: 12px; opacity: 0.7; margin-top: 4px; }
+.dark .content { padding: 20px; }
+.dark .search { background: #161B22; border: 1px solid #30363D; border-radius: 50px; padding: 10px 20px; font-size: 14px; width: 100%; margin-bottom: 16px; color: #C9D1D9; outline: none; }
+.dark .cards { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 16px; }
+.dark .card { background: #161B22; border: 1px solid #30363D; border-radius: 12px; padding: 16px; }
+.dark .card h3 { font-size: 13px; font-weight: 600; color: #E6E6E6; margin-bottom: 6px; }
+.dark .card p { font-size: 11px; color: #8B949E; }
+.dark .card .tag { display: inline-block; background: rgba(77,166,255,0.15); color: #4DA6FF; font-size: 10px; padding: 2px 8px; border-radius: 4px; margin-top: 8px; font-weight: 500; }
+.dark .card .tag.orange { background: rgba(255,152,0,0.15); color: #FFB74D; }
+.dark .quick-links { display: flex; gap: 8px; }
+.dark .quick-link { background: #161B22; border: 1px solid #30363D; border-radius: 8px; padding: 8px 14px; font-size: 11px; color: #4DA6FF; font-weight: 500; }
+.dark .btn { background: #4DA6FF; color: #0D1117; border: none; border-radius: 8px; padding: 8px 16px; font-size: 12px; font-weight: 600; }
+.dark .btn.accent { background: #FFB74D; color: #212121; }
+</style>
+</head>
+<body>
+<div><h2>Option B: Vibrant — Light (dark sidebar)</h2>
+<div class="preview light"><div class="sidebar"><div class="logo">C</div><div class="item active"><div class="dot"></div></div><div class="item"><div class="dot"></div></div><div class="item"><div class="dot"></div></div><div class="item"><div class="dot"></div></div></div><div class="main"><div class="header"><h1>Internal Developer Platform</h1><p>Welcome back, developer</p></div><div class="content"><input class="search" placeholder="Search catalog, templates, docs..." readonly><div class="cards"><div class="card"><h3>CICD Pipeline RG</h3><p>Kro ResourceGroup for CI/CD</p><span class="tag">kro-resource-group</span></div><div class="card"><h3>EKS Cluster RG</h3><p>Provision EKS with VPC</p><span class="tag orange">production</span></div><div class="card"><h3>Example Website</h3><p>Example website component</p><span class="tag">website</span></div><div class="card"><h3>Platform Infra</h3><p>Platform infrastructure</p><span class="tag orange">system</span></div></div><div class="quick-links"><div class="quick-link">Catalog</div><div class="quick-link">GitLab</div><div class="quick-link">ArgoCD</div><div class="quick-link">Create</div></div><div style="margin-top:12px;display:flex;gap:8px"><button class="btn">Create Entity</button><button class="btn accent">Deploy</button></div></div></div></div></div>
+<div><h2>Option B: Vibrant — Dark</h2>
+<div class="preview dark"><div class="sidebar"><div class="logo">C</div><div class="item active"><div class="dot"></div></div><div class="item"><div class="dot"></div></div><div class="item"><div class="dot"></div></div><div class="item"><div class="dot"></div></div></div><div class="main"><div class="header"><h1>Internal Developer Platform</h1><p>Welcome back, developer</p></div><div class="content"><input class="search" placeholder="Search catalog, templates, docs..." readonly><div class="cards"><div class="card"><h3>CICD Pipeline RG</h3><p>Kro ResourceGroup for CI/CD</p><span class="tag">kro-resource-group</span></div><div class="card"><h3>EKS Cluster RG</h3><p>Provision EKS with VPC</p><span class="tag orange">production</span></div><div class="card"><h3>Example Website</h3><p>Example website component</p><span class="tag">website</span></div><div class="card"><h3>Platform Infra</h3><p>Platform infrastructure</p><span class="tag orange">system</span></div></div><div class="quick-links"><div class="quick-link">Catalog</div><div class="quick-link">GitLab</div><div class="quick-link">ArgoCD</div><div class="quick-link">Create</div></div><div style="margin-top:12px;display:flex;gap:8px"><button class="btn">Create Entity</button><button class="btn accent">Deploy</button></div></div></div></div></div>
+</body></html>

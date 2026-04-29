@@ -1,11 +1,14 @@
 import React, { PropsWithChildren } from 'react';
-import { makeStyles } from '@material-ui/core';
-import HomeIcon from '@material-ui/icons/Home';
-import ExtensionIcon from '@material-ui/icons/Extension';
-import MapIcon from '@material-ui/icons/MyLocation';
-import LibraryBooks from '@material-ui/icons/LibraryBooks';
-import CreateComponentIcon from '@material-ui/icons/AddCircleOutline';
-import {LogoFull, LogoIcon} from '@internal/plugin-cnoe-ui';
+import HomeIcon from '@mui/icons-material/Home';
+import ExtensionIcon from '@mui/icons-material/Extension';
+import MapIcon from '@mui/icons-material/MyLocation';
+import LibraryBooks from '@mui/icons-material/LibraryBooks';
+import CreateComponentIcon from '@mui/icons-material/AddCircleOutline';
+import CategoryIcon from '@mui/icons-material/Category';
+import MenuIcon from '@mui/icons-material/Menu';
+import SearchIcon from '@mui/icons-material/Search';
+import GroupIcon from '@mui/icons-material/People';
+import { LogoFull, LogoIcon } from '../logos';
 import {
   Settings as SidebarSettings,
   UserSettingsSignInAvatar,
@@ -22,32 +25,38 @@ import {
   SidebarSpace,
   useSidebarOpenState,
   Link,
+  SidebarExpandButton,
 } from '@backstage/core-components';
-import MenuIcon from '@material-ui/icons/Menu';
-import SearchIcon from '@material-ui/icons/Search';
+import { MyGroupsSidebarItem } from '@backstage/plugin-org';
 
-const useSidebarLogoStyles = makeStyles({
+const sidebarLogoStyles = {
   root: {
     width: sidebarConfig.drawerWidthClosed,
     height: 3 * sidebarConfig.logoHeight,
     display: 'flex',
-    flexFlow: 'row nowrap',
+    flexFlow: 'row nowrap' as const,
     alignItems: 'center',
-    marginBottom: -14,
+    marginBottom: 8,
+    borderBottom: '1px solid rgba(255,255,255,0.1)',
+    paddingBottom: 16,
   },
   link: {
     width: sidebarConfig.drawerWidthClosed,
     marginLeft: 24,
   },
-});
+};
 
 const SidebarLogo = () => {
-  const classes = useSidebarLogoStyles();
   const { isOpen } = useSidebarOpenState();
 
   return (
-    <div className={classes.root}>
-      <Link to="/" underline="none" className={classes.link} aria-label="Home">
+    <div style={sidebarLogoStyles.root}>
+      <Link
+        to="/"
+        underline="none"
+        style={sidebarLogoStyles.link}
+        aria-label="Home"
+      >
         {isOpen ? <LogoFull /> : <LogoIcon />}
       </Link>
     </div>
@@ -57,32 +66,68 @@ const SidebarLogo = () => {
 export const Root = ({ children }: PropsWithChildren<{}>) => (
   <SidebarPage>
     <Sidebar>
+      {/* Logo */}
       <SidebarLogo />
+
+      {/* Search — uses SidebarGroup so it aligns with other items */}
       <SidebarGroup label="Search" icon={<SearchIcon />} to="/search">
         <SidebarSearchModal />
       </SidebarGroup>
+
       <SidebarDivider />
+
+      {/* Main navigation */}
       <SidebarGroup label="Menu" icon={<MenuIcon />}>
-        {/* Global nav, not org-specific */}
-        <SidebarItem icon={HomeIcon} to="catalog" text="Home" />
+        <SidebarItem icon={HomeIcon} to="catalog" text="Catalog" />
+        <MyGroupsSidebarItem
+          singularTitle="My Group"
+          pluralTitle="My Groups"
+          icon={GroupIcon}
+        />
         <SidebarItem icon={ExtensionIcon} to="api-docs" text="APIs" />
         <SidebarItem icon={LibraryBooks} to="docs" text="Docs" />
         <SidebarItem icon={CreateComponentIcon} to="create" text="Create..." />
-        {/* End global nav */}
         <SidebarDivider />
+        <span
+          style={{
+            fontSize: 10,
+            textTransform: 'uppercase',
+            letterSpacing: 1.5,
+            opacity: 0.5,
+            padding: '16px 24px 4px',
+            display: 'block',
+          }}
+        >
+          Tools
+        </span>
         <SidebarScrollWrapper>
           <SidebarItem icon={MapIcon} to="tech-radar" text="Tech Radar" />
+          <SidebarItem icon={CategoryIcon} to="catalog-graph" text="Graph" />
         </SidebarScrollWrapper>
       </SidebarGroup>
+
       <SidebarSpace />
       <SidebarDivider />
-      <SidebarGroup
-        label="Settings"
-        icon={<UserSettingsSignInAvatar />}
-        to="/settings"
+
+      {/* Collapse toggle */}
+      <div
+        style={{ opacity: 0.6, transition: 'opacity 0.2s' }}
+        onMouseEnter={e => { (e.currentTarget as HTMLDivElement).style.opacity = '1'; }}
+        onMouseLeave={e => { (e.currentTarget as HTMLDivElement).style.opacity = '0.6'; }}
       >
-        <SidebarSettings />
-      </SidebarGroup>
+        <SidebarExpandButton />
+      </div>
+
+      {/* Settings at bottom */}
+      <div style={{ borderTop: '1px solid rgba(255,255,255,0.1)' }}>
+        <SidebarGroup
+          label="Settings"
+          icon={<UserSettingsSignInAvatar />}
+          to="/settings"
+        >
+          <SidebarSettings />
+        </SidebarGroup>
+      </div>
     </Sidebar>
     {children}
   </SidebarPage>

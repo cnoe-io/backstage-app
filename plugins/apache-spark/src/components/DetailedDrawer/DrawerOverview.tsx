@@ -1,4 +1,4 @@
-import { createStyles, makeStyles } from '@material-ui/core';
+// Inline styles replace former makeStyles/createStyles usage (MUI removed per BUI migration)
 import { ApacheSpark } from '../../api/model';
 import {
   InfoCard,
@@ -10,17 +10,13 @@ import {
 } from '@backstage/core-components';
 import React from 'react';
 
-const useStyles = makeStyles(() =>
-  createStyles({
-    content: {
-      justifyContent: 'space-between',
-      display: 'flex',
-      flexDirection: 'column',
-      padding: '5px',
-      gap: '30px',
-    },
-  }),
-);
+const contentStyle: React.CSSProperties = {
+  justifyContent: 'space-between',
+  display: 'flex',
+  flexDirection: 'column',
+  padding: '5px',
+  gap: '30px',
+};
 
 type generateMetadataOutput = {
   app: { [key: string]: any };
@@ -79,7 +75,7 @@ const upperCaseFirstChar = (s: string) => {
 export const DrawerOverview = (props: { sparkApp: ApacheSpark }) => {
   const data = generateMetadata(props.sparkApp)
   return (
-    <div className={useStyles().content}>
+    <div style={contentStyle}>
       <InfoCard title="Apache Spark Application">
         <StructuredMetadataTable
           metadata={data.app}

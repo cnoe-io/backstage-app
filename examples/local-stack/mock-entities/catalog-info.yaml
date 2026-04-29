@@ -1,0 +1,196 @@
+---
+# System
+apiVersion: backstage.io/v1alpha1
+kind: System
+metadata:
+  name: cnoe-platform
+  description: CNOE Internal Developer Platform
+  tags: [platform, cnoe]
+spec:
+  owner: guests
+
+---
+# Platform API Service — wired to K8s + ArgoCD mock data
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: platform-api-service
+  description: Platform API backend service with Kubernetes and ArgoCD integration
+  tags: [go, api, kubernetes]
+  annotations:
+    backstage.io/kubernetes-id: platform-api-service
+    argocd/app-name: platform-api-service
+    backstage.io/techdocs-ref: dir:.
+  links:
+    - url: https://github.com/cnoe-io/platform-api
+      title: GitHub
+      icon: github
+spec:
+  type: service
+  lifecycle: production
+  owner: guests
+  system: cnoe-platform
+  providesApis:
+    - platform-api
+
+---
+# Developer Portal — frontend component
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: developer-portal
+  description: Backstage-based developer portal
+  tags: [backstage, react, typescript]
+  annotations:
+    backstage.io/techdocs-ref: dir:.
+spec:
+  type: website
+  lifecycle: production
+  owner: guests
+  system: cnoe-platform
+  consumesApis:
+    - platform-api
+
+---
+# Data Pipeline — wired to Spark + Argo Workflows mock data
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: data-pipeline
+  description: ETL data pipeline using Apache Spark and Argo Workflows
+  tags: [spark, python, data]
+  annotations:
+    backstage.io/kubernetes-id: spark-etl-job
+    apache-spark/app-name: spark-etl-job
+    argo-workflows/namespace: default
+spec:
+  type: service
+  lifecycle: production
+  owner: guests
+  system: cnoe-platform
+
+---
+# Infrastructure Service — wired to Terraform mock data
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: infrastructure-service
+  description: Infrastructure management service using Terraform
+  tags: [terraform, infrastructure, aws]
+  annotations:
+    backstage.io/kubernetes-id: infrastructure-service
+    terraform/state-key: cnoe-platform/infrastructure
+spec:
+  type: service
+  lifecycle: production
+  owner: guests
+  system: cnoe-platform
+
+---
+# Platform API definition
+apiVersion: backstage.io/v1alpha1
+kind: API
+metadata:
+  name: platform-api
+  description: CNOE Platform REST API
+  tags: [rest, openapi]
+spec:
+  type: openapi
+  lifecycle: production
+  owner: guests
+  system: cnoe-platform
+  definition: |
+    openapi: 3.0.0
+    info:
+      title: CNOE Platform API
+      version: 1.0.0
+      description: API for managing platform resources
+    paths:
+      /api/v1/resources:
+        get:
+          summary: List resources
+          responses:
+            '200':
+              description: List of resources
+      /api/v1/resources/{id}:
+        get:
+          summary: Get resource by ID
+          parameters:
+            - name: id
+              in: path
+              required: true
+              schema:
+                type: string
+          responses:
+            '200':
+              description: Resource details
+
+---
+# gRPC API
+apiVersion: backstage.io/v1alpha1
+kind: API
+metadata:
+  name: platform-grpc-api
+  description: CNOE Platform gRPC API for internal services
+  tags: [grpc, protobuf]
+spec:
+  type: grpc
+  lifecycle: production
+  owner: guests
+  system: cnoe-platform
+  definition: |
+    syntax = "proto3";
+    package cnoe.platform.v1;
+    service PlatformService {
+      rpc GetResource (GetResourceRequest) returns (Resource);
+      rpc ListResources (ListResourcesRequest) returns (ListResourcesResponse);
+    }
+    message GetResourceRequest { string id = 1; }
+    message Resource { string id = 1; string name = 2; string type = 3; }
+    message ListResourcesRequest { int32 page_size = 1; string page_token = 2; }
+    message ListResourcesResponse { repeated Resource resources = 1; string next_page_token = 2; }
+
+---
+# Database Resource
+apiVersion: backstage.io/v1alpha1
+kind: Resource
+metadata:
+  name: platform-database
+  description: PostgreSQL database for the platform
+  tags: [postgresql, database]
+spec:
+  type: database
+  owner: guests
+  system: cnoe-platform
+
+---
+# S3 Bucket Resource
+apiVersion: backstage.io/v1alpha1
+kind: Resource
+metadata:
+  name: platform-storage
+  description: S3 bucket for platform artifacts
+  tags: [s3, storage, aws]
+spec:
+  type: s3-bucket
+  owner: guests
+  system: cnoe-platform
+
+---
+# User and Group
+apiVersion: backstage.io/v1alpha1
+kind: Group
+metadata:
+  name: guests
+  description: Guest users group
+spec:
+  type: team
+  children: []
+
+---
+apiVersion: backstage.io/v1alpha1
+kind: User
+metadata:
+  name: guest
+spec:
+  memberOf: [guests]
