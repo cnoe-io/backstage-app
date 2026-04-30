@@ -11,7 +11,6 @@
  * Do not edit the class manually.
  */
 
-import { RequestFile } from './models';
 import { IoArgoprojWorkflowV1alpha1Mutex } from './ioArgoprojWorkflowV1alpha1Mutex';
 import { IoArgoprojWorkflowV1alpha1SemaphoreRef } from './ioArgoprojWorkflowV1alpha1SemaphoreRef';
 

@@ -1,4 +1,4 @@
-import React from 'react';
+import type { CSSProperties, FC, ChangeEvent } from 'react';
 
 interface KroResourceFilterProps {
   selectedResourceTypes: string[];
@@ -9,7 +9,7 @@ interface KroResourceFilterProps {
 const styles = {
   container: {
     padding: 8,
-  } as React.CSSProperties,
+  } as CSSProperties,
   select: {
     minWidth: 200,
     padding: '8px 12px',
@@ -17,13 +17,13 @@ const styles = {
     border: '1px solid rgba(0,0,0,0.23)',
     fontSize: '0.875rem',
     backgroundColor: 'var(--backstage-color-background-paper, #fff)',
-  } as React.CSSProperties,
+  } as CSSProperties,
   chipContainer: {
     display: 'flex',
     flexWrap: 'wrap' as const,
     gap: 4,
     marginTop: 8,
-  } as React.CSSProperties,
+  } as CSSProperties,
   chip: {
     display: 'inline-flex',
     alignItems: 'center',
@@ -33,12 +33,12 @@ const styles = {
     fontSize: '0.75rem',
     border: '1px solid rgba(0,0,0,0.23)',
     backgroundColor: 'transparent',
-  } as React.CSSProperties,
+  } as CSSProperties,
   kroChip: {
     backgroundColor: 'var(--backstage-color-primary-light, #90caf9)',
     color: '#fff',
     borderColor: 'transparent',
-  } as React.CSSProperties,
+  } as CSSProperties,
   deleteButton: {
     background: 'none',
     border: 'none',
@@ -47,14 +47,14 @@ const styles = {
     fontSize: '0.875rem',
     lineHeight: 1,
     color: 'inherit',
-  } as React.CSSProperties,
+  } as CSSProperties,
 };
 
 /**
  * Enhanced resource filter that includes Kro ResourceGroups
  * alongside standard Kubernetes resources
  */
-export const KroResourceFilter: React.FC<KroResourceFilterProps> = ({
+export const KroResourceFilter: FC<KroResourceFilterProps> = ({
   selectedResourceTypes,
   onResourceTypeChange,
   availableResourceTypes,
@@ -71,7 +71,7 @@ export const KroResourceFilter: React.FC<KroResourceFilterProps> = ({
     return resourceType.includes('kro.run') || resourceType.includes('ResourceGroup');
   };
 
-  const handleSelectChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
+  const handleSelectChange = (event: ChangeEvent<HTMLSelectElement>) => {
     const value = event.target.value;
     if (value && !selectedResourceTypes.includes(value)) {
       onResourceTypeChange([...selectedResourceTypes, value]);

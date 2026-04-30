@@ -1,4 +1,3 @@
-import React from 'react';
 import { MainPageComponent } from './MainPageComponent';
 import { rest } from 'msw';
 import { setupServer } from 'msw/node';

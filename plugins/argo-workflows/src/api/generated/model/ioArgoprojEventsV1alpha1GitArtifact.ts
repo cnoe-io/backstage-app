@@ -11,7 +11,6 @@
  * Do not edit the class manually.
  */
 
-import { RequestFile } from './models';
 import { IoArgoprojEventsV1alpha1GitCreds } from './ioArgoprojEventsV1alpha1GitCreds';
 import { IoArgoprojEventsV1alpha1GitRemoteConfig } from './ioArgoprojEventsV1alpha1GitRemoteConfig';
 import { IoK8sApiCoreV1SecretKeySelector } from './ioK8sApiCoreV1SecretKeySelector';

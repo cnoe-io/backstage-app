@@ -64,7 +64,7 @@ export async function createRouter(
         Bucket: req.body.Bucket,
         Prefix: req.body.Key,
       }
-      if (token != "1" && token) {
+      if (token !== "1" && token) {
         input.ContinuationToken = token;
       }
       const command = new ListObjectsV2Command(input);
@@ -84,9 +84,11 @@ export async function createRouter(
       if (fsstat.isDirectory()) {
         const filenames = fs.readdirSync(req.body.FileLocation);
         for (const i in filenames) {
-          responseObject.push({
-            Key: `${req.body.FileLocation  }/${  filenames[i]}`
-          });
+          if (Object.hasOwn(filenames, i)) {
+            responseObject.push({
+              Key: `${req.body.FileLocation  }/${  filenames[i]}`
+            });
+          }
         }
       } else if (fsstat.isFile()) {
         responseObject.push({

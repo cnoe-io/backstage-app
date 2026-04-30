@@ -11,7 +11,6 @@
  * Do not edit the class manually.
  */
 
-import { RequestFile } from './models';
 import { GrpcGatewayRuntimeStreamError } from './grpcGatewayRuntimeStreamError';
 import { IoArgoprojWorkflowV1alpha1LogEntry } from './ioArgoprojWorkflowV1alpha1LogEntry';
 

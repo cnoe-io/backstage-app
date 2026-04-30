@@ -1,4 +1,4 @@
-import React from 'react';
+
 import { createFrontendPlugin, PageBlueprint } from '@backstage/frontend-plugin-api';
 
 /**

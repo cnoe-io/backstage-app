@@ -1,4 +1,4 @@
-import React, { useState, useEffect, Dispatch, SetStateAction } from 'react';
+import { useState, useEffect, type Dispatch, type SetStateAction, type CSSProperties } from 'react';
 import {
   Table,
   TableColumn,
@@ -13,13 +13,13 @@ import {
 import { useApi } from '@backstage/core-plugin-api';
 import { useEntity } from '@backstage/plugin-catalog-react';
 // Slide-over panel styles (replaces MUI Drawer)
-const drawerOverlayStyle: React.CSSProperties = {
+const drawerOverlayStyle: CSSProperties = {
   position: 'fixed',
   inset: 0,
   background: 'rgba(0,0,0,0.3)',
   zIndex: 1200,
 };
-const drawerPanelStyle: React.CSSProperties = {
+const drawerPanelStyle: CSSProperties = {
   position: 'fixed',
   top: 0,
   right: 0,
@@ -43,9 +43,11 @@ import {
 import { TerraformApiRef } from '../../api';
 
 export const OutputTable = ({ outputs }:any) => {
-  let data:any = {};
-  for(let i in outputs) {
-    data[Number(i)+1] = outputs[i].value;
+  const data:any = {};
+  for(const i in outputs) {
+    if (Object.hasOwn(outputs, i)) {
+      data[Number(i)+1] = outputs[i].value;
+    }
   }
 
   return (
@@ -122,36 +124,42 @@ export const ResourceDetailComponent = ({resourceDetail,allResources,setResource
   useEffect(()=>{
     const resourceObj = allResources[resourceDetail.name];
 
-    let newDetails:any = {};
-    for(let i in resourceObj) {
-      if(!Array.isArray(resourceObj[i])) {
-        newDetails[i] = resourceObj[i];
+    const newDetails:any = {};
+    for(const i in resourceObj) {
+      if (Object.hasOwn(resourceObj, i)) {
+        if(!Array.isArray(resourceObj[i])) {
+          newDetails[i] = resourceObj[i];
+        }
       }
     }
     setDetails(newDetails);
 
     const newAttributes:any = {};
-    for(let i in resourceObj?.instances[0]?.attributes) {
-      let attribute:any = resourceObj?.instances[0]?.attributes[i];
-      if(Array.isArray(attribute) || typeof attribute === "object") {
-        newAttributes[i] = JSON.stringify(attribute);
-      } else if (!attribute) {
-        newAttributes[i] = "";
-      } else {
-        newAttributes[i] = attribute;
+    for(const i in resourceObj?.instances[0]?.attributes) {
+      if (Object.hasOwn(resourceObj?.instances[0]?.attributes, i)) {
+        const attribute:any = resourceObj?.instances[0]?.attributes[i];
+        if(Array.isArray(attribute) || typeof attribute === "object") {
+          newAttributes[i] = JSON.stringify(attribute);
+        } else if (!attribute) {
+          newAttributes[i] = "";
+        } else {
+          newAttributes[i] = attribute;
+        }
       }
     }
     setAttributes(newAttributes);
 
-    let newDependNodes:any[] = [{'id': resourceDetail.displayName, 'name': resourceDetail.name}];
-    let newDependEdges:any[] = [];
-    for(let i in resourceObj?.instances[0]?.dependencies) {
-      newDependNodes.push({
-        'id': resourceObj.instances[0]?.dependencies[i].displayName, 'name': resourceObj.instances[0]?.dependencies[i].name
-      });
-      newDependEdges.push({
-        'from': resourceObj.instances[0]?.dependencies[i].displayName, 'to': resourceDetail.displayName
-      });
+    const newDependNodes:any[] = [{'id': resourceDetail.displayName, 'name': resourceDetail.name}];
+    const newDependEdges:any[] = [];
+    for(const i in resourceObj?.instances[0]?.dependencies) {
+      if (Object.hasOwn(resourceObj?.instances[0]?.dependencies, i)) {
+        newDependNodes.push({
+          'id': resourceObj.instances[0]?.dependencies[i].displayName, 'name': resourceObj.instances[0]?.dependencies[i].name
+        });
+        newDependEdges.push({
+          'from': resourceObj.instances[0]?.dependencies[i].displayName, 'to': resourceDetail.displayName
+        });
+      }
     }
     setDependNodes(newDependNodes);
     setDependEdges(newDependEdges);
@@ -161,11 +169,11 @@ export const ResourceDetailComponent = ({resourceDetail,allResources,setResource
   return (
     <div style={{maxWidth: '800px'}}>
       <InfoCard title="Details">
-        { <StructuredMetadataTable metadata={details} /> }
+        <StructuredMetadataTable metadata={details} />
       </InfoCard>
       &nbsp;
       <InfoCard title="Attributes">
-        { <StructuredMetadataTable metadata={attributes} /> }
+        <StructuredMetadataTable metadata={attributes} />
       </InfoCard>
       <InfoCard title="Dependencies">
         <DependencyGraph
@@ -222,22 +230,22 @@ export const MainPageFetchComponent = () => {
   const [error] = useState<ResponseError>();
 
   function parseResources(resourcesArr:any[]) {
-    let resourcesObj:any = {};
-    let nameIndex:any = {};
-    let data:any[] = resourcesArr.filter((resource:any)=> {
+    const resourcesObj:any = {};
+    const nameIndex:any = {};
+    const data:any[] = resourcesArr.filter((resource:any)=> {
       if(resource.mode === "managed") {
         return true;
-      } else {
+      } 
         return false;
-      }
+      
     }).map((resource:any)=> {
       let resourceName:string = "";
       if(resource.module) {
-        resourceName += resource.module.split("[")[0] + ".";
+        resourceName += `${resource.module.split("[")[0]  }.`;
       } else {
-        resourceName += resource.mode + "."
+        resourceName += `${resource.mode  }.`
       }
-      resourceName += resource.type + "." + resource.name;
+      resourceName += `${resource.type  }.${  resource.name}`;
       resourcesObj[resourceName] = resource;
       let displayName = resourceName;
       if(resource.instances[0].attributes.name) {
@@ -253,15 +261,19 @@ export const MainPageFetchComponent = () => {
       }
     });
 
-    for(let i in resourcesObj) {
-      let newDependenciesObj:any[] = [];
-      if(resourcesObj[i].instances[0].dependencies) {
-        for(let j in resourcesObj[i].instances[0].dependencies) {
-          if(nameIndex[resourcesObj[i].instances[0].dependencies[j]]) {
-            newDependenciesObj.push({name: resourcesObj[i].instances[0].dependencies[j], displayName: nameIndex[resourcesObj[i].instances[0].dependencies[j]]});
+    for(const i in resourcesObj) {
+      if (Object.hasOwn(resourcesObj, i)) {
+        const newDependenciesObj:any[] = [];
+        if(resourcesObj[i].instances[0].dependencies) {
+          for(const j in resourcesObj[i].instances[0].dependencies) {
+            if (Object.hasOwn(resourcesObj[i].instances[0].dependencies, j)) {
+              if(nameIndex[resourcesObj[i].instances[0].dependencies[j]]) {
+                newDependenciesObj.push({name: resourcesObj[i].instances[0].dependencies[j], displayName: nameIndex[resourcesObj[i].instances[0].dependencies[j]]});
+              }
+            }
           }
+          resourcesObj[i].instances[0].dependencies = newDependenciesObj;
         }
-        resourcesObj[i].instances[0].dependencies = newDependenciesObj;
       }
     }
 
@@ -270,45 +282,6 @@ export const MainPageFetchComponent = () => {
   }
 
   useEffect(() => {
-    const getStateFiles = async() => {
-      let resourcesArr:any[] = [];
-      let outputsArr:any[] = [];
-      let responseJSON:any = {};
-
-      if(SecretName) {
-        responseJSON = await apiClient.getSecret(undefined, SecretNamespace, SecretName);
-      } else if(Bucket) {
-        responseJSON = await apiClient.s3GetFileList(Bucket,Prefix);
-      } else if(FileLocation) {
-        responseJSON = await apiClient.localGetFileList(FileLocation);
-      } 
-
-      for(let i in responseJSON) {
-        let tfStateJSON:any = {};
-        let file = responseJSON[i];
-        if(file.TFStateContents) {
-          tfStateJSON = await apiClient.deflate(file.TFStateContents);
-        } else if(file.Key && !file.Key?.endsWith("/")) {
-          tfStateJSON = await apiClient.getTFStateFile(Bucket,file);
-        } 
-        
-        if(tfStateJSON.outputs) {
-          for(let i in tfStateJSON.outputs) {
-            outputsArr.push(tfStateJSON.outputs[i]);
-          }
-        }
-        if(tfStateJSON.resources) {
-          for(let i in tfStateJSON.resources) {
-            resourcesArr.push(tfStateJSON.resources[i]);
-          }
-        }
-      }
-
-      parseResources(resourcesArr);
-      setOutputs(outputsArr);
-      setLoading(false);
-    };
-
     let Bucket = "";
     let Prefix = "";
     let FileLocation = "";
@@ -318,7 +291,7 @@ export const MainPageFetchComponent = () => {
     if(entity.metadata.annotations?.[TERRAFORM_SECRET_NAME]) {
       SecretName = entity.metadata.annotations?.[TERRAFORM_SECRET_NAME] || "";
     }
-      
+
     if(entity.metadata.annotations?.[TERRAFORM_SECRET_NAMESPACE]) {
       SecretNamespace = entity.metadata.annotations?.[TERRAFORM_SECRET_NAMESPACE] || "";
     }
@@ -337,7 +310,53 @@ export const MainPageFetchComponent = () => {
       }
     }
 
+    const getStateFiles = async() => {
+      const resourcesArr:any[] = [];
+      const outputsArr:any[] = [];
+      let responseJSON:any = {};
+
+      if(SecretName) {
+        responseJSON = await apiClient.getSecret(undefined, SecretNamespace, SecretName);
+      } else if(Bucket) {
+        responseJSON = await apiClient.s3GetFileList(Bucket,Prefix);
+      } else if(FileLocation) {
+        responseJSON = await apiClient.localGetFileList(FileLocation);
+      }
+
+      for(const i in responseJSON) {
+        if (Object.hasOwn(responseJSON, i)) {
+          let tfStateJSON:any = {};
+          const file = responseJSON[i];
+          if(file.TFStateContents) {
+            tfStateJSON = await apiClient.deflate(file.TFStateContents);
+          } else if(file.Key && !file.Key?.endsWith("/")) {
+            tfStateJSON = await apiClient.getTFStateFile(Bucket,file);
+          }
+
+          if(tfStateJSON.outputs) {
+            for(const k in tfStateJSON.outputs) {
+              if (Object.hasOwn(tfStateJSON.outputs, k)) {
+                outputsArr.push(tfStateJSON.outputs[k]);
+              }
+            }
+          }
+          if(tfStateJSON.resources) {
+            for(const k in tfStateJSON.resources) {
+              if (Object.hasOwn(tfStateJSON.resources, k)) {
+                resourcesArr.push(tfStateJSON.resources[k]);
+              }
+            }
+          }
+        }
+      }
+
+      parseResources(resourcesArr);
+      setOutputs(outputsArr);
+      setLoading(false);
+    };
+
     getStateFiles();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   if (loading) {
@@ -346,15 +365,15 @@ export const MainPageFetchComponent = () => {
     return <ResponseErrorPanel error={error} />;
   }
 
-  return <>
+  return (<>
     <TerraformTables resources={resources} outputs={outputs} setResourceDetail={setResourceDetail}/>
     {resourceDetail.name && (
       <>
-        <div style={drawerOverlayStyle} onClick={() => setResourceDetail({})} />
+        <div role="presentation" style={drawerOverlayStyle} onClick={() => setResourceDetail({})} onKeyDown={(e) => { if (e.key === 'Escape') setResourceDetail({}); }} />
         <div style={drawerPanelStyle}>
           <ResourceDetailComponent resourceDetail={resourceDetail} allResources={allResources} setResourceDetail={setResourceDetail}/>
         </div>
       </>
     )}
-  </>;
+  </>);
 };

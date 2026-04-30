@@ -1,4 +1,4 @@
-import React from 'react';
+import { useState, useRef, useEffect, type CSSProperties } from 'react';
 import { Content, Page } from '@backstage/core-components';
 import {
   EntityListProvider,
@@ -11,14 +11,14 @@ import {
 import { CatalogTable } from '@backstage/plugin-catalog';
 import FilterListIcon from '@mui/icons-material/FilterList';
 
-const contentWrapperStyle: React.CSSProperties = {
+const contentWrapperStyle: CSSProperties = {
   width: '100%',
   padding: '0 0.3vw 24px',
 };
 
 const waveSvg = `url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' width='1368' height='400' fill='none'%3e%3cmask id='a' width='1368' height='401' x='0' y='0' maskUnits='userSpaceOnUse'%3e%3cpath fill='url(%23paint0_linear)' d='M437 116C223 116 112 0 112 0h1256v400c-82 0-225-21-282-109-112-175-436-175-649-175z'/%3e%3cpath fill='url(%23paint1_linear)' d='M1368 400V282C891-29 788 40 711 161 608 324 121 372 0 361v39h1368z'/%3e%3cpath fill='url(%23paint2_linear)' d='M1368 244v156H0V94c92-24 198-46 375 0l135 41c176 51 195 109 858 109z'/%3e%3cpath fill='url(%23paint3_linear)' d='M1252 400h116c-14-7-35-14-116-16-663-14-837-128-1013-258l-85-61C98 28 46 8 0 0v400h1252z'/%3e%3c/mask%3e%3cg mask='url(%23a)'%3e%3cpath fill='white' d='M-172-98h1671v601H-172z'/%3e%3c/g%3e%3cdefs%3e%3clinearGradient id='paint0_linear' x1='602' x2='1093.5' y1='-960.5' y2='272' gradientUnits='userSpaceOnUse'%3e%3cstop stop-color='white'/%3e%3cstop offset='1' stop-color='white' stop-opacity='0'/%3e%3c/linearGradient%3e%3clinearGradient id='paint1_linear' x1='482' x2='480' y1='1058.5' y2='70.5' gradientUnits='userSpaceOnUse'%3e%3cstop stop-color='white'/%3e%3cstop offset='1' stop-color='white' stop-opacity='0'/%3e%3c/linearGradient%3e%3clinearGradient id='paint2_linear' x1='424' x2='446.1' y1='-587.5' y2='274.6' gradientUnits='userSpaceOnUse'%3e%3cstop stop-color='white'/%3e%3cstop offset='1' stop-color='white' stop-opacity='0'/%3e%3c/linearGradient%3e%3clinearGradient id='paint3_linear' x1='587' x2='349' y1='-1120.5' y2='341' gradientUnits='userSpaceOnUse'%3e%3cstop stop-color='white'/%3e%3cstop offset='1' stop-color='white' stop-opacity='0'/%3e%3c/linearGradient%3e%3c/defs%3e%3c/svg%3e")`;
 
-const headerCardStyle: React.CSSProperties = {
+const headerCardStyle: CSSProperties = {
   background: `linear-gradient(135deg, #003D7A 0%, #00568C 50%, #1A8DFF 100%)`,
   backgroundImage: `${waveSvg}, linear-gradient(135deg, #003D7A 0%, #00568C 50%, #1A8DFF 100%)`,
   backgroundSize: 'cover, cover',
@@ -32,21 +32,21 @@ const headerCardStyle: React.CSSProperties = {
   overflow: 'hidden',
 };
 
-const titleStyle: React.CSSProperties = {
+const titleStyle: CSSProperties = {
   margin: 0,
   fontSize: '2rem',
   fontWeight: 700,
   letterSpacing: '-0.5px',
 };
 
-const subtitleStyle: React.CSSProperties = {
+const subtitleStyle: CSSProperties = {
   margin: '8px 0 0',
   fontSize: '1rem',
   fontWeight: 400,
   opacity: 0.85,
 };
 
-const toolbarCardStyle: React.CSSProperties = {
+const toolbarCardStyle: CSSProperties = {
   background: 'rgba(255,255,255,0.03)',
   borderRadius: 16,
   boxShadow: '0 4px 24px rgba(0,0,0,0.10), 0 1.5px 6px rgba(0,0,0,0.06)',
@@ -57,7 +57,7 @@ const toolbarCardStyle: React.CSSProperties = {
   marginBottom: 24,
 };
 
-const tableCardStyle: React.CSSProperties = {
+const tableCardStyle: CSSProperties = {
   background: 'var(--backstage-color-background-paper, #fff)',
   borderRadius: 16,
   boxShadow: '0 4px 24px rgba(0,0,0,0.10), 0 1.5px 6px rgba(0,0,0,0.06)',
@@ -65,7 +65,7 @@ const tableCardStyle: React.CSSProperties = {
   overflow: 'hidden',
 };
 
-const filterBtnBase: React.CSSProperties = {
+const filterBtnBase: CSSProperties = {
   display: 'flex',
   alignItems: 'center',
   gap: 6,
@@ -81,14 +81,14 @@ const filterBtnBase: React.CSSProperties = {
   position: 'relative' as const,
 };
 
-const filterBtnActiveStyle: React.CSSProperties = {
+const filterBtnActiveStyle: CSSProperties = {
   ...filterBtnBase,
   background: 'rgba(255,152,0,0.08)',
   borderColor: 'rgba(255,152,0,0.5)',
   color: '#FF9800',
 };
 
-const dropdownStyle: React.CSSProperties = {
+const dropdownStyle: CSSProperties = {
   position: 'absolute',
   top: 'calc(100% + 8px)',
   right: 0,
@@ -104,13 +104,13 @@ const dropdownStyle: React.CSSProperties = {
   gap: 12,
 };
 
-const filterSectionStyle: React.CSSProperties = {
+const filterSectionStyle: CSSProperties = {
   display: 'flex',
   flexDirection: 'column',
   gap: 4,
 };
 
-const filterLabelStyle: React.CSSProperties = {
+const filterLabelStyle: CSSProperties = {
   fontSize: 11,
   fontWeight: 600,
   textTransform: 'uppercase',
@@ -120,10 +120,10 @@ const filterLabelStyle: React.CSSProperties = {
 };
 
 const FilterDropdown = () => {
-  const [open, setOpen] = React.useState(false);
-  const ref = React.useRef<HTMLDivElement>(null);
+  const [open, setOpen] = useState(false);
+  const ref = useRef<HTMLDivElement>(null);
 
-  React.useEffect(() => {
+  useEffect(() => {
     const handleClickOutside = (e: MouseEvent) => {
       if (ref.current && !ref.current.contains(e.target as Node)) {
         setOpen(false);

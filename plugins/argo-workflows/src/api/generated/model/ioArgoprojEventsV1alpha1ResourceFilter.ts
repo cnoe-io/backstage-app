@@ -11,7 +11,6 @@
  * Do not edit the class manually.
  */
 
-import { RequestFile } from './models';
 import { IoArgoprojEventsV1alpha1Selector } from './ioArgoprojEventsV1alpha1Selector';
 
 export class IoArgoprojEventsV1alpha1ResourceFilter {

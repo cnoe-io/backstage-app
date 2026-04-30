@@ -11,7 +11,6 @@
  * Do not edit the class manually.
  */
 
-import { RequestFile } from './models';
 import { IoArgoprojEventsV1alpha1PayloadField } from './ioArgoprojEventsV1alpha1PayloadField';
 
 export class IoArgoprojEventsV1alpha1ExprFilter {

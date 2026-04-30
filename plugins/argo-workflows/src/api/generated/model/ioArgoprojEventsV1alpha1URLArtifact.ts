@@ -11,7 +11,6 @@
  * Do not edit the class manually.
  */
 
-import { RequestFile } from './models';
 
 /**
 * URLArtifact contains information about an artifact at an http endpoint.

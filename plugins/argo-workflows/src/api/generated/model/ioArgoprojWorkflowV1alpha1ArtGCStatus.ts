@@ -11,7 +11,6 @@
  * Do not edit the class manually.
  */
 
-import { RequestFile } from './models';
 
 /**
 * ArtGCStatus maintains state related to ArtifactGC

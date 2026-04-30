@@ -11,7 +11,6 @@
  * Do not edit the class manually.
  */
 
-import { RequestFile } from './models';
 import { IoArgoprojEventsV1alpha1Amount } from './ioArgoprojEventsV1alpha1Amount';
 import { IoArgoprojEventsV1alpha1Int64OrString } from './ioArgoprojEventsV1alpha1Int64OrString';
 

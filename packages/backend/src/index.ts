@@ -6,6 +6,7 @@ const backend = createBackend();
 
 // Detect if running inside a Kubernetes cluster
 const isInCluster = require('fs').existsSync('/var/run/secrets/kubernetes.io/serviceaccount/token');
+
 const k8sEnabled = process.env.K8S_CLUSTER_URL || isInCluster;
 
 // Core plugins

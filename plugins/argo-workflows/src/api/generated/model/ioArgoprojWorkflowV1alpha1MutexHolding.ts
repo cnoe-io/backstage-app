@@ -11,7 +11,6 @@
  * Do not edit the class manually.
  */
 
-import { RequestFile } from './models';
 
 /**
 * MutexHolding describes the mutex and the object which is holding it.

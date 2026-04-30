@@ -47,16 +47,18 @@ function removeEmptyObjects(obj: any): any {
   }
   const newObj: any = Array.isArray(obj) ? [] : {};
   for (const key in obj) {
-    const value = obj[key];
-    const newValue = removeEmptyObjects(value);
-    if (
-      !(
-        newValue === null ||
-        newValue === undefined ||
-        (typeof newValue === 'object' && Object.keys(newValue).length === 0)
-      )
-    ) {
-      newObj[key] = newValue;
+    if (Object.hasOwn(obj, key)) {
+      const value = obj[key];
+      const newValue = removeEmptyObjects(value);
+      if (
+        !(
+          newValue === null ||
+          newValue === undefined ||
+          (typeof newValue === 'object' && Object.keys(newValue).length === 0)
+        )
+      ) {
+        newObj[key] = newValue;
+      }
     }
   }
   return newObj;

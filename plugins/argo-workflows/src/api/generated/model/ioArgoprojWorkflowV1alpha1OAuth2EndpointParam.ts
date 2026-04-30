@@ -11,7 +11,6 @@
  * Do not edit the class manually.
  */
 
-import { RequestFile } from './models';
 
 /**
 * EndpointParam is for requesting optional fields that should be sent in the oauth request

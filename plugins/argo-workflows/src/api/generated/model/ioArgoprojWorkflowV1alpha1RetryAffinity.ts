@@ -11,7 +11,6 @@
  * Do not edit the class manually.
  */
 
-import { RequestFile } from './models';
 
 /**
 * RetryAffinity prevents running steps on the same host.

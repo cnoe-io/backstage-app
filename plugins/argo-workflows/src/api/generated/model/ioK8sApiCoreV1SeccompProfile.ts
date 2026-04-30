@@ -11,7 +11,6 @@
  * Do not edit the class manually.
  */
 
-import { RequestFile } from './models';
 
 /**
 * SeccompProfile defines a pod/container\'s seccomp profile settings. Only one profile source may be set.
@@ -47,8 +46,8 @@ export class IoK8sApiCoreV1SeccompProfile {
 
 export namespace IoK8sApiCoreV1SeccompProfile {
     export enum TypeEnum {
-        Localhost = <any> 'Localhost',
-        RuntimeDefault = <any> 'RuntimeDefault',
-        Unconfined = <any> 'Unconfined'
+        Localhost = 'Localhost' as any,
+        RuntimeDefault = 'RuntimeDefault' as any,
+        Unconfined = 'Unconfined' as any
     }
 }

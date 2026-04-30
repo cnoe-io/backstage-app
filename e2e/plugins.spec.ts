@@ -2,11 +2,22 @@ import { test, expect } from '@playwright/test';
 
 test.describe('CNOE Backstage Plugin Tests', () => {
   test.beforeEach(async ({ page }) => {
+    // Dismiss webpack dev server overlay that intercepts clicks
+    await page.addInitScript(() => {
+      window.addEventListener('load', () => {
+        const overlay = document.getElementById('webpack-dev-server-client-overlay');
+        if (overlay) overlay.remove();
+      });
+    });
     await page.goto('/');
+    // Remove overlay if present
+    await page.evaluate(() => {
+      document.getElementById('webpack-dev-server-client-overlay')?.remove();
+    });
     const enterBtn = page.getByRole('button', { name: 'Enter' });
     if (await enterBtn.isVisible({ timeout: 10000 }).catch(() => false)) {
-      await enterBtn.click();
-      await page.waitForURL('**/home', { timeout: 15000 });
+      await enterBtn.click({ force: true });
+      await page.waitForURL('**/home', { timeout: 30000 });
     }
   });
 

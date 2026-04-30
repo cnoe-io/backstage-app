@@ -2,7 +2,7 @@ import { Content, Page } from '@backstage/core-components';
 import { HomePageSearchBar } from '@backstage/plugin-search';
 import { SearchContextProvider } from '@backstage/plugin-search-react';
 import { useApi, configApiRef } from '@backstage/core-plugin-api';
-import React from 'react';
+import type React from 'react';
 
 import {
   HomePageToolkit,
@@ -68,8 +68,8 @@ export const CNOEHomepage = () => {
         const baseUrl = gitlabIntegrations[0].getOptionalString('baseUrl');
         if (baseUrl) return baseUrl;
       }
-    } catch (e) {
-      console.log('Could not read GitLab config:', e);
+    } catch {
+      // GitLab config not available
     }
     return 'https://gitlab.com';
   };

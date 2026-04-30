@@ -11,7 +11,6 @@
  * Do not edit the class manually.
  */
 
-import { RequestFile } from './models';
 import { IoArgoprojEventsV1alpha1AMQPConsumeConfig } from './ioArgoprojEventsV1alpha1AMQPConsumeConfig';
 import { IoArgoprojEventsV1alpha1AMQPExchangeDeclareConfig } from './ioArgoprojEventsV1alpha1AMQPExchangeDeclareConfig';
 import { IoArgoprojEventsV1alpha1AMQPQueueBindConfig } from './ioArgoprojEventsV1alpha1AMQPQueueBindConfig';

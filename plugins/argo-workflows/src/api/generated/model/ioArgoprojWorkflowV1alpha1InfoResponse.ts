@@ -11,7 +11,6 @@
  * Do not edit the class manually.
  */
 
-import { RequestFile } from './models';
 import { IoArgoprojWorkflowV1alpha1Column } from './ioArgoprojWorkflowV1alpha1Column';
 import { IoArgoprojWorkflowV1alpha1Link } from './ioArgoprojWorkflowV1alpha1Link';
 

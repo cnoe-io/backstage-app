@@ -10,8 +10,12 @@
   },
   "typesVersions": {
     "*": {
-      "alpha": ["src/alpha.tsx"],
-      "package.json": ["package.json"]
+      "alpha": [
+        "src/alpha.tsx"
+      ],
+      "package.json": [
+        "package.json"
+      ]
     }
   },
   "license": "Apache-2.0",
@@ -35,14 +39,19 @@
     "postpack": "backstage-cli package postpack"
   },
   "dependencies": {
+    "@backstage/catalog-model": "^1.7.7",
     "@backstage/core-components": "^0.18.8",
     "@backstage/core-plugin-api": "^1.12.4",
+    "@backstage/errors": "^1.2.7",
     "@backstage/frontend-plugin-api": "^0.15.1",
+    "@backstage/plugin-catalog-react": "^2.1.1",
+    "@backstage/plugin-kubernetes": "^0.12.18",
     "@backstage/theme": "^0.7.2",
     "react-use": "^17.2.4"
   },
   "peerDependencies": {
-    "react": "^16.13.1 || ^17.0.0"
+    "react": "^16.13.1 || ^17.0.0",
+    "react-router-dom": "^7.14.2"
   },
   "devDependencies": {
     "@backstage/cli": "^0.36.0",

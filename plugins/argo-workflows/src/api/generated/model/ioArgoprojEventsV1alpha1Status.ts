@@ -11,7 +11,6 @@
  * Do not edit the class manually.
  */
 
-import { RequestFile } from './models';
 import { IoArgoprojEventsV1alpha1Condition } from './ioArgoprojEventsV1alpha1Condition';
 
 /**

@@ -1,4 +1,4 @@
-import React from 'react';
+import type { CSSProperties } from 'react';
 import { Content, Page } from '@backstage/core-components';
 import {
   CatalogIndexPage as StockCatalogIndexPage,
@@ -12,7 +12,7 @@ import {
 import { HeroHeader, contentWrapperStyle } from '../shared/HeroHeader';
 import { CatalogDropdownFilters } from './CatalogPage';
 
-const toolbarCardStyle: React.CSSProperties = {
+const toolbarCardStyle: CSSProperties = {
   background: 'rgba(255,255,255,0.03)',
   borderRadius: 16,
   boxShadow: '0 4px 24px rgba(0,0,0,0.10), 0 1.5px 6px rgba(0,0,0,0.06)',
@@ -23,7 +23,7 @@ const toolbarCardStyle: React.CSSProperties = {
   marginBottom: 24,
 };
 
-const tableCardStyle: React.CSSProperties = {
+const tableCardStyle: CSSProperties = {
   background: 'var(--backstage-color-background-paper, #fff)',
   borderRadius: 16,
   boxShadow: '0 4px 24px rgba(0,0,0,0.10), 0 1.5px 6px rgba(0,0,0,0.06)',

@@ -1,5 +1,5 @@
 import { ApacheSpark } from '../../api/model';
-import React from 'react';
+import type { CSSProperties } from 'react';
 import { stringify } from 'yaml';
 import { CopyTextButton, TabbedLayout } from '@backstage/core-components';
 import {
@@ -8,25 +8,25 @@ import {
 } from '../ApacheSparkLogs/ApacheSparkLogs';
 import { DrawerOverview } from './DrawerOverview';
 
-const headerStyle: React.CSSProperties = {
+const headerStyle: CSSProperties = {
   display: 'flex',
   justifyContent: 'space-between',
   alignItems: 'center',
 };
-const contentStyle: React.CSSProperties = {
+const contentStyle: CSSProperties = {
   height: '80%',
   backgroundColor: '#EEEEEE',
   overflow: 'scroll',
   display: 'flex',
   flexDirection: 'row',
 };
-const logsStyle: React.CSSProperties = {
+const logsStyle: CSSProperties = {
   height: 500,
   display: 'flex',
   flexDirection: 'column',
   flexShrink: 0,
 };
-const logs2Style: React.CSSProperties = {
+const logs2Style: CSSProperties = {
   height: 600,
   display: 'flex',
   flexDirection: 'column',

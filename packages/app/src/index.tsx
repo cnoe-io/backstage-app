@@ -1,6 +1,6 @@
 import '@backstage/ui/css/styles.css';
 import '@backstage/cli/asset-types';
-import React from 'react';
+
 import ReactDOM from 'react-dom/client';
 
 import App from './App';
@@ -402,7 +402,7 @@ const detectDarkMode = () => {
   const bg = window.getComputedStyle(document.body).backgroundColor;
   const match = bg.match(/\d+/g);
   if (match) {
-    const brightness = (parseInt(match[0]) + parseInt(match[1]) + parseInt(match[2])) / 3;
+    const brightness = (parseInt(match[0], 10) + parseInt(match[1], 10) + parseInt(match[2], 10)) / 3;
     document.documentElement.classList.toggle('backstage-dark', brightness < 128);
   }
 };
@@ -420,6 +420,7 @@ async function startApp() {
   ) {
     const { worker } = await import('./mocks/browser');
     await worker.start({ onUnhandledRequest: 'bypass' });
+    // eslint-disable-next-line no-console -- intentional startup log for MSW
     console.log('[MSW] Mock service worker started');
   }
 

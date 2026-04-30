@@ -11,7 +11,6 @@
  * Do not edit the class manually.
  */
 
-import { RequestFile } from './models';
 import { IoK8sApiCoreV1ContainerPort } from './ioK8sApiCoreV1ContainerPort';
 import { IoK8sApiCoreV1EnvFromSource } from './ioK8sApiCoreV1EnvFromSource';
 import { IoK8sApiCoreV1EnvVar } from './ioK8sApiCoreV1EnvVar';
@@ -218,12 +217,12 @@ export class IoK8sApiCoreV1Container {
 
 export namespace IoK8sApiCoreV1Container {
     export enum ImagePullPolicyEnum {
-        Always = <any> 'Always',
-        IfNotPresent = <any> 'IfNotPresent',
-        Never = <any> 'Never'
+        Always = 'Always' as any,
+        IfNotPresent = 'IfNotPresent' as any,
+        Never = 'Never' as any
     }
     export enum TerminationMessagePolicyEnum {
-        FallbackToLogsOnError = <any> 'FallbackToLogsOnError',
-        File = <any> 'File'
+        FallbackToLogsOnError = 'FallbackToLogsOnError' as any,
+        File = 'File' as any
     }
 }

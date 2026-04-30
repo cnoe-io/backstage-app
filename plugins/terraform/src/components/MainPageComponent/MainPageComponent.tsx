@@ -1,4 +1,3 @@
-import React from 'react';
 import { Page, Header, Content } from '@backstage/core-components';
 import { MainPageFetchComponent } from '../MainPageFetchComponent';
 

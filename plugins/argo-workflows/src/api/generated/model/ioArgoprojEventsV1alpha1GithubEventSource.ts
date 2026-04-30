@@ -11,7 +11,6 @@
  * Do not edit the class manually.
  */
 
-import { RequestFile } from './models';
 import { IoArgoprojEventsV1alpha1EventSourceFilter } from './ioArgoprojEventsV1alpha1EventSourceFilter';
 import { IoArgoprojEventsV1alpha1GithubAppCreds } from './ioArgoprojEventsV1alpha1GithubAppCreds';
 import { IoArgoprojEventsV1alpha1OwnedRepositories } from './ioArgoprojEventsV1alpha1OwnedRepositories';

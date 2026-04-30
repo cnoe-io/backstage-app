@@ -1,4 +1,4 @@
-import React from 'react';
+
 import { render, screen } from '@testing-library/react';
 import { useApi } from '@backstage/core-plugin-api';
 import { useEntity } from '@backstage/plugin-catalog-react';

@@ -11,7 +11,6 @@
  * Do not edit the class manually.
  */
 
-import { RequestFile } from './models';
 import { GrpcGatewayRuntimeStreamError } from './grpcGatewayRuntimeStreamError';
 import { IoK8sApiCoreV1Event } from './ioK8sApiCoreV1Event';
 

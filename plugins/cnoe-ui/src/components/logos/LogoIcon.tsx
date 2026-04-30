@@ -1,4 +1,4 @@
-import React from 'react';
+
 
 // Inline styles replace former makeStyles usage (MUI removed per BUI migration)
 const svgStyle: React.CSSProperties = { width: 'auto', height: 28 };

@@ -8,9 +8,9 @@ import {
   StatusRunning,
   StructuredMetadataTable,
 } from '@backstage/core-components';
-import React from 'react';
+import type { CSSProperties } from 'react';
 
-const contentStyle: React.CSSProperties = {
+const contentStyle: CSSProperties = {
   justifyContent: 'space-between',
   display: 'flex',
   flexDirection: 'column',

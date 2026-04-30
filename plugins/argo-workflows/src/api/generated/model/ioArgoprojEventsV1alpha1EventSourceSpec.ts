@@ -11,7 +11,6 @@
  * Do not edit the class manually.
  */
 
-import { RequestFile } from './models';
 import { IoArgoprojEventsV1alpha1AMQPEventSource } from './ioArgoprojEventsV1alpha1AMQPEventSource';
 import { IoArgoprojEventsV1alpha1AzureEventsHubEventSource } from './ioArgoprojEventsV1alpha1AzureEventsHubEventSource';
 import { IoArgoprojEventsV1alpha1BitbucketEventSource } from './ioArgoprojEventsV1alpha1BitbucketEventSource';

@@ -11,7 +11,6 @@
  * Do not edit the class manually.
  */
 
-import { RequestFile } from './models';
 import { IoK8sApiCoreV1PersistentVolumeClaimCondition } from './ioK8sApiCoreV1PersistentVolumeClaimCondition';
 
 /**
@@ -84,8 +83,8 @@ export class IoK8sApiCoreV1PersistentVolumeClaimStatus {
 
 export namespace IoK8sApiCoreV1PersistentVolumeClaimStatus {
     export enum PhaseEnum {
-        Bound = <any> 'Bound',
-        Lost = <any> 'Lost',
-        Pending = <any> 'Pending'
+        Bound = 'Bound' as any,
+        Lost = 'Lost' as any,
+        Pending = 'Pending' as any
     }
 }

@@ -1,4 +1,4 @@
-import React from 'react';
+import type { CSSProperties } from 'react';
 import { EntityKubernetesContent } from '@backstage/plugin-kubernetes';
 import { useEntity } from '@backstage/plugin-catalog-react';
 import {
@@ -8,13 +8,13 @@ import {
   IfKroOverviewAvailable,
 } from '@terasky/backstage-plugin-kro-resources-frontend';
 
-const stack: React.CSSProperties = {
+const stack: CSSProperties = {
   display: 'flex',
   flexDirection: 'column',
   gap: '24px',
 };
 
-const chip: React.CSSProperties = {
+const chip: CSSProperties = {
   display: 'inline-block',
   padding: '2px 10px',
   borderRadius: '16px',

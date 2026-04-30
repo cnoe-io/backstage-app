@@ -11,7 +11,6 @@
  * Do not edit the class manually.
  */
 
-import { RequestFile } from './models';
 import { IoArgoprojWorkflowV1alpha1ClusterWorkflowTemplate } from './ioArgoprojWorkflowV1alpha1ClusterWorkflowTemplate';
 
 export class IoArgoprojWorkflowV1alpha1ClusterWorkflowTemplateUpdateRequest {

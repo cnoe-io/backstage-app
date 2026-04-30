@@ -1,4 +1,4 @@
-import React from 'react';
+import { cloneElement, type CSSProperties, type ReactElement } from 'react';
 import Dashboard from '@mui/icons-material/Dashboard';
 import RocketLaunch from '@mui/icons-material/RocketLaunch';
 import Cloud from '@mui/icons-material/Cloud';
@@ -95,26 +95,26 @@ import {
 } from '@roadiehq/backstage-plugin-argo-cd';
 
 // CSS grid layout helpers (replaces MUI Grid)
-const grid12: React.CSSProperties = {
+const grid12: CSSProperties = {
   display: 'grid',
   gridTemplateColumns: 'repeat(12, 1fr)',
   gap: '24px',
   alignItems: 'stretch',
 };
-const span = (n: number): React.CSSProperties => ({ gridColumn: `span ${n}` });
+const span = (n: number): CSSProperties => ({ gridColumn: `span ${n}` });
 
 // Tab label helper — renders icon + text inline
 // EntityLayout.Route types title as string but renders ReactNode at runtime
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-const tabLabel = (icon: React.ReactElement, text: string): any => (
+const tabLabel = (icon: ReactElement, text: string): any => (
   <span style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-    {React.cloneElement(icon, { style: { fontSize: 18 } })}
+    {cloneElement(icon, { style: { fontSize: 18 } })}
     {text}
   </span>
 );
 
 // Chip style helpers for EntityMetadataBar
-const chipBase: React.CSSProperties = {
+const chipBase: CSSProperties = {
   display: 'inline-flex',
   alignItems: 'center',
   gap: '4px',
@@ -130,12 +130,12 @@ const EntityMetadataBar = () => {
   const type = (entity.spec?.type as string) || 'unknown';
   const owner = (entity.spec?.owner as string) || 'unknown';
 
-  const lifecycleColor =
-    lifecycle === 'production'
-      ? { background: '#e8f5e9', color: '#2e7d32' }
-      : lifecycle === 'experimental'
-        ? { background: '#fff8e1', color: '#f57f17' }
-        : { background: '#e3f2fd', color: '#1565c0' };
+  let lifecycleColor = { background: '#e3f2fd', color: '#1565c0' };
+  if (lifecycle === 'production') {
+    lifecycleColor = { background: '#e8f5e9', color: '#2e7d32' };
+  } else if (lifecycle === 'experimental') {
+    lifecycleColor = { background: '#fff8e1', color: '#f57f17' };
+  }
 
   return (
     <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap', padding: '12px 0', gridColumn: 'span 12' }}>

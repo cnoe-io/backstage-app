@@ -11,7 +11,6 @@
  * Do not edit the class manually.
  */
 
-import { RequestFile } from './models';
 
 export class IoArgoprojEventsV1alpha1StorageGridFilter {
     'prefix'?: string;

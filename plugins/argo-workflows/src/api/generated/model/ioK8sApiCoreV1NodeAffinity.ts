@@ -11,7 +11,6 @@
  * Do not edit the class manually.
  */
 
-import { RequestFile } from './models';
 import { IoK8sApiCoreV1NodeSelector } from './ioK8sApiCoreV1NodeSelector';
 import { IoK8sApiCoreV1PreferredSchedulingTerm } from './ioK8sApiCoreV1PreferredSchedulingTerm';
 

@@ -11,7 +11,6 @@
  * Do not edit the class manually.
  */
 
-import { RequestFile } from './models';
 import { IoK8sApimachineryPkgApisMetaV1OwnerReference } from './ioK8sApimachineryPkgApisMetaV1OwnerReference';
 
 /**

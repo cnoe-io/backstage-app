@@ -11,7 +11,6 @@
  * Do not edit the class manually.
  */
 
-import { RequestFile } from './models';
 
 /**
 * WorkflowTemplateRef is a reference to a WorkflowTemplate resource.

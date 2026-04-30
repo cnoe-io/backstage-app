@@ -134,7 +134,7 @@ export class KroResourceGroupService {
             'create',
             permissionResult.reason
           );
-          throw new Error('Permission denied: ' + permissionResult.reason);
+          throw new Error(`Permission denied: ${permissionResult.reason}`);
         }
       }
 

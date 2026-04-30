@@ -11,7 +11,6 @@
  * Do not edit the class manually.
  */
 
-import { RequestFile } from './models';
 
 /**
 * Represents a host path mapped into a pod. Host path volumes do not support ownership management or SELinux relabeling.

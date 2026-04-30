@@ -11,7 +11,6 @@
  * Do not edit the class manually.
  */
 
-import { RequestFile } from './models';
 import { IoArgoprojWorkflowV1alpha1Counter } from './ioArgoprojWorkflowV1alpha1Counter';
 import { IoArgoprojWorkflowV1alpha1Gauge } from './ioArgoprojWorkflowV1alpha1Gauge';
 import { IoArgoprojWorkflowV1alpha1Histogram } from './ioArgoprojWorkflowV1alpha1Histogram';

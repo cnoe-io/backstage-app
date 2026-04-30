@@ -11,7 +11,6 @@
  * Do not edit the class manually.
  */
 
-import { RequestFile } from './models';
 
 /**
 * CreateS3BucketOptions options used to determine automatic automatic bucket-creation process

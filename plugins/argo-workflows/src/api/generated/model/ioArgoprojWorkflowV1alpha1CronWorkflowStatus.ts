@@ -11,7 +11,6 @@
  * Do not edit the class manually.
  */
 
-import { RequestFile } from './models';
 import { IoArgoprojWorkflowV1alpha1Condition } from './ioArgoprojWorkflowV1alpha1Condition';
 import { IoK8sApiCoreV1ObjectReference } from './ioK8sApiCoreV1ObjectReference';
 

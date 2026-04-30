@@ -11,7 +11,6 @@
  * Do not edit the class manually.
  */
 
-import { RequestFile } from './models';
 import { IoArgoprojEventsV1alpha1TriggerParameterSource } from './ioArgoprojEventsV1alpha1TriggerParameterSource';
 
 export class IoArgoprojEventsV1alpha1TriggerParameter {

@@ -1,4 +1,4 @@
-import React, { PropsWithChildren } from 'react';
+import { type PropsWithChildren } from 'react';
 import HomeIcon from '@mui/icons-material/Home';
 import ExtensionIcon from '@mui/icons-material/Extension';
 import MapIcon from '@mui/icons-material/MyLocation';

@@ -11,7 +11,6 @@
  * Do not edit the class manually.
  */
 
-import { RequestFile } from './models';
 
 /**
 * The pod this Toleration is attached to tolerates any taint that matches the triple <key,value,effect> using the matching operator <operator>.
@@ -74,12 +73,12 @@ export class IoK8sApiCoreV1Toleration {
 
 export namespace IoK8sApiCoreV1Toleration {
     export enum EffectEnum {
-        NoExecute = <any> 'NoExecute',
-        NoSchedule = <any> 'NoSchedule',
-        PreferNoSchedule = <any> 'PreferNoSchedule'
+        NoExecute = 'NoExecute' as any,
+        NoSchedule = 'NoSchedule' as any,
+        PreferNoSchedule = 'PreferNoSchedule' as any
     }
     export enum OperatorEnum {
-        Equal = <any> 'Equal',
-        Exists = <any> 'Exists'
+        Equal = 'Equal' as any,
+        Exists = 'Exists' as any
     }
 }

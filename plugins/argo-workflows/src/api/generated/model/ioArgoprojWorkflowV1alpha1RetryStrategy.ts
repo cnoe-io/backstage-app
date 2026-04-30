@@ -11,7 +11,6 @@
  * Do not edit the class manually.
  */
 
-import { RequestFile } from './models';
 import { IoArgoprojWorkflowV1alpha1Backoff } from './ioArgoprojWorkflowV1alpha1Backoff';
 import { IoArgoprojWorkflowV1alpha1RetryAffinity } from './ioArgoprojWorkflowV1alpha1RetryAffinity';
 

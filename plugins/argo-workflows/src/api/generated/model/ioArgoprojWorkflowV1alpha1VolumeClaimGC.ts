@@ -11,7 +11,6 @@
  * Do not edit the class manually.
  */
 
-import { RequestFile } from './models';
 
 /**
 * VolumeClaimGC describes how to delete volumes from completed Workflows

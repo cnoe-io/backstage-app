@@ -11,7 +11,6 @@
  * Do not edit the class manually.
  */
 
-import { RequestFile } from './models';
 import { IoArgoprojWorkflowV1alpha1Inputs } from './ioArgoprojWorkflowV1alpha1Inputs';
 import { IoArgoprojWorkflowV1alpha1MemoizationStatus } from './ioArgoprojWorkflowV1alpha1MemoizationStatus';
 import { IoArgoprojWorkflowV1alpha1NodeSynchronizationStatus } from './ioArgoprojWorkflowV1alpha1NodeSynchronizationStatus';

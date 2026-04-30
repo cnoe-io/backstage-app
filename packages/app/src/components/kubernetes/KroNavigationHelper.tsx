@@ -1,4 +1,4 @@
-import React from 'react';
+import type { CSSProperties, FC } from 'react';
 import { useEntity } from '@backstage/plugin-catalog-react';
 import { useRouteRef } from '@backstage/core-plugin-api';
 import { entityRouteRef } from '@backstage/plugin-catalog-react';
@@ -12,7 +12,7 @@ interface RelatedResource {
   isKroResource: boolean;
 }
 
-const chipStyle: React.CSSProperties = {
+const chipStyle: CSSProperties = {
   display: 'inline-block',
   padding: '2px 10px',
   borderRadius: '16px',
@@ -21,7 +21,7 @@ const chipStyle: React.CSSProperties = {
   border: '1px solid',
 };
 
-const btnStyle: React.CSSProperties = {
+const btnStyle: CSSProperties = {
   padding: '4px 12px',
   borderRadius: '4px',
   border: '1px solid rgba(144,202,249,0.5)',
@@ -35,7 +35,7 @@ const btnStyle: React.CSSProperties = {
  * Navigation helper component that provides seamless navigation
  * between Kubernetes and Kro views.
  */
-export const KroNavigationHelper: React.FC = () => {
+export const KroNavigationHelper: FC = () => {
   const { entity } = useEntity();
   const catalogEntityRoute = useRouteRef(entityRouteRef);
 

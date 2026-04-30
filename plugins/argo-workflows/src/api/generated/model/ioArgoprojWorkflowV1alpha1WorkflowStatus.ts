@@ -11,7 +11,6 @@
  * Do not edit the class manually.
  */
 
-import { RequestFile } from './models';
 import { IoArgoprojWorkflowV1alpha1ArtGCStatus } from './ioArgoprojWorkflowV1alpha1ArtGCStatus';
 import { IoArgoprojWorkflowV1alpha1ArtifactRepositoryRefStatus } from './ioArgoprojWorkflowV1alpha1ArtifactRepositoryRefStatus';
 import { IoArgoprojWorkflowV1alpha1Condition } from './ioArgoprojWorkflowV1alpha1Condition';

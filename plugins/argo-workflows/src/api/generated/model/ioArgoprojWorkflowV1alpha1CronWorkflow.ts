@@ -11,7 +11,6 @@
  * Do not edit the class manually.
  */
 
-import { RequestFile } from './models';
 import { IoArgoprojWorkflowV1alpha1CronWorkflowSpec } from './ioArgoprojWorkflowV1alpha1CronWorkflowSpec';
 import { IoArgoprojWorkflowV1alpha1CronWorkflowStatus } from './ioArgoprojWorkflowV1alpha1CronWorkflowStatus';
 import { IoK8sApimachineryPkgApisMetaV1ObjectMeta } from './ioK8sApimachineryPkgApisMetaV1ObjectMeta';

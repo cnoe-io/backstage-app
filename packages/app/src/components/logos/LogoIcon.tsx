@@ -1,4 +1,4 @@
-import React from 'react';
+
 import { useTheme } from '@mui/material/styles';
 
 /** Collapsed sidebar icon — just the boat, no "CNOE" text */

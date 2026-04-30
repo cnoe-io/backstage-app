@@ -11,7 +11,6 @@
  * Do not edit the class manually.
  */
 
-import { RequestFile } from './models';
 import { IoArgoprojEventsV1alpha1SensorSpec } from './ioArgoprojEventsV1alpha1SensorSpec';
 import { IoArgoprojEventsV1alpha1SensorStatus } from './ioArgoprojEventsV1alpha1SensorStatus';
 import { IoK8sApimachineryPkgApisMetaV1ObjectMeta } from './ioK8sApimachineryPkgApisMetaV1ObjectMeta';

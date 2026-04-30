@@ -11,7 +11,6 @@
  * Do not edit the class manually.
  */
 
-import { RequestFile } from './models';
 
 /**
 * ArtifactResult describes the result of attempting to delete a given Artifact

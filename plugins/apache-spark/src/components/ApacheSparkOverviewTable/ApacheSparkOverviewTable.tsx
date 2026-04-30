@@ -10,7 +10,7 @@ import {
 } from '@backstage/core-components';
 import { useApi } from '@backstage/core-plugin-api';
 import { apacheSparkApiRef } from '../../api';
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState, type CSSProperties } from 'react';
 import useAsync from 'react-use/lib/useAsync';
 import { ApacheSpark, ApacheSparkList } from '../../api/model';
 import { DrawerContent } from '../DetailedDrawer/DetailedDrawer';
@@ -18,13 +18,13 @@ import { getAnnotationValues } from '../utils';
 import { useEntity } from '@backstage/plugin-catalog-react';
 
 // Slide-over panel styles (replaces MUI Drawer)
-const overlayStyle: React.CSSProperties = {
+const overlayStyle: CSSProperties = {
   position: 'fixed',
   inset: 0,
   background: 'rgba(0,0,0,0.3)',
   zIndex: 1200,
 };
-const panelStyle: React.CSSProperties = {
+const panelStyle: CSSProperties = {
   position: 'fixed',
   top: 0,
   right: 0,
@@ -141,7 +141,7 @@ export const ApacheSparkOverviewTable = () => {
       />
       {isOpen && (
         <>
-          <div style={overlayStyle} onClick={() => toggleDrawer(false)} />
+          <div role="presentation" style={overlayStyle} onClick={() => toggleDrawer(false)} onKeyDown={(e) => { if (e.key === 'Escape') toggleDrawer(false); }} />
           <div style={panelStyle}>
             <DrawerContent toggleDrawer={toggleDrawer} apacheSpark={drawerData} />
           </div>

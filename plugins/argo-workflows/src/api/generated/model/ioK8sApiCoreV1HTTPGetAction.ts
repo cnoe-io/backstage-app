@@ -11,7 +11,6 @@
  * Do not edit the class manually.
  */
 
-import { RequestFile } from './models';
 import { IoK8sApiCoreV1HTTPHeader } from './ioK8sApiCoreV1HTTPHeader';
 
 /**
@@ -72,7 +71,7 @@ export class IoK8sApiCoreV1HTTPGetAction {
 
 export namespace IoK8sApiCoreV1HTTPGetAction {
     export enum SchemeEnum {
-        Http = <any> 'HTTP',
-        Https = <any> 'HTTPS'
+        Http = 'HTTP' as any,
+        Https = 'HTTPS' as any
     }
 }

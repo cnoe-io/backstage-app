@@ -11,7 +11,6 @@
  * Do not edit the class manually.
  */
 
-import { RequestFile } from './models';
 import { IoK8sApiCoreV1ObjectFieldSelector } from './ioK8sApiCoreV1ObjectFieldSelector';
 import { IoK8sApiCoreV1ResourceFieldSelector } from './ioK8sApiCoreV1ResourceFieldSelector';
 

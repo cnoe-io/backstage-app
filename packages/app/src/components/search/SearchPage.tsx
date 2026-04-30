@@ -1,4 +1,4 @@
-import React from 'react';
+import { useState, useRef, useEffect, type CSSProperties } from 'react';
 import { CatalogSearchResultListItem } from '@backstage/plugin-catalog';
 import {
   catalogApiRef,
@@ -24,7 +24,7 @@ import { HeroHeader, contentWrapperStyle } from '../shared/HeroHeader';
 import FilterListIcon from '@mui/icons-material/FilterList';
 import CloseIcon from '@mui/icons-material/Close';
 
-const toolbarCardStyle: React.CSSProperties = {
+const toolbarCardStyle: CSSProperties = {
   background: 'rgba(255,255,255,0.03)',
   borderRadius: 16,
   boxShadow: '0 4px 24px rgba(0,0,0,0.10), 0 1.5px 6px rgba(0,0,0,0.06)',
@@ -35,7 +35,7 @@ const toolbarCardStyle: React.CSSProperties = {
   marginBottom: 24,
 };
 
-const tableCardStyle: React.CSSProperties = {
+const tableCardStyle: CSSProperties = {
   background: 'var(--backstage-color-background-paper, #fff)',
   borderRadius: 16,
   boxShadow: '0 4px 24px rgba(0,0,0,0.10), 0 1.5px 6px rgba(0,0,0,0.06)',
@@ -44,7 +44,7 @@ const tableCardStyle: React.CSSProperties = {
   padding: '20px 24px',
 };
 
-const filterBtnBase: React.CSSProperties = {
+const filterBtnBase: CSSProperties = {
   display: 'flex',
   alignItems: 'center',
   gap: 6,
@@ -60,13 +60,13 @@ const filterBtnBase: React.CSSProperties = {
   position: 'relative' as const,
 };
 
-const filterBtnActiveStyle: React.CSSProperties = {
+const filterBtnActiveStyle: CSSProperties = {
   ...filterBtnBase,
   background: 'rgba(255,152,0,0.08)',
   borderColor: 'rgba(255,152,0,0.5)',
 };
 
-const dropdownStyle: React.CSSProperties = {
+const dropdownStyle: CSSProperties = {
   position: 'absolute',
   top: 'calc(100% + 8px)',
   right: 0,
@@ -82,13 +82,13 @@ const dropdownStyle: React.CSSProperties = {
   gap: 12,
 };
 
-const filterSectionStyle: React.CSSProperties = {
+const filterSectionStyle: CSSProperties = {
   display: 'flex',
   flexDirection: 'column',
   gap: 4,
 };
 
-const filterLabelStyle: React.CSSProperties = {
+const filterLabelStyle: CSSProperties = {
   fontSize: 11,
   fontWeight: 600,
   textTransform: 'uppercase',
@@ -98,12 +98,12 @@ const filterLabelStyle: React.CSSProperties = {
 };
 
 const SearchFilterDropdown = () => {
-  const [open, setOpen] = React.useState(false);
-  const ref = React.useRef<HTMLDivElement>(null);
+  const [open, setOpen] = useState(false);
+  const ref = useRef<HTMLDivElement>(null);
   const { types } = useSearch();
   const catalogApi = useApi(catalogApiRef);
 
-  React.useEffect(() => {
+  useEffect(() => {
     const handleClickOutside = (e: MouseEvent) => {
       if (ref.current && !ref.current.contains(e.target as Node)) setOpen(false);
     };

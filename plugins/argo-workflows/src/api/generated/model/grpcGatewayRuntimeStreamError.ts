@@ -11,7 +11,6 @@
  * Do not edit the class manually.
  */
 
-import { RequestFile } from './models';
 import { GoogleProtobufAny } from './googleProtobufAny';
 
 export class GrpcGatewayRuntimeStreamError {

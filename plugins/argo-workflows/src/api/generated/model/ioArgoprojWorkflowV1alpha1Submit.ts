@@ -11,7 +11,6 @@
  * Do not edit the class manually.
  */
 
-import { RequestFile } from './models';
 import { IoArgoprojWorkflowV1alpha1Arguments } from './ioArgoprojWorkflowV1alpha1Arguments';
 import { IoArgoprojWorkflowV1alpha1WorkflowTemplateRef } from './ioArgoprojWorkflowV1alpha1WorkflowTemplateRef';
 import { IoK8sApimachineryPkgApisMetaV1ObjectMeta } from './ioK8sApimachineryPkgApisMetaV1ObjectMeta';

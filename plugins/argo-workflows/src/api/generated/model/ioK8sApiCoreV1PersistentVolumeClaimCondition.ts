@@ -11,7 +11,6 @@
  * Do not edit the class manually.
  */
 
-import { RequestFile } from './models';
 
 /**
 * PersistentVolumeClaimCondition contails details about state of pvc
@@ -80,7 +79,7 @@ export class IoK8sApiCoreV1PersistentVolumeClaimCondition {
 
 export namespace IoK8sApiCoreV1PersistentVolumeClaimCondition {
     export enum TypeEnum {
-        FileSystemResizePending = <any> 'FileSystemResizePending',
-        Resizing = <any> 'Resizing'
+        FileSystemResizePending = 'FileSystemResizePending' as any,
+        Resizing = 'Resizing' as any
     }
 }

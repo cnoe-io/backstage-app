@@ -1,4 +1,4 @@
-import React, {Dispatch, SetStateAction} from 'react';
+import { type Dispatch, type SetStateAction } from 'react';
 import { screen } from '@testing-library/react';
 import { OutputTable, ResourceTable } from './MainPageFetchComponent';
 import {
@@ -7,7 +7,7 @@ import {
 
 describe('MainPageFetchComponent', () => {
   it('renders the outputs table', async () => {
-    let fakeOutputs = [{
+    const fakeOutputs = [{
       "type": "string",
       "value": "Hello World!"
     }];
@@ -22,7 +22,7 @@ describe('MainPageFetchComponent', () => {
   });
 
   it('renders the resources table', async () => {
-    let fakeResources = [
+    const fakeResources = [
       {
         "module": "module.eks",
         "mode": "managed",

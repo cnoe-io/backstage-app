@@ -10,7 +10,7 @@ import {
   SelectItem,
 } from '@backstage/core-components';
 import { ResponseErrorPanel } from '@backstage/core-components';
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useEntity } from '@backstage/plugin-catalog-react';
 import { getAnnotationValues } from '../utils';
 

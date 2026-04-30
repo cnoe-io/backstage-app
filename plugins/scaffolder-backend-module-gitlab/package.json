@@ -50,6 +50,7 @@
     "@backstage/errors": "^1.2.7",
     "@backstage/integration": "^1.20.1",
     "@backstage/plugin-scaffolder-node": "^0.12.0",
+    "@gitbeaker/requester-utils": "^43.8.0",
     "@gitbeaker/rest": "^41.2.0",
     "luxon": "^3.0.0",
     "winston": "^3.2.1",
@@ -57,6 +58,7 @@
     "zod": "^3.22.4"
   },
   "devDependencies": {
+    "@backstage/backend-test-utils": "^1.11.1",
     "@backstage/cli": "^0.35.0"
   }
 }

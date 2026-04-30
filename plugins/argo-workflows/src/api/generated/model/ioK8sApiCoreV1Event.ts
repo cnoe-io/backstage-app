@@ -11,7 +11,6 @@
  * Do not edit the class manually.
  */
 
-import { RequestFile } from './models';
 import { IoK8sApiCoreV1EventSeries } from './ioK8sApiCoreV1EventSeries';
 import { IoK8sApiCoreV1EventSource } from './ioK8sApiCoreV1EventSource';
 import { IoK8sApiCoreV1ObjectReference } from './ioK8sApiCoreV1ObjectReference';

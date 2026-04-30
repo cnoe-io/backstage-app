@@ -11,7 +11,6 @@
  * Do not edit the class manually.
  */
 
-import { RequestFile } from './models';
 import { IoK8sApiCoreV1ConfigMapProjection } from './ioK8sApiCoreV1ConfigMapProjection';
 import { IoK8sApiCoreV1DownwardAPIProjection } from './ioK8sApiCoreV1DownwardAPIProjection';
 import { IoK8sApiCoreV1SecretProjection } from './ioK8sApiCoreV1SecretProjection';

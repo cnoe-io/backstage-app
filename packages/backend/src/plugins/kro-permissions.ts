@@ -224,9 +224,8 @@ export class KroRBACValidator {
       return ['platform-engineers', 'kro-readers'];
     } else if (username.includes('dev')) {
       return ['developers', 'kro-readers'];
-    } else {
-      return ['kro-readers'];
     }
+    return ['kro-readers'];
   }
 }
 
@@ -301,15 +300,14 @@ export class KroPermissionPolicy implements PermissionPolicy {
           component: 'kro-permissions'
         });
         return { result: AuthorizeResult.ALLOW };
-      } else {
-        this.logger.warn(`Permission denied for ${request.permission.name}`, {
-          user: user.identity.userEntityRef,
-          permission: request.permission.name,
-          reason: validation.reason,
-          component: 'kro-permissions'
-        });
-        return { result: AuthorizeResult.DENY };
       }
+      this.logger.warn(`Permission denied for ${request.permission.name}`, {
+        user: user.identity.userEntityRef,
+        permission: request.permission.name,
+        reason: validation.reason,
+        component: 'kro-permissions'
+      });
+      return { result: AuthorizeResult.DENY };
 
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : String(error);
@@ -348,7 +346,7 @@ export const kroPermissionsModule = createBackendModule({
 
         // Create and register permission policy
         // Initialize kro policy
-        new KroPermissionPolicy(rbacValidator, logger);
+        const _kroPolicy = new KroPermissionPolicy(rbacValidator, logger);
 
         // Note: In a real implementation, you would register this policy with the permission system
         // This is a simplified example showing the structure

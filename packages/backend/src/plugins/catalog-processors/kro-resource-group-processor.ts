@@ -286,9 +286,8 @@ export class KroResourceGroupProcessor implements CatalogProcessor {
         return 'Ready';
       } else if (readyCondition.reason === 'Failed' || readyCondition.status === 'False') {
         return 'Failed';
-      } else {
-        return 'Pending';
       }
+      return 'Pending';
     }
 
     return 'Unknown';

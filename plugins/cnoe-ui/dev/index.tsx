@@ -1,4 +1,4 @@
-import React from 'react';
+
 import { createDevApp } from '@backstage/dev-utils';
 import { cnoeFrontendPlugin, CNOEHomepage } from '../src/plugin';
 

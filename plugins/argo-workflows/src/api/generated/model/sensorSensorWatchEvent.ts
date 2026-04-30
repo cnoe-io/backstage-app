@@ -11,7 +11,6 @@
  * Do not edit the class manually.
  */
 
-import { RequestFile } from './models';
 import { IoArgoprojEventsV1alpha1Sensor } from './ioArgoprojEventsV1alpha1Sensor';
 
 export class SensorSensorWatchEvent {

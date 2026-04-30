@@ -1,3 +1,4 @@
+/* eslint-disable jest/no-commented-out-tests */
 // import { ApacheSparkClient } from './index';
 // import { ApacheSpark } from './model';
 //

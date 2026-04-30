@@ -1,4 +1,4 @@
-import React from 'react';
+import { createElement } from 'react';
 import {
   createUnifiedTheme,
   UnifiedThemeProvider,
@@ -469,7 +469,7 @@ export const cnoeVibrantLightAppTheme: AppTheme = {
   title: 'CNOE Light',
   variant: 'light',
   Provider: ({ children }) =>
-    React.createElement(UnifiedThemeProvider, { theme: lightTheme, children }),
+    createElement(UnifiedThemeProvider, { theme: lightTheme, children }),
 };
 
 export const cnoeVibrantDarkAppTheme: AppTheme = {
@@ -477,5 +477,5 @@ export const cnoeVibrantDarkAppTheme: AppTheme = {
   title: 'CNOE Dark',
   variant: 'dark',
   Provider: ({ children }) =>
-    React.createElement(UnifiedThemeProvider, { theme: darkTheme, children }),
+    createElement(UnifiedThemeProvider, { theme: darkTheme, children }),
 };

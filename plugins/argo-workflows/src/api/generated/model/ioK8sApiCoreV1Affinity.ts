@@ -11,7 +11,6 @@
  * Do not edit the class manually.
  */
 
-import { RequestFile } from './models';
 import { IoK8sApiCoreV1NodeAffinity } from './ioK8sApiCoreV1NodeAffinity';
 import { IoK8sApiCoreV1PodAffinity } from './ioK8sApiCoreV1PodAffinity';
 import { IoK8sApiCoreV1PodAntiAffinity } from './ioK8sApiCoreV1PodAntiAffinity';

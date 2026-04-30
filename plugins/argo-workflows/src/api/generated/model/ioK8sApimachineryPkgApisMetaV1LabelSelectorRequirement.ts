@@ -11,7 +11,6 @@
  * Do not edit the class manually.
  */
 
-import { RequestFile } from './models';
 
 /**
 * A label selector requirement is a selector that contains values, a key, and an operator that relates the key and values.

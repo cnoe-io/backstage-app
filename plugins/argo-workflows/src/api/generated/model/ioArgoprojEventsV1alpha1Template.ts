@@ -11,7 +11,6 @@
  * Do not edit the class manually.
  */
 
-import { RequestFile } from './models';
 import { IoArgoprojEventsV1alpha1Metadata } from './ioArgoprojEventsV1alpha1Metadata';
 import { IoK8sApiCoreV1Affinity } from './ioK8sApiCoreV1Affinity';
 import { IoK8sApiCoreV1Container } from './ioK8sApiCoreV1Container';

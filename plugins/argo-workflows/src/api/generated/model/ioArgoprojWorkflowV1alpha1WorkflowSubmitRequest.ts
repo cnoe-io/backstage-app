@@ -11,7 +11,6 @@
  * Do not edit the class manually.
  */
 
-import { RequestFile } from './models';
 import { IoArgoprojWorkflowV1alpha1SubmitOpts } from './ioArgoprojWorkflowV1alpha1SubmitOpts';
 
 export class IoArgoprojWorkflowV1alpha1WorkflowSubmitRequest {

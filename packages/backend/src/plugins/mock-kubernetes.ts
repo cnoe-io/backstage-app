@@ -7,11 +7,13 @@ import * as path from 'path';
 import * as fs from 'fs';
 
 function loadFixture(name: string): any {
+  // eslint-disable-next-line no-restricted-syntax
   const filePath = path.resolve(__dirname, '../mocks/fixtures', name);
   return JSON.parse(fs.readFileSync(filePath, 'utf8'));
 }
 
 function loadFixtureText(name: string): string {
+  // eslint-disable-next-line no-restricted-syntax
   const filePath = path.resolve(__dirname, '../mocks/fixtures', name);
   return fs.readFileSync(filePath, 'utf8');
 }

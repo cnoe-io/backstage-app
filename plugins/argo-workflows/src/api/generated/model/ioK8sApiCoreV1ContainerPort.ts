@@ -11,7 +11,6 @@
  * Do not edit the class manually.
  */
 
-import { RequestFile } from './models';
 
 /**
 * ContainerPort represents a network port in a single container.
@@ -74,8 +73,8 @@ export class IoK8sApiCoreV1ContainerPort {
 
 export namespace IoK8sApiCoreV1ContainerPort {
     export enum ProtocolEnum {
-        Sctp = <any> 'SCTP',
-        Tcp = <any> 'TCP',
-        Udp = <any> 'UDP'
+        Sctp = 'SCTP' as any,
+        Tcp = 'TCP' as any,
+        Udp = 'UDP' as any
     }
 }

@@ -11,7 +11,6 @@
  * Do not edit the class manually.
  */
 
-import { RequestFile } from './models';
 import { IoArgoprojWorkflowV1alpha1CreateS3BucketOptions } from './ioArgoprojWorkflowV1alpha1CreateS3BucketOptions';
 import { IoArgoprojWorkflowV1alpha1S3EncryptionOptions } from './ioArgoprojWorkflowV1alpha1S3EncryptionOptions';
 import { IoK8sApiCoreV1SecretKeySelector } from './ioK8sApiCoreV1SecretKeySelector';

@@ -219,7 +219,7 @@ export const kroAuditModule = createBackendModule({
 
         // Create audit logger instance
         // Initialize audit logger
-        new KroAuditLogger(logger);
+        const _auditLogger = new KroAuditLogger(logger);
 
         // Register audit logger as a service (in a real implementation)
         // This would be made available to other parts of the application

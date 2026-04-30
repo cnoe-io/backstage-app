@@ -10,8 +10,12 @@
   },
   "typesVersions": {
     "*": {
-      "alpha": ["src/alpha.tsx"],
-      "package.json": ["package.json"]
+      "alpha": [
+        "src/alpha.tsx"
+      ],
+      "package.json": [
+        "package.json"
+      ]
     }
   },
   "license": "Apache-2.0",
@@ -38,6 +42,9 @@
     "@backstage/core-components": "^0.18.8",
     "@backstage/core-plugin-api": "^1.12.4",
     "@backstage/frontend-plugin-api": "^0.15.1",
+    "@backstage/plugin-home": "^0.9.3",
+    "@backstage/plugin-search": "^1.7.0",
+    "@backstage/plugin-search-react": "^1.11.0",
     "@backstage/theme": "^0.7.2",
     "react-use": "^17.2.4"
   },

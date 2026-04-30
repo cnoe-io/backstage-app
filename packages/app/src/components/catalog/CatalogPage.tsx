@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect, type CSSProperties } from 'react';
 import {
   EntityTypePicker,
   EntityOwnerPicker,
@@ -9,7 +9,7 @@ import {
 import FilterListIcon from '@mui/icons-material/FilterList';
 import CloseIcon from '@mui/icons-material/Close';
 
-const filterBtnBase: React.CSSProperties = {
+const filterBtnBase: CSSProperties = {
   display: 'flex',
   alignItems: 'center',
   gap: 6,
@@ -25,14 +25,14 @@ const filterBtnBase: React.CSSProperties = {
   position: 'relative' as const,
 };
 
-const filterBtnActiveStyle: React.CSSProperties = {
+const filterBtnActiveStyle: CSSProperties = {
   ...filterBtnBase,
   background: 'rgba(255,152,0,0.08)',
   borderColor: 'rgba(255,152,0,0.5)',
   color: '#FF9800',
 };
 
-const dropdownStyle: React.CSSProperties = {
+const dropdownStyle: CSSProperties = {
   position: 'absolute',
   top: 'calc(100% + 8px)',
   right: 0,
@@ -48,13 +48,13 @@ const dropdownStyle: React.CSSProperties = {
   gap: 12,
 };
 
-const filterSectionStyle: React.CSSProperties = {
+const filterSectionStyle: CSSProperties = {
   display: 'flex',
   flexDirection: 'column',
   gap: 4,
 };
 
-const filterLabelStyle: React.CSSProperties = {
+const filterLabelStyle: CSSProperties = {
   fontSize: 11,
   fontWeight: 600,
   textTransform: 'uppercase',
@@ -68,7 +68,7 @@ export const CatalogDropdownFilters = () => {
   const ref = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    if (!open) return;
+    if (!open) return undefined;
     const handleClick = (e: MouseEvent) => {
       if (ref.current && !ref.current.contains(e.target as Node)) setOpen(false);
     };

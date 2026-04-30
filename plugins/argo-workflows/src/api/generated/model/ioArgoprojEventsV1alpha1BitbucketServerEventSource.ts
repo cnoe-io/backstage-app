@@ -11,7 +11,6 @@
  * Do not edit the class manually.
  */
 
-import { RequestFile } from './models';
 import { IoArgoprojEventsV1alpha1BitbucketServerRepository } from './ioArgoprojEventsV1alpha1BitbucketServerRepository';
 import { IoArgoprojEventsV1alpha1EventSourceFilter } from './ioArgoprojEventsV1alpha1EventSourceFilter';
 import { IoArgoprojEventsV1alpha1WebhookContext } from './ioArgoprojEventsV1alpha1WebhookContext';
