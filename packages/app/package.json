@@ -54,7 +54,7 @@
     "@mui/material": "^9.0.0",
     "@roadiehq/backstage-plugin-argo-cd": "^2.12.5",
     "@terasky/backstage-plugin-kro-resources-frontend": "^0.2.1",
-    "msw": "^2.14.2",
+    "msw": "^1.0.0",
     "react": "^18.0.2",
     "react-dom": "^18.0.2",
     "react-router-dom": "^6.3.0"
