@@ -1,12 +1,11 @@
-import React from 'react';
-
-// import {
-//   Header,
-//   Page,
-//   Content,
-// } from '@backstage/core-components';
+import { Page, Header, Content } from '@backstage/core-components';
 import { MainPageFetchComponent } from '../MainPageFetchComponent';
 
 export const MainPageComponent = () => (
-  <MainPageFetchComponent/>
+  <Page themeId="tool">
+    <Header title="Terraform" />
+    <Content>
+      <MainPageFetchComponent/>
+    </Content>
+  </Page>
 );

@@ -11,7 +11,6 @@
  * Do not edit the class manually.
  */
 
-import { RequestFile } from './models';
 
 /**
 * RawArtifact allows raw string content to be placed as an artifact in a container

@@ -779,7 +779,7 @@ import { StreamResultOfSensorLogEntry } from './streamResultOfSensorLogEntry';
 import { StreamResultOfSensorSensorWatchEvent } from './streamResultOfSensorSensorWatchEvent';
 
 /* tslint:disable:no-unused-variable */
-let primitives = [
+const primitives = [
                     "string",
                     "boolean",
                     "double",
@@ -790,7 +790,7 @@ let primitives = [
                     "any"
                  ];
 
-let enumsMap: {[index: string]: any} = {
+const enumsMap: {[index: string]: any} = {
         "IoK8sApiCoreV1Container.ImagePullPolicyEnum": IoK8sApiCoreV1Container.ImagePullPolicyEnum,
         "IoK8sApiCoreV1Container.TerminationMessagePolicyEnum": IoK8sApiCoreV1Container.TerminationMessagePolicyEnum,
         "IoK8sApiCoreV1ContainerPort.ProtocolEnum": IoK8sApiCoreV1ContainerPort.ProtocolEnum,
@@ -804,7 +804,7 @@ let enumsMap: {[index: string]: any} = {
         "IoK8sApiCoreV1Toleration.OperatorEnum": IoK8sApiCoreV1Toleration.OperatorEnum,
 }
 
-let typeMap: {[index: string]: any} = {
+const typeMap: {[index: string]: any} = {
     "EventsourceCreateEventSourceRequest": EventsourceCreateEventSourceRequest,
     "EventsourceEventSourceWatchEvent": EventsourceEventSourceWatchEvent,
     "EventsourceLogEntry": EventsourceLogEntry,
@@ -1196,7 +1196,7 @@ export class ObjectSerializer {
             return expectedType;
         } else if (expectedType === "Date") {
             return expectedType;
-        } else {
+        } 
             if (enumsMap[expectedType]) {
                 return expectedType;
             }
@@ -1206,22 +1206,22 @@ export class ObjectSerializer {
             }
 
             // Check the discriminator
-            let discriminatorProperty = typeMap[expectedType].discriminator;
+            const discriminatorProperty = typeMap[expectedType].discriminator;
             if (discriminatorProperty == null) {
                 return expectedType; // the type does not have a discriminator. use it.
-            } else {
+            } 
                 if (data[discriminatorProperty]) {
-                    var discriminatorType = data[discriminatorProperty];
+                    const discriminatorType = data[discriminatorProperty];
                     if(typeMap[discriminatorType]){
                         return discriminatorType; // use the type given in the discriminator
-                    } else {
+                    } 
                         return expectedType; // discriminator did not map to a type
-                    }
-                } else {
+                    
+                } 
                     return expectedType; // discriminator was not present (or an empty string)
-                }
-            }
-        }
+                
+            
+        
     }
 
     public static serialize(data: any, type: string) {
@@ -1232,15 +1232,15 @@ export class ObjectSerializer {
         } else if (type.lastIndexOf("Array<", 0) === 0) { // string.startsWith pre es6
             let subType: string = type.replace("Array<", ""); // Array<Type> => Type>
             subType = subType.substring(0, subType.length - 1); // Type> => Type
-            let transformedData: any[] = [];
+            const transformedData: any[] = [];
             for (let index = 0; index < data.length; index++) {
-                let datum = data[index];
+                const datum = data[index];
                 transformedData.push(ObjectSerializer.serialize(datum, subType));
             }
             return transformedData;
         } else if (type === "Date") {
             return data.toISOString();
-        } else {
+        } 
             if (enumsMap[type]) {
                 return data;
             }
@@ -1252,14 +1252,14 @@ export class ObjectSerializer {
             type = this.findCorrectType(data, type);
 
             // get the map for the correct type.
-            let attributeTypes = typeMap[type].getAttributeTypeMap();
-            let instance: {[index: string]: any} = {};
+            const attributeTypes = typeMap[type].getAttributeTypeMap();
+            const instance: {[index: string]: any} = {};
             for (let index = 0; index < attributeTypes.length; index++) {
-                let attributeType = attributeTypes[index];
+                const attributeType = attributeTypes[index];
                 instance[attributeType.baseName] = ObjectSerializer.serialize(data[attributeType.name], attributeType.type);
             }
             return instance;
-        }
+        
     }
 
     public static deserialize(data: any, type: string) {
@@ -1272,15 +1272,15 @@ export class ObjectSerializer {
         } else if (type.lastIndexOf("Array<", 0) === 0) { // string.startsWith pre es6
             let subType: string = type.replace("Array<", ""); // Array<Type> => Type>
             subType = subType.substring(0, subType.length - 1); // Type> => Type
-            let transformedData: any[] = [];
+            const transformedData: any[] = [];
             for (let index = 0; index < data.length; index++) {
-                let datum = data[index];
+                const datum = data[index];
                 transformedData.push(ObjectSerializer.deserialize(datum, subType));
             }
             return transformedData;
         } else if (type === "Date") {
             return new Date(data);
-        } else {
+        } 
             if (enumsMap[type]) {// is Enum
                 return data;
             }
@@ -1288,14 +1288,14 @@ export class ObjectSerializer {
             if (!typeMap[type]) { // dont know the type
                 return data;
             }
-            let instance = new typeMap[type]();
-            let attributeTypes = typeMap[type].getAttributeTypeMap();
+            const instance = new typeMap[type]();
+            const attributeTypes = typeMap[type].getAttributeTypeMap();
             for (let index = 0; index < attributeTypes.length; index++) {
-                let attributeType = attributeTypes[index];
+                const attributeType = attributeTypes[index];
                 instance[attributeType.name] = ObjectSerializer.deserialize(data[attributeType.baseName], attributeType.type);
             }
             return instance;
-        }
+        
     }
 }
 
@@ -1325,7 +1325,7 @@ export class HttpBearerAuth implements Authentication {
             const accessToken = typeof this.accessToken === 'function'
                             ? this.accessToken()
                             : this.accessToken;
-            requestOptions.headers["Authorization"] = "Bearer " + accessToken;
+            requestOptions.headers.Authorization = `Bearer ${  accessToken}`;
         }
     }
 }
@@ -1338,15 +1338,15 @@ export class ApiKeyAuth implements Authentication {
 
     applyToRequest(requestOptions: localVarRequest.Options): void {
         if (this.location == "query") {
-            (<any>requestOptions.qs)[this.paramName] = this.apiKey;
+            (requestOptions.qs as any)[this.paramName] = this.apiKey;
         } else if (this.location == "header" && requestOptions && requestOptions.headers) {
             requestOptions.headers[this.paramName] = this.apiKey;
         } else if (this.location == 'cookie' && requestOptions && requestOptions.headers) {
-            if (requestOptions.headers['Cookie']) {
-                requestOptions.headers['Cookie'] += '; ' + this.paramName + '=' + encodeURIComponent(this.apiKey);
+            if (requestOptions.headers.Cookie) {
+                requestOptions.headers.Cookie += `; ${  this.paramName  }=${  encodeURIComponent(this.apiKey)}`;
             }
             else {
-                requestOptions.headers['Cookie'] = this.paramName + '=' + encodeURIComponent(this.apiKey);
+                requestOptions.headers.Cookie = `${this.paramName  }=${  encodeURIComponent(this.apiKey)}`;
             }
         }
     }
@@ -1357,7 +1357,7 @@ export class OAuth implements Authentication {
 
     applyToRequest(requestOptions: localVarRequest.Options): void {
         if (requestOptions && requestOptions.headers) {
-            requestOptions.headers["Authorization"] = "Bearer " + this.accessToken;
+            requestOptions.headers.Authorization = `Bearer ${  this.accessToken}`;
         }
     }
 }

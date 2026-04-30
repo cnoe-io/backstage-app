@@ -1,0 +1,15 @@
+{
+  "apiVersion": "argoproj.io/v1alpha1",
+  "kind": "WorkflowTemplateList",
+  "metadata": {},
+  "items": [
+    {
+      "metadata": { "name": "ci-build-template", "namespace": "default" },
+      "spec": { "entrypoint": "build-and-test" }
+    },
+    {
+      "metadata": { "name": "deploy-template", "namespace": "default" },
+      "spec": { "entrypoint": "deploy-to-env" }
+    }
+  ]
+}

@@ -11,7 +11,6 @@
  * Do not edit the class manually.
  */
 
-import { RequestFile } from './models';
 import { IoArgoprojEventsV1alpha1EventDependency } from './ioArgoprojEventsV1alpha1EventDependency';
 import { IoArgoprojEventsV1alpha1Template } from './ioArgoprojEventsV1alpha1Template';
 import { IoArgoprojEventsV1alpha1Trigger } from './ioArgoprojEventsV1alpha1Trigger';

@@ -11,7 +11,6 @@
  * Do not edit the class manually.
  */
 
-import { RequestFile } from './models';
 import { IoK8sApiCoreV1ContainerPort } from './ioK8sApiCoreV1ContainerPort';
 import { IoK8sApiCoreV1EnvFromSource } from './ioK8sApiCoreV1EnvFromSource';
 import { IoK8sApiCoreV1EnvVar } from './ioK8sApiCoreV1EnvVar';

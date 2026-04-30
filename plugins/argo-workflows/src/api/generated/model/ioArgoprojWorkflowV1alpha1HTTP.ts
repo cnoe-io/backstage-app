@@ -11,7 +11,6 @@
  * Do not edit the class manually.
  */
 
-import { RequestFile } from './models';
 import { IoArgoprojWorkflowV1alpha1HTTPBodySource } from './ioArgoprojWorkflowV1alpha1HTTPBodySource';
 import { IoArgoprojWorkflowV1alpha1HTTPHeader } from './ioArgoprojWorkflowV1alpha1HTTPHeader';
 

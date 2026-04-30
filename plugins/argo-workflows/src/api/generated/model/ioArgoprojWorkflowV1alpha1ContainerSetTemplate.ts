@@ -11,7 +11,6 @@
  * Do not edit the class manually.
  */
 
-import { RequestFile } from './models';
 import { IoArgoprojWorkflowV1alpha1ContainerNode } from './ioArgoprojWorkflowV1alpha1ContainerNode';
 import { IoArgoprojWorkflowV1alpha1ContainerSetRetryStrategy } from './ioArgoprojWorkflowV1alpha1ContainerSetRetryStrategy';
 import { IoK8sApiCoreV1VolumeMount } from './ioK8sApiCoreV1VolumeMount';

@@ -1,13 +1,5 @@
 import { ApacheSpark } from '../../api/model';
-import {
-  createStyles,
-  IconButton,
-  makeStyles,
-  Theme,
-  Typography,
-} from '@material-ui/core';
-import Close from '@material-ui/icons/Close';
-import React from 'react';
+import type { CSSProperties } from 'react';
 import { stringify } from 'yaml';
 import { CopyTextButton, TabbedLayout } from '@backstage/core-components';
 import {
@@ -16,38 +8,29 @@ import {
 } from '../ApacheSparkLogs/ApacheSparkLogs';
 import { DrawerOverview } from './DrawerOverview';
 
-const useDrawerContentStyles = makeStyles((theme: Theme) =>
-  createStyles({
-    header: {
-      display: 'flex',
-      justifyContent: 'space-between',
-    },
-    icon: {
-      fontSize: 20,
-    },
-    content: {
-      height: '80%',
-      backgroundColor: '#EEEEEE',
-      overflow: 'scroll',
-      display: 'flex',
-      flexDirection: 'row',
-    },
-    logs: {
-      height: 500,
-      display: 'flex',
-      flexDirection: 'column',
-      flexShrink: 0,
-    },
-    logs2: {
-      height: 600,
-      display: 'flex',
-      flexDirection: 'column',
-    },
-    secondaryAction: {
-      marginLeft: theme.spacing(2.5),
-    },
-  }),
-);
+const headerStyle: CSSProperties = {
+  display: 'flex',
+  justifyContent: 'space-between',
+  alignItems: 'center',
+};
+const contentStyle: CSSProperties = {
+  height: '80%',
+  backgroundColor: '#EEEEEE',
+  overflow: 'scroll',
+  display: 'flex',
+  flexDirection: 'row',
+};
+const logsStyle: CSSProperties = {
+  height: 500,
+  display: 'flex',
+  flexDirection: 'column',
+  flexShrink: 0,
+};
+const logs2Style: CSSProperties = {
+  height: 600,
+  display: 'flex',
+  flexDirection: 'column',
+};
 
 export const DrawerContent = ({
   toggleDrawer,
@@ -56,7 +39,6 @@ export const DrawerContent = ({
   toggleDrawer: (isOpen: boolean) => void;
   apacheSpark: ApacheSpark;
 }) => {
-  const classes = useDrawerContentStyles();
   const yamlString = stringify(apacheSpark);
   return (
     <TabbedLayout>
@@ -69,18 +51,19 @@ export const DrawerContent = ({
       </TabbedLayout.Route>
       <TabbedLayout.Route path="/manifests" title="Manifest">
         <>
-          <div className={classes.header}>
-            <Typography variant="h6">{apacheSpark.metadata.name}</Typography>
-            <IconButton
-              key="dismiss"
+          <div style={headerStyle}>
+            <h3>{apacheSpark.metadata.name}</h3>
+            <button
+              type="button"
               title="Close"
               onClick={() => toggleDrawer(false)}
-              color="inherit"
+              style={{ background: 'none', border: 'none', cursor: 'pointer', padding: '8px', fontSize: '20px', lineHeight: 1 }}
+              aria-label="Close"
             >
-              <Close className={classes.icon} />
-            </IconButton>
+              &#x2715;
+            </button>
           </div>
-          <div className={classes.content}>
+          <div style={contentStyle}>
             <CopyTextButton text={yamlString} tooltipText="Copy" />
             <pre>{yamlString}</pre>
           </div>
@@ -88,19 +71,15 @@ export const DrawerContent = ({
       </TabbedLayout.Route>
       <TabbedLayout.Route path="/live-logs" title="Live logs">
         <>
-          <div className={classes.logs2}>
-            <div className={classes.logs}>
-              <Typography variant="h6">
-                Driver Log for {apacheSpark.metadata.name}
-              </Typography>
+          <div style={logs2Style}>
+            <div style={logsStyle}>
+              <h3>Driver Log for {apacheSpark.metadata.name}</h3>
               <ApacheSparkDriverLogs sparkApp={apacheSpark} />
             </div>
           </div>
-          <div className={classes.logs2}>
-            <div className={classes.logs}>
-              <Typography variant="h6">
-                Executor Logs for {apacheSpark.metadata.name}
-              </Typography>
+          <div style={logs2Style}>
+            <div style={logsStyle}>
+              <h3>Executor Logs for {apacheSpark.metadata.name}</h3>
               <ApacheSparkExecutorLogs sparkApp={apacheSpark} />
             </div>
           </div>

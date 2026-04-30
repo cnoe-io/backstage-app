@@ -11,7 +11,6 @@
  * Do not edit the class manually.
  */
 
-import { RequestFile } from './models';
 
 /**
 * PodDNSConfigOption defines DNS resolver options of a pod.

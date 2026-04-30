@@ -11,7 +11,6 @@
  * Do not edit the class manually.
  */
 
-import { RequestFile } from './models';
 
 /**
 * ObjectReference contains enough information to let you inspect or modify the referred object.

@@ -11,7 +11,6 @@
  * Do not edit the class manually.
  */
 
-import { RequestFile } from './models';
 import { IoArgoprojEventsV1alpha1ConditionsResetByTime } from './ioArgoprojEventsV1alpha1ConditionsResetByTime';
 
 export class IoArgoprojEventsV1alpha1ConditionsResetCriteria {

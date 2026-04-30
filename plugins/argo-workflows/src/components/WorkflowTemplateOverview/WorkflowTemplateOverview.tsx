@@ -5,7 +5,7 @@ import { getAnnotationValues, trimBaseUrl } from "../utils";
 import { Link, Progress, Table, TableColumn } from "@backstage/core-components";
 import React, { useEffect, useState } from "react";
 import useAsync from "react-use/lib/useAsync";
-import Alert from "@material-ui/lab/Alert";
+import { ResponseErrorPanel } from "@backstage/core-components";
 
 type TableData = {
   id: string;
@@ -67,7 +67,7 @@ export const WorkflowTemplateTable = () => {
   if (loading) {
     return <Progress />;
   } else if (error) {
-    return <Alert severity="info">no workflow templates found</Alert>;
+    return <ResponseErrorPanel error={error} />;
   }
 
   return (

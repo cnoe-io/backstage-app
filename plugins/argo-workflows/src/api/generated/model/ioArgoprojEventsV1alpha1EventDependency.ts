@@ -11,7 +11,6 @@
  * Do not edit the class manually.
  */
 
-import { RequestFile } from './models';
 import { IoArgoprojEventsV1alpha1EventDependencyFilter } from './ioArgoprojEventsV1alpha1EventDependencyFilter';
 import { IoArgoprojEventsV1alpha1EventDependencyTransformer } from './ioArgoprojEventsV1alpha1EventDependencyTransformer';
 

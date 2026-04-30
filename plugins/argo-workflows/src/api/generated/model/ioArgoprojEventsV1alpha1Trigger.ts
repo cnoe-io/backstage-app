@@ -11,7 +11,6 @@
  * Do not edit the class manually.
  */
 
-import { RequestFile } from './models';
 import { IoArgoprojEventsV1alpha1Backoff } from './ioArgoprojEventsV1alpha1Backoff';
 import { IoArgoprojEventsV1alpha1RateLimit } from './ioArgoprojEventsV1alpha1RateLimit';
 import { IoArgoprojEventsV1alpha1TriggerParameter } from './ioArgoprojEventsV1alpha1TriggerParameter';

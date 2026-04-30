@@ -11,7 +11,6 @@
  * Do not edit the class manually.
  */
 
-import { RequestFile } from './models';
 
 /**
 * TypedLocalObjectReference contains enough information to let you locate the typed referenced object inside the same namespace.

@@ -1,4 +1,4 @@
-import React from 'react';
+
 import { createDevApp } from '@backstage/dev-utils';
 import { terraformPlugin, TerraformPluginPage } from '../src/plugin';
 

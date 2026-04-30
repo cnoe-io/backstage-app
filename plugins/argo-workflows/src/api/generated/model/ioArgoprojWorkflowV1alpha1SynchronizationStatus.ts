@@ -11,7 +11,6 @@
  * Do not edit the class manually.
  */
 
-import { RequestFile } from './models';
 import { IoArgoprojWorkflowV1alpha1MutexStatus } from './ioArgoprojWorkflowV1alpha1MutexStatus';
 import { IoArgoprojWorkflowV1alpha1SemaphoreStatus } from './ioArgoprojWorkflowV1alpha1SemaphoreStatus';
 

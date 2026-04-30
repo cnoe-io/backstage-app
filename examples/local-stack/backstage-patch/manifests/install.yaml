@@ -1,0 +1,52 @@
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: backstage-kro-reader
+rules:
+  - apiGroups: ["kro.run"]
+    resources: ["resourcegraphdefinitions", "webapps"]
+    verbs: ["get", "list", "watch"]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: backstage-kro-reader
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: backstage-kro-reader
+subjects:
+  - kind: ServiceAccount
+    name: backstage
+    namespace: backstage
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: backstage-kro-config
+  namespace: backstage
+data:
+  app-config.kro.yaml: |
+    kubernetes:
+      customResources:
+        - group: kro.run
+          apiVersion: v1alpha1
+          plural: resourcegraphdefinitions
+    kubernetesIngestor:
+      components:
+        enabled: true
+      clusters:
+        - url: https://kubernetes.default.svc.cluster.local
+          name: local
+          authProvider: serviceAccount
+          skipTLSVerify: true
+          skipMetricsLookup: true
+          serviceAccountToken:
+            $file: /var/run/secrets/kubernetes.io/serviceaccount/token
+          caData:
+            $file: /var/run/secrets/kubernetes.io/serviceaccount/ca.crt
+    kro:
+      enabled: true
+    permission:
+      enabled: false

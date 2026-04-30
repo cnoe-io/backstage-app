@@ -11,7 +11,6 @@
  * Do not edit the class manually.
  */
 
-import { RequestFile } from './models';
 import { IoArgoprojEventsV1alpha1S3Bucket } from './ioArgoprojEventsV1alpha1S3Bucket';
 import { IoArgoprojEventsV1alpha1S3Filter } from './ioArgoprojEventsV1alpha1S3Filter';
 import { IoK8sApiCoreV1SecretKeySelector } from './ioK8sApiCoreV1SecretKeySelector';

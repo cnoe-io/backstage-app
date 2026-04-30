@@ -11,7 +11,6 @@
  * Do not edit the class manually.
  */
 
-import { RequestFile } from './models';
 
 /**
 * OSSLifecycleRule specifies how to manage bucket\'s lifecycle

@@ -11,7 +11,6 @@
  * Do not edit the class manually.
  */
 
-import { RequestFile } from './models';
 import { IoArgoprojEventsV1alpha1CatchupConfiguration } from './ioArgoprojEventsV1alpha1CatchupConfiguration';
 import { IoArgoprojEventsV1alpha1ConfigMapPersistence } from './ioArgoprojEventsV1alpha1ConfigMapPersistence';
 

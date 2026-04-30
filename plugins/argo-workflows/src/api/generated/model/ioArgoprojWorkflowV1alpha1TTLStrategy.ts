@@ -11,7 +11,6 @@
  * Do not edit the class manually.
  */
 
-import { RequestFile } from './models';
 
 /**
 * TTLStrategy is the strategy for the time to live depending on if the workflow succeeded or failed

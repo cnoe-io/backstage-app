@@ -11,7 +11,6 @@
  * Do not edit the class manually.
  */
 
-import { RequestFile } from './models';
 import { IoArgoprojWorkflowV1alpha1NodeResult } from './ioArgoprojWorkflowV1alpha1NodeResult';
 
 export class IoArgoprojWorkflowV1alpha1WorkflowTaskSetStatus {

@@ -11,7 +11,6 @@
  * Do not edit the class manually.
  */
 
-import { RequestFile } from './models';
 import { IoArgoprojEventsV1alpha1EventSourceSpec } from './ioArgoprojEventsV1alpha1EventSourceSpec';
 import { IoArgoprojEventsV1alpha1EventSourceStatus } from './ioArgoprojEventsV1alpha1EventSourceStatus';
 import { IoK8sApimachineryPkgApisMetaV1ObjectMeta } from './ioK8sApimachineryPkgApisMetaV1ObjectMeta';

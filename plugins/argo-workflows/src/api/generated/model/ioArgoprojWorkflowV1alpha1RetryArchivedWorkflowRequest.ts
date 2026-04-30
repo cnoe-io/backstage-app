@@ -11,7 +11,6 @@
  * Do not edit the class manually.
  */
 
-import { RequestFile } from './models';
 
 export class IoArgoprojWorkflowV1alpha1RetryArchivedWorkflowRequest {
     'name'?: string;

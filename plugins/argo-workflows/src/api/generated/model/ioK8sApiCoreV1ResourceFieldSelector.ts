@@ -11,7 +11,6 @@
  * Do not edit the class manually.
  */
 
-import { RequestFile } from './models';
 
 /**
 * ResourceFieldSelector represents container resources (cpu, memory) and their output format

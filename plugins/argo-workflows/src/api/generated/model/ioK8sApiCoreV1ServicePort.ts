@@ -11,7 +11,6 @@
  * Do not edit the class manually.
  */
 
-import { RequestFile } from './models';
 
 /**
 * ServicePort contains information on service\'s port.
@@ -80,8 +79,8 @@ export class IoK8sApiCoreV1ServicePort {
 
 export namespace IoK8sApiCoreV1ServicePort {
     export enum ProtocolEnum {
-        Sctp = <any> 'SCTP',
-        Tcp = <any> 'TCP',
-        Udp = <any> 'UDP'
+        Sctp = 'SCTP' as any,
+        Tcp = 'TCP' as any,
+        Udp = 'UDP' as any
     }
 }

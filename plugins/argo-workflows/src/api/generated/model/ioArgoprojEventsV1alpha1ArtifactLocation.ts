@@ -11,7 +11,6 @@
  * Do not edit the class manually.
  */
 
-import { RequestFile } from './models';
 import { IoArgoprojEventsV1alpha1FileArtifact } from './ioArgoprojEventsV1alpha1FileArtifact';
 import { IoArgoprojEventsV1alpha1GitArtifact } from './ioArgoprojEventsV1alpha1GitArtifact';
 import { IoArgoprojEventsV1alpha1Resource } from './ioArgoprojEventsV1alpha1Resource';

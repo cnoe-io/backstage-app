@@ -1,0 +1,41 @@
+{
+  "version": 4,
+  "terraform_version": "1.5.0",
+  "serial": 42,
+  "outputs": [
+    { "value": "vpc-0abc123def456", "type": "string" },
+    { "value": "subnet-0def789abc012", "type": "string" }
+  ],
+  "resources": [
+    {
+      "mode": "managed",
+      "type": "aws_vpc",
+      "name": "main",
+      "provider": "provider[\"registry.terraform.io/hashicorp/aws\"]",
+      "instances": [{
+        "attributes": { "id": "vpc-0abc123def456", "cidr_block": "10.0.0.0/16", "name": "cnoe-platform-vpc", "enable_dns_support": true, "enable_dns_hostnames": true },
+        "dependencies": []
+      }]
+    },
+    {
+      "mode": "managed",
+      "type": "aws_subnet",
+      "name": "public",
+      "provider": "provider[\"registry.terraform.io/hashicorp/aws\"]",
+      "instances": [{
+        "attributes": { "id": "subnet-0def789abc012", "vpc_id": "vpc-0abc123def456", "cidr_block": "10.0.1.0/24", "availability_zone": "us-west-2a", "name": "cnoe-public-subnet" },
+        "dependencies": ["managed.aws_vpc.main"]
+      }]
+    },
+    {
+      "mode": "managed",
+      "type": "aws_security_group",
+      "name": "allow_tls",
+      "provider": "provider[\"registry.terraform.io/hashicorp/aws\"]",
+      "instances": [{
+        "attributes": { "id": "sg-0ghi345jkl678", "vpc_id": "vpc-0abc123def456", "name": "allow-tls", "description": "Allow TLS inbound traffic" },
+        "dependencies": ["managed.aws_vpc.main"]
+      }]
+    }
+  ]
+}

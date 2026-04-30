@@ -11,7 +11,6 @@
  * Do not edit the class manually.
  */
 
-import { RequestFile } from './models';
 import { IoK8sApiCoreV1AWSElasticBlockStoreVolumeSource } from './ioK8sApiCoreV1AWSElasticBlockStoreVolumeSource';
 import { IoK8sApiCoreV1AzureDiskVolumeSource } from './ioK8sApiCoreV1AzureDiskVolumeSource';
 import { IoK8sApiCoreV1AzureFileVolumeSource } from './ioK8sApiCoreV1AzureFileVolumeSource';

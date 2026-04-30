@@ -11,7 +11,6 @@
  * Do not edit the class manually.
  */
 
-import { RequestFile } from './models';
 import { IoArgoprojWorkflowV1alpha1SemaphoreHolding } from './ioArgoprojWorkflowV1alpha1SemaphoreHolding';
 
 export class IoArgoprojWorkflowV1alpha1SemaphoreStatus {

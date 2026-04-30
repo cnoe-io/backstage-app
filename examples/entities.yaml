@@ -1,41 +1,350 @@
 ---
-# https://backstage.io/docs/features/software-catalog/descriptor-format#kind-system
+# System
 apiVersion: backstage.io/v1alpha1
 kind: System
 metadata:
-  name: examples
+  name: cnoe-platform
+  description: CNOE Internal Developer Platform
+  tags:
+    - platform
+    - cnoe
+  links:
+    - url: https://cnoe.io
+      title: CNOE Website
+      icon: web
 spec:
-  owner: guests
+  owner: platform-team
+
 ---
-# https://backstage.io/docs/features/software-catalog/descriptor-format#kind-component
+# Frontend Component
 apiVersion: backstage.io/v1alpha1
 kind: Component
 metadata:
-  name: example-website
+  name: developer-portal
+  description: Backstage-based developer portal for the CNOE platform
+  tags:
+    - backstage
+    - react
+    - typescript
+  annotations:
+    backstage.io/techdocs-ref: dir:.
+  links:
+    - url: https://cnoe.io/docs
+      title: Documentation
+      icon: docs
+    - url: https://github.com/cnoe-io/backstage-app
+      title: GitHub Repository
+      icon: github
 spec:
   type: website
-  lifecycle: experimental
-  owner: guests
-  system: examples
-  providesApis: [example-grpc-api]
+  lifecycle: production
+  owner: platform-team
+  system: cnoe-platform
+  consumesApis:
+    - platform-api
+
 ---
-# https://backstage.io/docs/features/software-catalog/descriptor-format#kind-api
+# Backend Service
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: platform-api-service
+  description: Backend API service powering the CNOE platform
+  tags:
+    - node
+    - typescript
+    - api
+  annotations:
+    backstage.io/techdocs-ref: dir:.
+    backstage.io/kubernetes-namespace: default
+    backstage.io/kubernetes-id: platform-api-service
+    argocd/app-name: platform-api-service
+    apache-spark.cnoe.io/label-selector: app=spark-example
+    apache-spark.cnoe.io/cluster-name: local
+    argo-workflows.cnoe.io/label-selector: app=example-workflow
+    argo-workflows.cnoe.io/namespace: default
+    terraform.cnoe.io/secret-name: terraform-state
+    terraform.cnoe.io/secret-namespace: default
+  links:
+    - url: https://github.com/cnoe-io/platform-api
+      title: GitHub Repository
+      icon: github
+spec:
+  type: service
+  lifecycle: production
+  owner: platform-team
+  system: cnoe-platform
+  providesApis:
+    - platform-api
+  consumesApis:
+    - cluster-api
+  dependsOn:
+    - resource:platform-database
+
+---
+# Worker Service
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: gitops-controller
+  description: GitOps reconciliation controller for infrastructure management
+  tags:
+    - go
+    - kubernetes
+    - gitops
+spec:
+  type: service
+  lifecycle: production
+  owner: infra-team
+  system: cnoe-platform
+  dependsOn:
+    - resource:platform-database
+
+---
+# Library
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: cnoe-sdk
+  description: Shared SDK library for CNOE platform integrations
+  tags:
+    - typescript
+    - sdk
+    - library
+spec:
+  type: library
+  lifecycle: production
+  owner: platform-team
+  system: cnoe-platform
+
+---
+# API - OpenAPI
 apiVersion: backstage.io/v1alpha1
 kind: API
 metadata:
-  name: example-grpc-api
+  name: platform-api
+  description: CNOE Platform REST API
+  tags:
+    - rest
+    - openapi
+spec:
+  type: openapi
+  lifecycle: production
+  owner: platform-team
+  system: cnoe-platform
+  definition: |
+    openapi: "3.0.0"
+    info:
+      title: CNOE Platform API
+      version: "1.0.0"
+      description: REST API for the CNOE Internal Developer Platform
+    servers:
+      - url: https://api.cnoe.example.com/v1
+    paths:
+      /health:
+        get:
+          summary: Health check
+          operationId: getHealth
+          responses:
+            '200':
+              description: Service is healthy
+              content:
+                application/json:
+                  schema:
+                    type: object
+                    properties:
+                      status:
+                        type: string
+                        example: ok
+      /clusters:
+        get:
+          summary: List clusters
+          operationId: listClusters
+          responses:
+            '200':
+              description: List of managed clusters
+              content:
+                application/json:
+                  schema:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Cluster'
+        post:
+          summary: Create a cluster
+          operationId: createCluster
+          requestBody:
+            required: true
+            content:
+              application/json:
+                schema:
+                  $ref: '#/components/schemas/ClusterInput'
+          responses:
+            '201':
+              description: Cluster created
+      /clusters/{id}:
+        get:
+          summary: Get cluster details
+          operationId: getCluster
+          parameters:
+            - name: id
+              in: path
+              required: true
+              schema:
+                type: string
+          responses:
+            '200':
+              description: Cluster details
+              content:
+                application/json:
+                  schema:
+                    $ref: '#/components/schemas/Cluster'
+    components:
+      schemas:
+        Cluster:
+          type: object
+          properties:
+            id:
+              type: string
+            name:
+              type: string
+            provider:
+              type: string
+              enum: [aws, gcp, azure]
+            status:
+              type: string
+              enum: [provisioning, running, degraded, deleting]
+            region:
+              type: string
+            nodeCount:
+              type: integer
+        ClusterInput:
+          type: object
+          required: [name, provider, region]
+          properties:
+            name:
+              type: string
+            provider:
+              type: string
+              enum: [aws, gcp, azure]
+            region:
+              type: string
+            nodeCount:
+              type: integer
+              default: 3
+
+---
+# API - gRPC
+apiVersion: backstage.io/v1alpha1
+kind: API
+metadata:
+  name: cluster-api
+  description: Internal gRPC API for cluster management
+  tags:
+    - grpc
+    - internal
 spec:
   type: grpc
-  lifecycle: experimental
-  owner: guests
-  system: examples
+  lifecycle: production
+  owner: infra-team
+  system: cnoe-platform
   definition: |
     syntax = "proto3";
 
-    service Exampler {
-      rpc Example (ExampleMessage) returns (ExampleMessage) {};
+    package cnoe.cluster.v1;
+
+    service ClusterService {
+      rpc CreateCluster (CreateClusterRequest) returns (Cluster) {};
+      rpc GetCluster (GetClusterRequest) returns (Cluster) {};
+      rpc ListClusters (ListClustersRequest) returns (ListClustersResponse) {};
+      rpc DeleteCluster (DeleteClusterRequest) returns (DeleteClusterResponse) {};
     }
 
-    message ExampleMessage {
-      string example = 1;
-    };
+    message CreateClusterRequest {
+      string name = 1;
+      string provider = 2;
+      string region = 3;
+      int32 node_count = 4;
+    }
+
+    message GetClusterRequest {
+      string id = 1;
+    }
+
+    message ListClustersRequest {
+      int32 page_size = 1;
+      string page_token = 2;
+    }
+
+    message ListClustersResponse {
+      repeated Cluster clusters = 1;
+      string next_page_token = 2;
+    }
+
+    message DeleteClusterRequest {
+      string id = 1;
+    }
+
+    message DeleteClusterResponse {}
+
+    message Cluster {
+      string id = 1;
+      string name = 2;
+      string provider = 3;
+      string region = 4;
+      string status = 5;
+      int32 node_count = 6;
+    }
+
+---
+# Resource - Database
+apiVersion: backstage.io/v1alpha1
+kind: Resource
+metadata:
+  name: platform-database
+  description: PostgreSQL database for the CNOE platform
+  tags:
+    - postgresql
+    - database
+spec:
+  type: database
+  owner: infra-team
+  system: cnoe-platform
+
+---
+# Resource - S3 Bucket
+apiVersion: backstage.io/v1alpha1
+kind: Resource
+metadata:
+  name: artifacts-bucket
+  description: S3 bucket for build artifacts and TechDocs
+  tags:
+    - s3
+    - storage
+spec:
+  type: s3-bucket
+  owner: infra-team
+  system: cnoe-platform
+
+---
+# Kro ResourceGroup
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: example-resource-group
+  description: Example Kro ResourceGroup for managing cloud resources
+  tags:
+    - kro
+    - kubernetes
+    - resourcegroup
+  annotations:
+    backstage.io/kubernetes-namespace: default
+    backstage.io/kubernetes-label-selector: app=example-rg
+    kro.run/resource-group: example-resource-group
+    kro.run/managed-resources: '[{"kind":"Deployment","name":"web-app","namespace":"default"},{"kind":"Service","name":"web-app-svc","namespace":"default"}]'
+spec:
+  type: kro-resource-group
+  lifecycle: production
+  owner: platform-team
+  system: cnoe-platform
+  dependsOn:
+    - resource:platform-database

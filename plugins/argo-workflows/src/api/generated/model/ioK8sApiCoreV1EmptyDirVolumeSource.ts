@@ -11,7 +11,6 @@
  * Do not edit the class manually.
  */
 
-import { RequestFile } from './models';
 
 /**
 * Represents an empty directory for a pod. Empty directory volumes support ownership management and SELinux relabeling.

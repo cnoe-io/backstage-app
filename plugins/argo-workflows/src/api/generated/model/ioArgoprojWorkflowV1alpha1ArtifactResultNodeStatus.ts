@@ -11,7 +11,6 @@
  * Do not edit the class manually.
  */
 
-import { RequestFile } from './models';
 import { IoArgoprojWorkflowV1alpha1ArtifactResult } from './ioArgoprojWorkflowV1alpha1ArtifactResult';
 
 /**

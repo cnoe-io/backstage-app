@@ -11,7 +11,6 @@
  * Do not edit the class manually.
  */
 
-import { RequestFile } from './models';
 import { IoArgoprojEventsV1alpha1K8SResourcePolicy } from './ioArgoprojEventsV1alpha1K8SResourcePolicy';
 import { IoArgoprojEventsV1alpha1StatusPolicy } from './ioArgoprojEventsV1alpha1StatusPolicy';
 

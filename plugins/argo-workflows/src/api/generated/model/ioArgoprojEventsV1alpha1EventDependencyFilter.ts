@@ -11,7 +11,6 @@
  * Do not edit the class manually.
  */
 
-import { RequestFile } from './models';
 import { IoArgoprojEventsV1alpha1DataFilter } from './ioArgoprojEventsV1alpha1DataFilter';
 import { IoArgoprojEventsV1alpha1EventContext } from './ioArgoprojEventsV1alpha1EventContext';
 import { IoArgoprojEventsV1alpha1ExprFilter } from './ioArgoprojEventsV1alpha1ExprFilter';

@@ -11,7 +11,6 @@
  * Do not edit the class manually.
  */
 
-import { RequestFile } from './models';
 import { IoArgoprojWorkflowV1alpha1Outputs } from './ioArgoprojWorkflowV1alpha1Outputs';
 
 export class IoArgoprojWorkflowV1alpha1NodeResult {

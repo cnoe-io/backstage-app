@@ -1,1 +1,4 @@
 playwright.config.ts
+dist
+dist-types
+node_modules

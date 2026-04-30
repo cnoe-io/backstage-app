@@ -11,7 +11,6 @@
  * Do not edit the class manually.
  */
 
-import { RequestFile } from './models';
 import { IoArgoprojWorkflowV1alpha1DataSource } from './ioArgoprojWorkflowV1alpha1DataSource';
 import { IoArgoprojWorkflowV1alpha1TransformationStep } from './ioArgoprojWorkflowV1alpha1TransformationStep';
 

@@ -11,7 +11,6 @@
  * Do not edit the class manually.
  */
 
-import { RequestFile } from './models';
 import { IoK8sApiCoreV1ServicePort } from './ioK8sApiCoreV1ServicePort';
 
 export class IoArgoprojEventsV1alpha1Service {

@@ -11,7 +11,6 @@
  * Do not edit the class manually.
  */
 
-import { RequestFile } from './models';
 import { IoArgoprojEventsV1alpha1EventSource } from './ioArgoprojEventsV1alpha1EventSource';
 
 export class EventsourceUpdateEventSourceRequest {

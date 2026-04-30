@@ -11,7 +11,6 @@
  * Do not edit the class manually.
  */
 
-import { RequestFile } from './models';
 
 /**
 * AzureDisk represents an Azure Data Disk mount on the host and bind mount to the pod.

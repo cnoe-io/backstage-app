@@ -1,1 +1,1 @@
-export {isTerraformAvailable, terraformPlugin, TerraformPluginPage} from './plugin';
+export {isTerraformAvailable, terraformPlugin, TerraformPluginPage, EntityTerraformContent} from './plugin';

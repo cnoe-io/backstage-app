@@ -11,7 +11,6 @@
  * Do not edit the class manually.
  */
 
-import { RequestFile } from './models';
 
 /**
 * Header indicate a key-value request header to be used when fetching artifacts over HTTP

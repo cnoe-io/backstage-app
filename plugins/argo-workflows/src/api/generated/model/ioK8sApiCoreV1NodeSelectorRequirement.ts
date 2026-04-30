@@ -11,7 +11,6 @@
  * Do not edit the class manually.
  */
 
-import { RequestFile } from './models';
 
 /**
 * A node selector requirement is a selector that contains values, a key, and an operator that relates the key and values.
@@ -56,11 +55,11 @@ export class IoK8sApiCoreV1NodeSelectorRequirement {
 
 export namespace IoK8sApiCoreV1NodeSelectorRequirement {
     export enum OperatorEnum {
-        DoesNotExist = <any> 'DoesNotExist',
-        Exists = <any> 'Exists',
-        Gt = <any> 'Gt',
-        In = <any> 'In',
-        Lt = <any> 'Lt',
-        NotIn = <any> 'NotIn'
+        DoesNotExist = 'DoesNotExist' as any,
+        Exists = 'Exists' as any,
+        Gt = 'Gt' as any,
+        In = 'In' as any,
+        Lt = 'Lt' as any,
+        NotIn = 'NotIn' as any
     }
 }

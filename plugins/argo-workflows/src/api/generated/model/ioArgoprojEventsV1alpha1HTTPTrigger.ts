@@ -11,7 +11,6 @@
  * Do not edit the class manually.
  */
 
-import { RequestFile } from './models';
 import { IoArgoprojEventsV1alpha1BasicAuth } from './ioArgoprojEventsV1alpha1BasicAuth';
 import { IoArgoprojEventsV1alpha1SecureHeader } from './ioArgoprojEventsV1alpha1SecureHeader';
 import { IoArgoprojEventsV1alpha1TLSConfig } from './ioArgoprojEventsV1alpha1TLSConfig';

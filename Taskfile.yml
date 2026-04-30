@@ -1,0 +1,198 @@
+version: '3'
+
+vars:
+  IMAGE_NAME: ghcr.io/cnoe-io/backstage-app
+  IMAGE_TAG: local
+  KIND_CLUSTER: localdev
+  K8S_CONTEXT: kind-{{.KIND_CLUSTER}}
+  BACKSTAGE_NS: backstage
+
+tasks:
+  # ===== Development =====
+
+  dev:
+    desc: Start local dev server (frontend + backend)
+    cmds:
+      - yarn dev
+
+  dev:mock:
+    desc: Start local dev server with mock backends (no cluster needed)
+    cmds:
+      - MOCK_MODE=true yarn dev
+
+  tsc:
+    desc: Run TypeScript type checking
+    cmds:
+      - yarn tsc
+
+  lint:
+    desc: Run linter on all packages
+    cmds:
+      - yarn lint:all
+
+  test:
+    desc: Run all tests
+    cmds:
+      - yarn test:all
+
+  build:
+    desc: Build backend bundle
+    cmds:
+      - yarn build:backend
+
+  build:all:
+    desc: Build all packages (frontend + backend)
+    cmds:
+      - yarn build:all
+
+  clean:
+    desc: Clean all build artifacts
+    cmds:
+      - yarn clean
+
+  check:
+    desc: Run tsc + lint + build (same as PR CI)
+    cmds:
+      - task: tsc
+      - task: lint
+      - task: build
+
+  # ===== Docker =====
+
+  docker:build:
+    desc: Build Docker image
+    cmds:
+      - docker build -t {{.IMAGE_NAME}}:{{.IMAGE_TAG}} .
+
+  docker:run:
+    desc: Run Docker image locally (dev config, SQLite)
+    cmds:
+      - docker run -p 7007:7007 {{.IMAGE_NAME}}:{{.IMAGE_TAG}} node packages/backend --config app-config.yaml
+
+  # ===== idpbuilder Local Stack =====
+
+  stack:up:
+    desc: Bring up full local stack (ref-implementation + Kro + Backstage)
+    cmds:
+      - task: stack:idp
+      - task: stack:kro
+      - task: stack:patch
+      - task: stack:deploy
+
+  stack:idp:
+    desc: Start idpbuilder ref-implementation
+    cmds:
+      - |
+        idpbuilder create --use-path-routing \
+          --package https://github.com/cnoe-io/stacks//ref-implementation
+      - echo "Waiting for cluster to stabilize..."
+      - kubectl config use-context {{.K8S_CONTEXT}}
+      - kubectl wait --for=condition=Available deployment/backstage -n {{.BACKSTAGE_NS}} --timeout=600s
+
+  stack:kro:
+    desc: Install Kro operator and sample ResourceGraphDefinition
+    cmds:
+      - kubectl config use-context {{.K8S_CONTEXT}}
+      - helm install kro oci://registry.k8s.io/kro/charts/kro --namespace kro-system --create-namespace
+      - kubectl wait --for=condition=Established crd/resourcegraphdefinitions.kro.run --timeout=60s
+      - kubectl apply -f examples/local-stack/kro/manifests/install.yaml
+
+  stack:patch:
+    desc: Apply Backstage RBAC and config patches for Kro
+    cmds:
+      - kubectl config use-context {{.K8S_CONTEXT}}
+      - kubectl apply -f examples/local-stack/backstage-patch/manifests/install.yaml
+
+  stack:deploy:
+    desc: Build, load, and deploy local Backstage image to the cluster
+    cmds:
+      - task: docker:build
+      - task: stack:load
+      - task: stack:swap
+
+  stack:load:
+    desc: Load local Docker image into kind cluster
+    cmds:
+      - |
+        docker save {{.IMAGE_NAME}}:{{.IMAGE_TAG}} | \
+          docker exec -i {{.KIND_CLUSTER}}-control-plane \
+          ctr -n k8s.io images import --all-platforms -
+
+  stack:swap:
+    desc: Swap Backstage deployment to use local image
+    cmds:
+      - kubectl config use-context {{.K8S_CONTEXT}}
+      - kubectl -n {{.BACKSTAGE_NS}} set image deployment/backstage backstage={{.IMAGE_NAME}}:{{.IMAGE_TAG}}
+      - |
+        kubectl -n {{.BACKSTAGE_NS}} patch deployment backstage \
+          -p '{"spec":{"template":{"spec":{"containers":[{"name":"backstage","imagePullPolicy":"Never"}]}}}}'
+      - kubectl -n argocd patch application backstage --type merge -p '{"spec":{"syncPolicy":null}}'
+      - kubectl -n {{.BACKSTAGE_NS}} rollout status deployment/backstage --timeout=90s
+
+  stack:iterate:
+    desc: Rebuild and redeploy after code changes (fast cycle)
+    cmds:
+      - task: docker:build
+      - task: stack:load
+      - kubectl config use-context {{.K8S_CONTEXT}}
+      - kubectl -n {{.BACKSTAGE_NS}} rollout restart deployment/backstage
+      - kubectl -n {{.BACKSTAGE_NS}} rollout status deployment/backstage --timeout=90s
+
+  stack:logs:
+    desc: Tail Backstage logs
+    cmds:
+      - kubectl config use-context {{.K8S_CONTEXT}}
+      - kubectl logs -f deployment/backstage -n {{.BACKSTAGE_NS}}
+
+  stack:status:
+    desc: Show status of all stack components
+    cmds:
+      - kubectl config use-context {{.K8S_CONTEXT}}
+      - echo "=== Backstage ==="
+      - kubectl get pods -n {{.BACKSTAGE_NS}}
+      - echo ""
+      - echo "=== Kro ==="
+      - kubectl get pods -n kro-system
+      - echo ""
+      - echo "=== ResourceGraphDefinitions ==="
+      - kubectl get rgd -A
+      - echo ""
+      - echo "=== ArgoCD Applications ==="
+      - kubectl get applications -n argocd
+
+  stack:secrets:
+    desc: Show idpbuilder credentials
+    cmds:
+      - idpbuilder get secrets
+
+  stack:port-forward:
+    desc: Start port-forward to Backstage (localhost:7007)
+    cmds:
+      - kubectl config use-context {{.K8S_CONTEXT}}
+      - echo "Backstage available at http://localhost:7007"
+      - kubectl -n {{.BACKSTAGE_NS}} port-forward svc/backstage 7007:7007
+
+  stack:guest-auth:
+    desc: Enable guest auth on the cluster (for testing without Keycloak)
+    cmds:
+      - kubectl config use-context {{.K8S_CONTEXT}}
+      - |
+        kubectl -n {{.BACKSTAGE_NS}} get configmap backstage-config -o yaml | \
+          sed 's/keycloak-oidc:/guest:\n          dangerouslyAllowOutsideDevelopment: true\n        keycloak-oidc:/' | \
+          kubectl apply -f -
+      - kubectl -n {{.BACKSTAGE_NS}} rollout restart deployment/backstage
+
+  stack:down:
+    desc: Delete the idpbuilder cluster
+    cmds:
+      - idpbuilder delete --name {{.KIND_CLUSTER}}
+
+  # ===== CI Helpers =====
+
+  ci:pr:
+    desc: Run the same checks as the PR workflow
+    cmds:
+      - yarn install --frozen-lockfile --network-timeout 600000
+      - task: tsc
+      - task: lint
+      - task: build

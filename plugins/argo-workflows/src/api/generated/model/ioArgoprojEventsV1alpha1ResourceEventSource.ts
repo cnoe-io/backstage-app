@@ -11,7 +11,6 @@
  * Do not edit the class manually.
  */
 
-import { RequestFile } from './models';
 import { IoArgoprojEventsV1alpha1ResourceFilter } from './ioArgoprojEventsV1alpha1ResourceFilter';
 import { IoK8sApimachineryPkgApisMetaV1GroupVersionResource } from './ioK8sApimachineryPkgApisMetaV1GroupVersionResource';
 

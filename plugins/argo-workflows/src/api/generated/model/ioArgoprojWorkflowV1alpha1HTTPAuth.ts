@@ -11,7 +11,6 @@
  * Do not edit the class manually.
  */
 
-import { RequestFile } from './models';
 import { IoArgoprojWorkflowV1alpha1BasicAuth } from './ioArgoprojWorkflowV1alpha1BasicAuth';
 import { IoArgoprojWorkflowV1alpha1ClientCertAuth } from './ioArgoprojWorkflowV1alpha1ClientCertAuth';
 import { IoArgoprojWorkflowV1alpha1OAuth2Auth } from './ioArgoprojWorkflowV1alpha1OAuth2Auth';

@@ -11,7 +11,6 @@
  * Do not edit the class manually.
  */
 
-import { RequestFile } from './models';
 import { IoArgoprojEventsV1alpha1AWSLambdaTrigger } from './ioArgoprojEventsV1alpha1AWSLambdaTrigger';
 import { IoArgoprojEventsV1alpha1ArgoWorkflowTrigger } from './ioArgoprojEventsV1alpha1ArgoWorkflowTrigger';
 import { IoArgoprojEventsV1alpha1AzureEventHubsTrigger } from './ioArgoprojEventsV1alpha1AzureEventHubsTrigger';
