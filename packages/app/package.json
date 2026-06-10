@@ -6,6 +6,7 @@
   "backstage": {
     "role": "frontend"
   },
+  "configSchema": "config.d.ts",
   "scripts": {
     "start": "HOST=0.0.0.0 backstage-cli package start",
     "build": "backstage-cli package build",
@@ -80,6 +81,7 @@
     ]
   },
   "files": [
-    "dist"
+    "dist",
+    "config.d.ts"
   ]
 }

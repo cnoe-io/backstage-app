@@ -27,6 +27,7 @@ export const cnoeScaffolderActions = createBackendModule({
           createPublishGiteaAction({ integrations, config }),
           createArgoCDApp({ config, logger }),
           createKubernetesApply(config),
+          createKubernetesApply(config, 'kube:apply'),
           createSanitizeResource(),
           createVerifyDependency(),
         );

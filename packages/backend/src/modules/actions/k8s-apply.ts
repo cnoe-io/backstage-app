@@ -34,15 +34,16 @@ interface ConfFile {
   users: User[];
 }
 
-export const createKubernetesApply = (config: Config) => {
+export const createKubernetesApply = (config: Config, actionId = 'cnoe:kubernetes:apply') => {
   return createTemplateAction<{
     manifestString?: string;
     manifestObject?: any;
     manifestPath?: string;
+    manifest?: string;
     namespaced: boolean;
     clusterName?: string;
   }>({
-    id: 'cnoe:kubernetes:apply',
+    id: actionId,
     schema: {
       input: {
         type: 'object',
@@ -52,6 +53,11 @@ export const createKubernetesApply = (config: Config) => {
             type: 'string',
             title: 'Manifest',
             description: 'The manifest to apply in the cluster. Must be a string',
+          },
+          manifest: {
+            type: 'string',
+            title: 'Manifest',
+            description: 'Alias for manifestString',
           },
           manifestObject: {
             type: 'object',
@@ -86,8 +92,8 @@ export const createKubernetesApply = (config: Config) => {
         ctx.workspacePath,
         'to-be-applied.yaml',
       );
-      if (ctx.input.manifestString) {
-        fs.writeFileSync(manifestPath, ctx.input.manifestString, {
+      if (ctx.input.manifestString || ctx.input.manifest) {
+        fs.writeFileSync(manifestPath, ctx.input.manifestString || ctx.input.manifest!, {
           encoding: 'utf8',
           mode: '600',
         });
@@ -194,7 +200,32 @@ export const createKubernetesApply = (config: Config) => {
         }
         return;
       }
-      throw new Error('please specify a valid cluster name');
+      // No clusterName specified — use in-cluster service account
+      let counter = 1;
+      for (const obj of objList) {
+        const manifestFilePath = resolveSafeChildPath(
+          ctx.workspacePath,
+          `to-be-applied-${counter}.yaml`,
+        );
+        fs.writeFileSync(manifestFilePath, yaml.dump(obj), {
+          encoding: 'utf8',
+          mode: '600',
+        });
+        if (obj.metadata.generateName !== undefined) {
+          await executeShellCommand({
+            command: 'kubectl',
+            args: ['create', '-f', manifestFilePath],
+            logStream: ctx.logStream,
+          });
+        } else {
+          await executeShellCommand({
+            command: 'kubectl',
+            args: ['apply', '-f', manifestFilePath],
+            logStream: ctx.logStream,
+          });
+        }
+        counter += 1;
+      }
     },
   });
 };
