@@ -59,7 +59,8 @@
     "fs-extra": "~11.2.0",
     "js-yaml": "^4.1.0",
     "node-gyp": "^10.0.0",
-    "yaml": "^2.3.0"
+    "yaml": "^2.3.0",
+    "@backstage/plugin-scaffolder-backend-module-gitlab": "^0.8.0"
   },
   "devDependencies": {
     "@backstage/backend-test-utils": "^1.11.1",

@@ -28,6 +28,7 @@ backend.add(
 if (process.env.GITHUB_TOKEN) {
   backend.add(import('@backstage/plugin-scaffolder-backend-module-github'));
 }
+backend.add(import('@backstage/plugin-scaffolder-backend-module-gitlab'));
 
 // CNOE custom scaffolder actions (gitea publish, argocd, k8s-apply, sanitize, verify)
 backend.add(cnoeScaffolderActions);

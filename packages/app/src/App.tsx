@@ -11,6 +11,7 @@ import {
   catalogImportPlugin,
 } from '@backstage/plugin-catalog-import';
 import { ScaffolderPage, scaffolderPlugin } from '@backstage/plugin-scaffolder';
+import { CustomScaffolderPage } from './components/scaffolder/CustomScaffolderPage';
 import { orgPlugin } from '@backstage/plugin-org';
 import { SearchPage } from '@backstage/plugin-search';
 import { TechRadarPage } from '@backstage-community/plugin-tech-radar';
@@ -46,7 +47,7 @@ const app = createApp({
   themes: [cnoeVibrantLightAppTheme, cnoeVibrantDarkAppTheme],
   components: {
     SignInPage: props => {
-      return <SignInPage {...props} auto providers={['guest']} />;
+      return <SignInPage {...props} providers={['guest']} />;
     },
   },
   bindRoutes({ bind }) {
@@ -88,7 +89,8 @@ const routes = (
         <ReportIssue />
       </TechDocsAddons>
     </Route>
-    <Route path="/create" element={<ScaffolderPage />} />
+    <Route path="/create" element={<CustomScaffolderPage />} />
+    <Route path="/create/templates" element={<ScaffolderPage />} />
     <Route path="/api-docs" element={<CustomApiExplorerPage />} />
     <Route
       path="/tech-radar"
