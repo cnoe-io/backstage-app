@@ -72,22 +72,47 @@ tasks:
   # ===== idpbuilder Local Stack =====
 
   stack:up:
-    desc: Bring up full local stack (ref-implementation + Kro + Backstage)
+    desc: Bring up full local stack (ref-implementation + custom Backstage + Kro)
     cmds:
       - task: stack:idp
+      - task: stack:keycloak-fix
       - task: stack:kro
       - task: stack:patch
-      - task: stack:deploy
 
   stack:idp:
-    desc: Start idpbuilder ref-implementation
+    desc: Start idpbuilder with ref-implementation and custom Backstage override
     cmds:
       - |
         idpbuilder create --use-path-routing \
-          --package https://github.com/cnoe-io/stacks//ref-implementation
+          --package https://github.com/cnoe-io/stacks//ref-implementation \
+          --package ./examples/local-stack
       - echo "Waiting for cluster to stabilize..."
       - kubectl config use-context {{.K8S_CONTEXT}}
-      - kubectl wait --for=condition=Available deployment/backstage -n {{.BACKSTAGE_NS}} --timeout=600s
+
+  stack:keycloak-fix:
+    desc: Fix keycloak-clients secret (workaround for broken kubectl download in config job)
+    cmds:
+      - kubectl config use-context {{.K8S_CONTEXT}}
+      - |
+        echo "Waiting for keycloak config job to complete..."
+        kubectl wait --for=condition=Complete job/config -n keycloak --timeout=300s 2>/dev/null || true
+      - |
+        BACKSTAGE_SECRET=$(kubectl logs job/config -n keycloak 2>/dev/null | grep "BACKSTAGE_CLIENT_SECRET=" | tail -1 | sed 's/.*BACKSTAGE_CLIENT_SECRET=//')
+        ARGO_SECRET=$(kubectl logs job/config -n keycloak 2>/dev/null | grep "ARGO_WORKFLOWS_CLIENT_SECRET=" | tail -1 | sed 's/.*ARGO_WORKFLOWS_CLIENT_SECRET=//')
+        if [ -n "$BACKSTAGE_SECRET" ] && ! kubectl get secret keycloak-clients -n keycloak 2>/dev/null; then
+          echo "Creating keycloak-clients secret from job logs..."
+          kubectl -n keycloak create secret generic keycloak-clients \
+            --from-literal=BACKSTAGE_CLIENT_SECRET="$BACKSTAGE_SECRET" \
+            --from-literal=ARGO_WORKFLOWS_CLIENT_SECRET="$ARGO_SECRET" \
+            --from-literal=ARGOCD_SESSION_TOKEN=""
+          kubectl annotate externalsecret backstage-oidc -n backstage force-sync=$(date +%s) --overwrite 2>/dev/null || true
+        fi
+      - |
+        echo "Waiting for backstage-env-vars secret..."
+        until kubectl get secret backstage-env-vars -n backstage 2>/dev/null; do sleep 5; done
+      - |
+        echo "Waiting for backstage deployment..."
+        kubectl wait --for=condition=Available deployment/backstage -n {{.BACKSTAGE_NS}} --timeout=300s 2>/dev/null || true
 
   stack:kro:
     desc: Install Kro operator and sample ResourceGraphDefinition
@@ -104,11 +129,16 @@ tasks:
       - kubectl apply -f examples/local-stack/backstage-patch/manifests/install.yaml
 
   stack:deploy:
-    desc: Build, load, and deploy local Backstage image to the cluster
+    desc: Build local image, load into cluster, and restart backstage
     cmds:
       - task: docker:build
       - task: stack:load
-      - task: stack:swap
+      - kubectl config use-context {{.K8S_CONTEXT}}
+      - kubectl -n {{.BACKSTAGE_NS}} set image deployment/backstage backstage={{.IMAGE_NAME}}:{{.IMAGE_TAG}}
+      - |
+        kubectl -n {{.BACKSTAGE_NS}} patch deployment backstage \
+          -p '{"spec":{"template":{"spec":{"containers":[{"name":"backstage","imagePullPolicy":"Never"}]}}}}'
+      - kubectl -n {{.BACKSTAGE_NS}} rollout status deployment/backstage --timeout=90s
 
   stack:load:
     desc: Load local Docker image into kind cluster
@@ -119,14 +149,18 @@ tasks:
           ctr -n k8s.io images import --all-platforms -
 
   stack:swap:
-    desc: Swap Backstage deployment to use local image
+    desc: Swap Backstage deployment to use a specific image (usage -- task stack:swap IMAGE_SHA=abc123)
     cmds:
       - kubectl config use-context {{.K8S_CONTEXT}}
-      - kubectl -n {{.BACKSTAGE_NS}} set image deployment/backstage backstage={{.IMAGE_NAME}}:{{.IMAGE_TAG}}
+      - |
+        docker pull {{.IMAGE_NAME}}:{{.IMAGE_SHA}} && \
+        docker save {{.IMAGE_NAME}}:{{.IMAGE_SHA}} | \
+          docker exec -i {{.KIND_CLUSTER}}-control-plane \
+          ctr -n k8s.io images import --all-platforms -
+      - kubectl -n {{.BACKSTAGE_NS}} set image deployment/backstage backstage={{.IMAGE_NAME}}:{{.IMAGE_SHA}}
       - |
         kubectl -n {{.BACKSTAGE_NS}} patch deployment backstage \
           -p '{"spec":{"template":{"spec":{"containers":[{"name":"backstage","imagePullPolicy":"Never"}]}}}}'
-      - kubectl -n argocd patch application backstage --type merge -p '{"spec":{"syncPolicy":null}}'
       - kubectl -n {{.BACKSTAGE_NS}} rollout status deployment/backstage --timeout=90s
 
   stack:iterate:

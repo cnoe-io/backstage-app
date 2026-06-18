@@ -1,0 +1,24 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: backstage
+  namespace: argocd
+  labels:
+    env: dev
+  annotations:
+    argocd.argoproj.io/sync-wave: "40"
+spec:
+  project: default
+  source:
+    repoURL: cnoe://backstage-override/manifests
+    targetRevision: HEAD
+    path: "."
+  destination:
+    server: "https://kubernetes.default.svc"
+    namespace: backstage
+  syncPolicy:
+    syncOptions:
+      - CreateNamespace=true
+    automated:
+      selfHeal: true
+      prune: true
