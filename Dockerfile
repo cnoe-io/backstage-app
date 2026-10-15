@@ -12,6 +12,18 @@ RUN find packages \! -name "package.json" -mindepth 2 -maxdepth 2 -exec rm -rf {
 # Stage 2 - Install dependencies and build packages
 FROM node:22-bookworm-slim AS build
 
+# isolated-vm (a direct dependency) is a native addon. On platforms without a
+# prebuilt binary (e.g. linux/arm64) yarn compiles it with node-gyp, which needs
+# Python and a C++ toolchain. The slim base ships neither, so the build stage
+# must install them or `yarn install` fails with "Could not find any Python
+# installation to use". Apply security updates in the same layer.
+RUN --mount=type=cache,target=/var/cache/apt,sharing=locked \
+    --mount=type=cache,target=/var/lib/apt,sharing=locked \
+    apt-get update && \
+    apt-get upgrade -y && \
+    apt-get install -y --no-install-recommends python3 make g++ && \
+    rm -rf /var/lib/apt/lists/*
+
 USER node
 WORKDIR /app
 
@@ -32,10 +44,21 @@ RUN mkdir packages/backend/dist/skeleton packages/backend/dist/bundle \
 # Stage 3 - Build the actual backend image and install production dependencies
 FROM node:22-bookworm-slim
 
+# Apply Debian security updates to the base image BEFORE installing packages.
+# node:22-bookworm-slim ships pre-installed OS libraries (perl, openssl,
+# python3.11, libexpat1, libpcre2) that lag the latest bookworm security
+# patches, so the published image inherited a stack of Critical/High CVEs
+# (perl deb12u4, openssl deb12u1, python3.11 deb12u9, expat deb12u4,
+# pcre2 deb12u2, etc.). `apt-get install` alone does NOT refresh those
+# pre-installed packages — `apt-get upgrade` does. Run a full upgrade in the
+# same layer as the install so every OS package is at the current bookworm
+# security level, then clean the lists to keep the layer small.
 RUN --mount=type=cache,target=/var/cache/apt,sharing=locked \
     --mount=type=cache,target=/var/lib/apt,sharing=locked \
     apt-get update && \
-    apt-get install -y --no-install-recommends python3 python3-pip python3-venv g++ build-essential ca-certificates curl
+    apt-get upgrade -y && \
+    apt-get install -y --no-install-recommends python3 python3-pip python3-venv g++ build-essential ca-certificates curl && \
+    rm -rf /var/lib/apt/lists/*
 
 RUN yarn config set python /usr/bin/python3
 
