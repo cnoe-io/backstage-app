@@ -1,8 +1,8 @@
 app:
-  baseUrl: http://localhost:7007
+  baseUrl: http://localhost:7007/backstage
 
 backend:
-  baseUrl: http://localhost:7007
+  baseUrl: http://localhost:7007/backstage
   listen: ':7007'
   database:
     client: pg

@@ -23,7 +23,7 @@ import {
 import { TechDocsAddons } from '@backstage/plugin-techdocs-react';
 import { ReportIssue } from '@backstage/plugin-techdocs-module-addons-contrib';
 import { UserSettingsPage } from '@backstage/plugin-user-settings';
-import { apis } from './apis';
+import { apis, keycloakOIDCAuthApiRef } from './apis';
 import { entityPage } from './components/catalog/EntityPage';
 import { searchPage } from './components/search/SearchPage';
 import { Root } from './components/Root';
@@ -47,7 +47,7 @@ const app = createApp({
   themes: [cnoeVibrantLightAppTheme, cnoeVibrantDarkAppTheme],
   components: {
     SignInPage: props => {
-      return <SignInPage {...props} providers={['guest']} />;
+      return <SignInPage {...props} providers={[{ id: 'keycloak-oidc', title: 'Keycloak', message: 'Sign in with Keycloak SSO', apiRef: keycloakOIDCAuthApiRef }]} />;
     },
   },
   bindRoutes({ bind }) {
@@ -89,8 +89,16 @@ const routes = (
         <ReportIssue />
       </TechDocsAddons>
     </Route>
-    <Route path="/create" element={<CustomScaffolderPage />} />
-    <Route path="/create/templates" element={<ScaffolderPage />} />
+    <Route
+      path="/create"
+      element={
+        <ScaffolderPage
+          components={{
+            EXPERIMENTAL_TemplateListPageComponent: CustomScaffolderPage,
+          }}
+        />
+      }
+    />
     <Route path="/api-docs" element={<CustomApiExplorerPage />} />
     <Route
       path="/tech-radar"
