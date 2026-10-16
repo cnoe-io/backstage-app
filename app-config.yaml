@@ -1,6 +1,6 @@
 app:
   title: CNOE
-  baseUrl: http://localhost:3000
+  baseUrl: http://localhost:3000/backstage
   packages: all
   listen:
     port: 3000
@@ -37,7 +37,7 @@ backend:
   # auth:
   #   keys:
   #     - secret: ${BACKEND_SECRET}
-  baseUrl: http://localhost:7007
+  baseUrl: http://localhost:7007/backstage
   listen:
     port: 7007
     host: 0.0.0.0
@@ -91,11 +91,10 @@ techdocs:
 
 auth:
   # see https://backstage.io/docs/auth/ to learn about auth providers
-  environment: local # set this to development to enable SSO
+  environment: development
   session:
     secret: abcdfkjalskdfjkla
   providers:
-    guest: {}
     keycloak-oidc:
       development:
         metadataUrl: https://cnoe.localtest.me:8443/keycloak/realms/cnoe/.well-known/openid-configuration
